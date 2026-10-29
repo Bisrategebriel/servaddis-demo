@@ -1,0 +1,185 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "../styles/tokens.css";
+
+/*
+ * The demo has no dark theme (doc 04). Keeping `dark:` bound to a `.dark` class
+ * that is never set stops shadcn's dark: utilities from following the OS setting.
+ */
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Role tokens. Doc 04 role names that clash with shadcn's are renamed:
+ *   doc 04 --primary/--on-primary  -> --primary/--primary-foreground
+ *   doc 04 --accent/--on-accent    -> --brand-accent/--brand-accent-foreground
+ *   (shadcn's --accent is a subtle hover background, not the amber brand accent)
+ *   doc 04 --bg / --surface        -> --background / --card
+ *   doc 04 --text                  -> --foreground
+ */
+:root {
+  --background: var(--gray-50);
+  --foreground: var(--navy-900);
+  --card: #ffffff;
+  --card-foreground: var(--navy-900);
+  --popover: #ffffff;
+  --popover-foreground: var(--navy-900);
+
+  --primary: var(--navy-900);
+  --primary-hover: var(--navy-800);
+  --primary-foreground: #ffffff;
+  --secondary: var(--gray-100);
+  --secondary-foreground: var(--navy-900);
+  --brand-accent: var(--amber-500);
+  --brand-accent-hover: var(--amber-400);
+  --brand-accent-foreground: var(--navy-900);
+
+  --muted: var(--gray-100);
+  --muted-foreground: var(--gray-600); /* secondary text: AA on white and on --gray-50 */
+  --text-secondary: var(--gray-600);
+  --text-muted: var(--gray-500); /* only on white */
+  --accent: var(--navy-50);
+  --accent-foreground: var(--navy-900);
+  --destructive: var(--danger-solid);
+
+  --border: var(--gray-200);
+  --border-strong: var(--gray-400);
+  --input: var(--gray-400); /* inputs use the strong border (3.09:1) */
+  --ring: var(--navy-600);
+
+  --chart-1: var(--navy-900);
+  --chart-2: var(--amber-500);
+  --chart-3: var(--gray-400);
+  --chart-4: var(--navy-300);
+  --chart-5: var(--amber-700);
+
+  --sidebar: var(--navy-900);
+  --sidebar-foreground: var(--gray-300);
+  --sidebar-primary: var(--amber-500);
+  --sidebar-primary-foreground: var(--navy-900);
+  --sidebar-accent: var(--navy-800);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: var(--navy-800);
+  --sidebar-ring: var(--amber-500);
+
+  /* Radius (doc 04 §2.4): sm 6 inputs/chips · lg 10 buttons · 2xl 16 cards · 3xl 24 sheets */
+  --radius: 10px;
+}
+
+@theme inline {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Ethiopic", sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Replace Tailwind's default gray/amber with the brand scales so stray shades can't leak in */
+  --color-gray-*: initial;
+  --color-amber-*: initial;
+
+  --color-navy-50: var(--navy-50);
+  --color-navy-100: var(--navy-100);
+  --color-navy-200: var(--navy-200);
+  --color-navy-300: var(--navy-300);
+  --color-navy-600: var(--navy-600);
+  --color-navy-700: var(--navy-700);
+  --color-navy-800: var(--navy-800);
+  --color-navy-900: var(--navy-900);
+  --color-navy-950: var(--navy-950);
+  --color-amber-50: var(--amber-50);
+  --color-amber-100: var(--amber-100);
+  --color-amber-300: var(--amber-300);
+  --color-amber-400: var(--amber-400);
+  --color-amber-500: var(--amber-500);
+  --color-amber-700: var(--amber-700);
+  --color-amber-800: var(--amber-800);
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-gray-700: var(--gray-700);
+
+  --color-success: var(--success-solid);
+  --color-success-fg: var(--success-fg);
+  --color-success-bg: var(--success-bg);
+  --color-info-fg: var(--info-fg);
+  --color-info-bg: var(--info-bg);
+  --color-warning-fg: var(--warning-fg);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger: var(--danger-solid);
+  --color-danger-fg: var(--danger-fg);
+  --color-danger-bg: var(--danger-bg);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-hover: var(--brand-accent-hover);
+  --color-brand-accent-foreground: var(--brand-accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Elevation (doc 04 §2.4): shadows only on hover cards and overlays */
+  --shadow-card: 0 1px 2px rgb(22 36 63 / 0.08);
+  --shadow-overlay: 0 8px 24px rgb(22 36 63 / 0.16);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

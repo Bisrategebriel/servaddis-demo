@@ -1,0 +1,48 @@
+/*
+ * Servaddis design tokens: doc 04 §2.2 (colour) and §2.4 (layout).
+ * Brand colours confirmed from the logo: navy #16243F, amber #D9A441.
+ * Contrast rules (doc 04 §2.2):
+ *   - never use --amber-500 as text on white (2.25:1); use --amber-700/800 instead
+ *   - --gray-500 (muted) is AA only on white, not on --gray-50
+ */
+:root {
+  /* Brand */
+  --navy-50: #eef2f9;
+  --navy-100: #dce4f2;
+  --navy-200: #b9c8e3;
+  --navy-300: #8fa5cb;
+  --navy-600: #34568f;
+  --navy-700: #2a4573;
+  --navy-800: #1f3358;
+  --navy-900: #16243f;
+  --navy-950: #0e1830;
+  --amber-50: #fff8e8;
+  --amber-100: #fbebc8;
+  --amber-300: #ebc577;
+  --amber-400: #e3b558;
+  --amber-500: #d9a441;
+  --amber-700: #8a5a00;
+  --amber-800: #7a5200;
+
+  /* Neutrals (navy-tinted) */
+  --gray-50: #f6f7f9;
+  --gray-100: #eceef2;
+  --gray-200: #dde1e8;
+  --gray-300: #c9ced8;
+  --gray-400: #8a93a6;
+  --gray-500: #6b7385;
+  --gray-600: #5b6477;
+  --gray-700: #3b4357;
+
+  /* Semantic */
+  --success-fg: #1a6b43;
+  --success-bg: #e6f4ec;
+  --success-solid: #1f7a4d;
+  --info-fg: #264a8f;
+  --info-bg: #e8effb;
+  --warning-fg: #7a5200;
+  --warning-bg: #fbebc8;
+  --danger-fg: #9a1b14;
+  --danger-bg: #fdecea;
+  --danger-solid: #b3261e;
+}
