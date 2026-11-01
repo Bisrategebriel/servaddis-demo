@@ -30,7 +30,7 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 | Field | Value |
 |---|---|
 | **Current milestone** | M1 Onboarding & verification |
-| **Next task** | T1.2 Venue setup screen + venue API (also asks "Your name") |
+| **Next task** | T1.3 License upload (dropzone, validation, storage adapter, `/api/files`) |
 | **Last demoable build** | M0: `pnpm demo`, personas, Reset, shells in EN/AM |
 | **Hours spent / P0 budget** | 0 / 150 |
 | **Blockers** | None |
@@ -133,7 +133,7 @@ Each task lists its priority, estimate, dependencies, spec refs and *Done when*.
 | ✓ | ID | Task | Est | Act | Deps | Refs | Done when |
 |:-:|---|---|--:|--:|---|---|---|
 | [x] | T1.1 | Landing + sign-in (phone, OTP, lockout, resend), EN/AM | 4 | 1 | T0.4, T0.6 | 03 SCR-00/01, 04 §7 | All states complete |
-| [ ] | T1.2 | Venue setup screen + venue API. Also asks **"Your name"**: OTP sign-up creates users with an empty name (T0.4) | 3 | | T1.1 | 03 SCR-E01 | Venue + OWNER membership created |
+| [x] | T1.2 | Venue setup screen + venue API. Also asks **"Your name"**: OTP sign-up creates users with an empty name (T0.4) | 3 | 1 | T1.1 | 03 SCR-E01 | Venue + OWNER membership created |
 | [ ] | T1.3 | License upload: dropzone, type/size/magic bytes, storage adapter, `/api/files` | 4 | | T1.2 | 03 SCR-E02, 02 §9 | Invalid files rejected server-side |
 | [ ] | T1.4 | Moderation service + admin queue/review (licenses), audit. **Seed:** add the 1 PENDING Lideta Corner Café re-upload license (05 §9.5) | 6 | | T1.3, T0.5 | 03 SCR-A01/A02 | Venue → VERIFIED/REJECTED |
 | [ ] | T1.5 | Dashboard, onboarding checklist, bell, simulated SMS log | 5 | | T1.4 | 03 §3, SCR-E03 | Badge updates ≤ 5 s after approval |
@@ -264,6 +264,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-29 | T0.1 | shadcn's default button is 32 px tall (`h-8`), below the 40/44 px touch targets (doc 04 §2.4). Fix the sizes when building the shells in T0.6 | Logged so it isn't missed | n/a |
 | 2026-10-29 | T0.2 | Prisma **6.19.3** (`prisma` + `@prisma/client`), staying on 6.x as doc 05 specifies (7 and 8-rc exist but change datasource config). pnpm 11 blocks install scripts, so `prisma`, `@prisma/client` and `@prisma/engines` are allowed in `pnpm-workspace.yaml` | Schema copies verbatim from doc 05 §4 | n/a |
 | 2026-10-29 | T0.2 | `DATABASE_URL="file:../data/servaddis.db"`: Prisma resolves SQLite paths relative to `prisma/`, and this keeps the db in root `data/` with uploads/cards | The TRD's `./data` would have created `prisma/data/` | Yes: TRD §10 |
+| 2026-11-02 | T1.2 | Forms use plain React state plus the shared zod schema, not React Hook Form as TRD §3 lists: a dependency isn't justified yet; revisit for the composer (T2.2). `POST /api/venues` takes a sub-city slug, saves the owner's name, and allows one venue per user (409), matching the demo's single-venue rule | Fewer dependencies | n/a |
 | 2026-11-01 | T0.8 | `pnpm demo` also accepts `--tunnel` and `--skip-build`. Without a tunnel it sets `PUBLIC_BASE_URL` to the LAN address automatically; with one, to the tunnel URL, so QR codes never need a manual edit. No Dockerfile (D-9). **Checked:** LAN URL and public tunnel URL. **Still needs you:** a run in airplane mode and a real phone (rehearsal checklist) | D-9 | n/a |
 | 2026-11-01 | T0.9 | The dock shows signed out too, so a presenter can start from the landing page; it asks `/api/demo/status` at runtime, keeping pages static, and lazy-loads its panel. **Added the TRD's toolkit passcode:** `--tunnel` generates one, so anyone with the public link can't reset or switch persona. `/api/demo/*` also check `DEMO_MODE` in the handler, not just in the proxy. Reset refuses to clear folders outside `./data`, and clears the language cookie so the next run opens in Amharic | Closes the tunnel risk noted at D-9 | n/a |
 | 2026-10-30 | T0.6 | **Locale routing:** root layout is `app/[locale]/layout.tsx` (`generateStaticParams` → am, en, required by Cache Components). The proxy rewrites `/jobs` → `/am/jobs` from the `sv_locale` cookie, so URLs stay unprefixed as in doc 03. Prefixed links (`/en/jobs`) set the cookie and redirect to the clean URL. Public + jobseeker pages prerender fully static; employer/admin are partial prerenders | Static-friendly; matches doc 03 routes | n/a |
@@ -325,6 +326,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-30 | T0.4 done: `POST /api/auth/otp/{request,verify}`, `POST /api/auth/logout`, `GET/PATCH /api/me`, `src/proxy.ts`, `session.ts` (jose 6.2), `rate-limit.ts`, `services/auth.ts`, SMS adapter seam, `src/lib/{phone,zod-schemas}.ts`. 83 tests green; live HTTP smoke test passed. TRD §5.1 annotated |
 | 2026-10-30 | T0.5 done: `src/lib/permissions.ts`, `src/server/policy/{authorize,with-auth}.ts`, `services/audit.ts`; `/api/me` returns permissions. 187 tests green, incl. the full doc 03 §6.1 matrix |
 | 2026-10-30 | T0.6 done: `app/[locale]` route tree (13 placeholder pages + landing), 3 shells, `LangToggle`, `POST /api/locale`, next-intl + `messages/{en,am}.json`, local Inter + Noto Sans Ethiopic, type scale with Amharic line heights, focus ring, reversed icon. 200 tests + 19 browser checks green; TRD §6 annotated |
+| 2026-11-02 | T1.2 done: `POST /api/venues`, `GET/PATCH /api/venues/:id`, `services/venues.ts`, venue setup screen, license-step placeholder. 222 tests + 6 browser checks green on the production build |
 | 2026-11-01 | T1.1 done: sign-in screen (`LoginForm`, `OtpInput`) with phone validation, resend countdown, wrong-code and lockout messages, the new-number question, safe `?next=` return. 7 browser checks green |
 | 2026-11-01 | T0.8 + T0.9 done, **M0 complete**: `scripts/demo.mjs`, README, demo dock, `POST /api/demo/{persona,reset,unlock}`, `GET /api/demo/status`. 212 tests + 12 dock browser checks green; Reset 827 ms. Tunnel verified live |
 

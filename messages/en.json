@@ -62,7 +62,8 @@
     "venue": "Venue profile",
     "onboardingVenue": "Set up your venue",
     "queue": "Moderation queue",
-    "audit": "Audit log"
+    "audit": "Audit log",
+    "onboardingLicense": "Upload your business license"
   },
   "demo": {
     "title": "Demo toolkit",
@@ -102,5 +103,37 @@
     "invalidPhone": "Enter a valid Ethiopian mobile number.",
     "chooseIntent": "What brings you to Servaddis?",
     "networkError": "We couldn't reach Servaddis. Check your connection and try again."
+  },
+  "venue": {
+    "title": "Set up your venue",
+    "intro": "Tell us who you are and where you hire. You can edit this later.",
+    "ownerName": "Your name",
+    "nameEn": "Venue name (English)",
+    "nameAm": "Venue name (Amharic, optional)",
+    "category": "Category",
+    "subCity": "Sub-city",
+    "contactPhone": "Contact phone",
+    "descriptionEn": "Short description (English, optional)",
+    "descriptionAm": "Short description (Amharic, optional)",
+    "choose": "Choose…",
+    "save": "Save and continue",
+    "saving": "Saving…",
+    "categories": {
+      "HOTEL": "Hotel",
+      "RESTAURANT": "Restaurant",
+      "CAFE": "Café",
+      "CATERING": "Catering",
+      "TOUR_OPERATOR": "Tour operator",
+      "GUESTHOUSE": "Guesthouse",
+      "SPA": "Spa"
+    },
+    "errors": {
+      "ownerName": "Enter your name.",
+      "nameEn": "Enter the venue name.",
+      "category": "Choose a category.",
+      "subCity": "Choose a sub-city.",
+      "contactPhone": "Enter a valid Ethiopian mobile number.",
+      "network": "We couldn't reach Servaddis. Try again."
+    }
   }
 }

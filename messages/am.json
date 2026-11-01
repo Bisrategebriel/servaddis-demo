@@ -62,7 +62,8 @@
     "venue": "የድርጅት መገለጫ",
     "onboardingVenue": "ድርጅትዎን ያዘጋጁ",
     "queue": "የግምገማ ወረፋ",
-    "audit": "የኦዲት መዝገብ"
+    "audit": "የኦዲት መዝገብ",
+    "onboardingLicense": "የንግድ ፈቃድዎን ይጫኑ"
   },
   "demo": {
     "title": "የማሳያ መሣሪያዎች",
@@ -102,5 +103,37 @@
     "invalidPhone": "ትክክለኛ የኢትዮጵያ ሞባይል ቁጥር ያስገቡ።",
     "chooseIntent": "ወደ Servaddis ምን አመጣዎት?",
     "networkError": "Servaddisን ማግኘት አልቻልንም። ግንኙነትዎን አረጋግጠው እንደገና ይሞክሩ።"
+  },
+  "venue": {
+    "title": "ድርጅትዎን ያዘጋጁ",
+    "intro": "ማን እንደሆኑና የት እንደሚቀጥሩ ይንገሩን። ኋላ ማስተካከል ይችላሉ።",
+    "ownerName": "ስምዎ",
+    "nameEn": "የድርጅት ስም (በእንግሊዝኛ)",
+    "nameAm": "የድርጅት ስም (በአማርኛ፣ አማራጭ)",
+    "category": "ዘርፍ",
+    "subCity": "ክፍለ ከተማ",
+    "contactPhone": "የመገኛ ስልክ",
+    "descriptionEn": "አጭር መግለጫ (በእንግሊዝኛ፣ አማራጭ)",
+    "descriptionAm": "አጭር መግለጫ (በአማርኛ፣ አማራጭ)",
+    "choose": "ይምረጡ…",
+    "save": "አስቀምጠው ይቀጥሉ",
+    "saving": "በማስቀመጥ ላይ…",
+    "categories": {
+      "HOTEL": "ሆቴል",
+      "RESTAURANT": "ምግብ ቤት",
+      "CAFE": "ካፌ",
+      "CATERING": "የምግብ አቅርቦት",
+      "TOUR_OPERATOR": "አስጎብኚ ድርጅት",
+      "GUESTHOUSE": "የእንግዳ ማረፊያ",
+      "SPA": "ስፓ"
+    },
+    "errors": {
+      "ownerName": "ስምዎን ያስገቡ።",
+      "nameEn": "የድርጅቱን ስም ያስገቡ።",
+      "category": "ዘርፍ ይምረጡ።",
+      "subCity": "ክፍለ ከተማ ይምረጡ።",
+      "contactPhone": "ትክክለኛ የኢትዮጵያ ሞባይል ቁጥር ያስገቡ።",
+      "network": "Servaddisን ማግኘት አልቻልንም። እንደገና ይሞክሩ።"
+    }
   }
 }
