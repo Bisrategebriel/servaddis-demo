@@ -62,8 +62,7 @@
     "venue": "Venue profile",
     "onboardingVenue": "Set up your venue",
     "queue": "Moderation queue",
-    "audit": "Audit log",
-    "onboardingLicense": "Upload your business license"
+    "audit": "Audit log"
   },
   "demo": {
     "title": "Demo toolkit",
@@ -135,5 +134,21 @@
       "contactPhone": "Enter a valid Ethiopian mobile number.",
       "network": "We couldn't reach Servaddis. Try again."
     }
+  },
+  "license": {
+    "title": "Upload your business license",
+    "intro": "We verify every venue before its jobs go live.",
+    "choose": "Choose a file or drop it here",
+    "rules": "PDF, JPG or PNG, up to 5 MB",
+    "uploading": "Uploading… {progress}%",
+    "pending": "Pending verification",
+    "pendingHint": "You can draft jobs now, and submit them once your license is approved.",
+    "verified": "Your venue is verified.",
+    "rejected": "Your license was not accepted",
+    "toDashboard": "Go to dashboard",
+    "badType": "Upload a PDF, JPG or PNG file.",
+    "tooLarge": "The file is larger than 5 MB.",
+    "failed": "The upload failed. Try again.",
+    "sample": "Demo: download a sample license"
   }
 }
