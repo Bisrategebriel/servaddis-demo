@@ -1,0 +1,106 @@
+{
+  "common": {
+    "appName": "Servaddis",
+    "skipToContent": "Skip to main content",
+    "demoEnvironment": "Demo environment",
+    "comingSoon": "This screen is built in a later step of the demo.",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "loading": "Loading…"
+  },
+  "lang": {
+    "label": "Language",
+    "am": "አማ",
+    "en": "EN"
+  },
+  "shell": {
+    "notifications": "Notifications",
+    "unread": "{count, plural, =0 {No unread notifications} one {# unread notification} other {# unread notifications}}",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mainNav": "Main navigation",
+    "account": "Account",
+    "adminTag": "Admin"
+  },
+  "roles": {
+    "OWNER": "Owner",
+    "HR_MANAGER": "HR Manager",
+    "POSTER": "Poster",
+    "SCREENER": "Screener",
+    "VIEWER": "Viewer"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "jobs": "Jobs",
+    "team": "Team",
+    "insights": "Insights",
+    "plans": "Plans",
+    "venue": "Venue",
+    "findJobs": "Jobs",
+    "myApplications": "My applications",
+    "profile": "Profile",
+    "queue": "Moderation queue",
+    "audit": "Audit log"
+  },
+  "landing": {
+    "headline": "The hiring platform built only for hospitality.",
+    "hiring": "I'm hiring",
+    "looking": "I'm looking for work",
+    "verifiedVenues": "Verified venues",
+    "freeToApply": "Free to apply"
+  },
+  "pages": {
+    "login": "Sign in",
+    "jobs": "Jobs",
+    "myApplications": "My applications",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "employerJobs": "Jobs",
+    "team": "Team",
+    "insights": "Insights",
+    "plans": "Plans",
+    "venue": "Venue profile",
+    "onboardingVenue": "Set up your venue",
+    "queue": "Moderation queue",
+    "audit": "Audit log"
+  },
+  "demo": {
+    "title": "Demo toolkit",
+    "open": "Open demo toolkit",
+    "close": "Close demo toolkit",
+    "personas": "Sign in as",
+    "reset": "Reset demo",
+    "resetConfirm": "Wipe all changes?",
+    "resetting": "Resetting…",
+    "seedVersion": "Seed version {version}",
+    "resetNeeded": "Demo data is out of date. Reset needed.",
+    "passcode": "Toolkit code",
+    "unlock": "Unlock",
+    "failed": "That didn't work. Try again.",
+    "persona": {
+      "bruk": "Bruk: new café owner",
+      "selam": "Selam: Hotel GM (Owner)",
+      "yared": "Yared: HR officer (Poster)",
+      "rahel": "Rahel: HR manager (Screener)",
+      "dawit": "Dawit: Waiter",
+      "moderator": "Moderator"
+    }
+  },
+  "login": {
+    "phoneLabel": "Enter your phone number",
+    "phoneHint": "9 digits, for example 911 234 567",
+    "sendCode": "Send code",
+    "sending": "Sending…",
+    "enterCode": "Enter the 6-digit code",
+    "codeSentTo": "We sent a code to {phone}",
+    "digit": "Digit {position} of 6",
+    "demoHint": "Demo: use 123456",
+    "resendIn": "Resend code in {seconds} s",
+    "resend": "Resend code",
+    "changeNumber": "Change number",
+    "verifying": "Checking…",
+    "invalidPhone": "Enter a valid Ethiopian mobile number.",
+    "chooseIntent": "What brings you to Servaddis?",
+    "networkError": "We couldn't reach Servaddis. Check your connection and try again."
+  }
+}

@@ -1,0 +1,669 @@
+// Servaddis Demo — Prisma schema (SQLite for demo; portable to MySQL 8)
+// Money is stored as integer ETB (no decimals) to avoid float issues.
+// JSON columns are used only for display-time lists; anything filtered/joined is relational.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────── Enums ─────────────────────────
+
+enum PlatformRole {
+  EMPLOYER
+  JOBSEEKER
+  ADMIN
+}
+
+enum Locale {
+  AM
+  EN
+}
+
+enum VenueCategory {
+  HOTEL
+  RESTAURANT
+  CAFE
+  CATERING
+  TOUR_OPERATOR
+  GUESTHOUSE
+  SPA
+}
+
+enum VerificationStatus {
+  UNSUBMITTED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum MemberRole {
+  OWNER
+  HR_MANAGER
+  POSTER
+  SCREENER
+  VIEWER
+}
+
+enum MemberStatus {
+  INVITED
+  ACTIVE
+  REMOVED
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  SHIFT
+}
+
+enum SalaryPeriod {
+  MONTH
+  DAY
+  SHIFT
+}
+
+enum Urgency {
+  NORMAL
+  HALF_DAY
+  SAME_DAY
+  NEXT_DAY
+  TWO_DAYS
+}
+
+enum JobStatus {
+  DRAFT
+  PENDING_REVIEW
+  CHANGES_REQUESTED
+  LIVE
+  EXPIRED
+  CLOSED
+  REJECTED
+}
+
+enum PostingSource {
+  FOUNDING_FREE
+  SUBSCRIPTION
+  URGENT_PAID
+}
+
+enum ApplicationStatus {
+  APPLIED
+  VIEWED
+  SHORTLISTED
+  REJECTED
+  HIRED
+}
+
+enum RejectReason {
+  NOT_ENOUGH_EXPERIENCE
+  SKILLS_MISMATCH
+  LANGUAGE_REQUIREMENT
+  AVAILABILITY_MISMATCH
+  POSITION_FILLED
+  OTHER
+}
+
+enum ModerationType {
+  LICENSE
+  JOB
+  REPORT
+}
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
+}
+
+enum PlanKind {
+  SUBSCRIPTION
+  ONE_TIME
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentProvider {
+  CHAPA_SIM
+  BANK_TRANSFER_SIM
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+enum Channel {
+  TELEGRAM
+  FACEBOOK
+  INSTAGRAM
+  TIKTOK
+}
+
+enum DistributionStatus {
+  QUEUED
+  RENDERED
+  PUBLISHED
+  DRAFT_FOR_TEAM
+  FAILED
+}
+
+enum NotificationKind {
+  VENUE_VERIFIED
+  VENUE_REJECTED
+  JOB_APPROVED
+  JOB_CHANGES_REQUESTED
+  JOB_REJECTED
+  JOB_EXPIRING
+  JOB_FILLED
+  APPLICATION_RECEIVED
+  APPLICATION_VIEWED
+  APPLICATION_SHORTLISTED
+  APPLICATION_REJECTED
+  APPLICATION_HIRED
+  STAFF_INVITED
+  PAYMENT_RECEIPT
+  CHECKIN_DUE
+}
+
+enum CheckinKind {
+  WEEK_2
+  DAY_30
+}
+
+enum ReportTarget {
+  JOB
+  VENUE
+}
+
+// ───────────────────────── Geography ─────────────────────────
+
+model City {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  nameEn    String
+  nameAm    String
+  isLaunch  Boolean   @default(false) // Addis only at launch; others seeded but disabled
+  subCities SubCity[]
+  venues    Venue[]
+  jobs      Job[]
+}
+
+model SubCity {
+  id     String @id @default(cuid())
+  cityId String
+  slug   String @unique
+  nameEn String
+  nameAm String
+  city   City   @relation(fields: [cityId], references: [id])
+  venues Venue[]
+  jobs   Job[]
+
+  @@index([cityId])
+}
+
+// ───────────────────────── Identity ─────────────────────────
+
+model User {
+  id            String       @id @default(cuid())
+  phone         String       @unique // E.164, e.g. +251911000001
+  name          String
+  platformRole  PlatformRole
+  locale        Locale       @default(AM)
+  faydaVerified Boolean      @default(false) // simulated in demo; never store a real FIN
+  isDemoSeed    Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  lastLoginAt   DateTime?
+
+  memberships       VenueMember[]
+  profile           JobseekerProfile?
+  applications      Application[]
+  notifications     Notification[]
+  jobsCreated       Job[]               @relation("JobCreator")
+  moderationReviews ModerationItem[]    @relation("ModerationReviewer")
+  licenseReviews    LicenseDocument[]   @relation("LicenseReviewer")
+  reports           Report[]
+  auditLogs         AuditLog[]
+  contactReveals    Application[]       @relation("ContactRevealer")
+}
+
+model Otp {
+  id          String    @id @default(cuid())
+  phone       String
+  codeHash    String
+  expiresAt   DateTime
+  attempts    Int       @default(0)
+  consumedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([phone, createdAt])
+}
+
+// ───────────────────────── Employers ─────────────────────────
+
+model Venue {
+  id                  String             @id @default(cuid())
+  nameEn              String
+  nameAm              String?
+  category            VenueCategory
+  cityId              String
+  subCityId           String
+  address             String?
+  contactPhone        String
+  descriptionEn       String?
+  descriptionAm       String?
+  logoUrl             String?
+  verification        VerificationStatus @default(UNSUBMITTED)
+  verifiedAt          DateTime?
+  foundingPostsLeft   Int                @default(3) // founding-partner free postings (business plan §5.2)
+  onboardingDismissed Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+
+  city          City              @relation(fields: [cityId], references: [id])
+  subCity       SubCity           @relation(fields: [subCityId], references: [id])
+  members       VenueMember[]
+  licenses      LicenseDocument[]
+  jobs          Job[]
+  subscriptions Subscription[]
+  payments      Payment[]
+  reports       Report[]
+
+  @@index([verification])
+  @@index([cityId, subCityId])
+}
+
+model VenueMember {
+  id            String       @id @default(cuid())
+  venueId       String
+  userId        String?      // null until the invitee signs in with the invited phone
+  invitedPhone  String?
+  displayName   String
+  role          MemberRole
+  grant         String       @default("[]") // JSON string[] of extra permission keys
+  revoke        String       @default("[]") // JSON string[] of permission keys removed from the preset
+  status        MemberStatus @default(ACTIVE)
+  createdAt     DateTime     @default(now())
+
+  venue Venue @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [userId], references: [id])
+
+  @@unique([venueId, userId])
+  @@unique([venueId, invitedPhone])
+  @@index([userId])
+}
+
+model LicenseDocument {
+  id              String       @id @default(cuid())
+  venueId         String
+  fileKey         String       // storage key, never a public URL
+  fileName        String
+  mime            String
+  sizeBytes       Int
+  status          ModerationStatus @default(PENDING)
+  reviewedById    String?
+  reviewedAt      DateTime?
+  rejectionReason String?
+  uploadedAt      DateTime     @default(now())
+
+  venue      Venue            @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  reviewedBy User?            @relation("LicenseReviewer", fields: [reviewedById], references: [id])
+  moderation ModerationItem[]
+
+  @@index([venueId])
+}
+
+// ───────────────────────── Taxonomy ─────────────────────────
+
+model Skill {
+  id     String @id @default(cuid())
+  slug   String @unique
+  nameEn String
+  nameAm String
+  group  String // e.g. "service", "kitchen", "language", "tourism"
+
+  jobs     JobSkill[]
+  profiles ProfileSkill[]
+}
+
+model RoleTemplate {
+  id          String @id @default(cuid())
+  slug        String @unique
+  nameEn      String
+  nameAm      String
+  family      String // FRONT_OF_HOUSE | KITCHEN | HOUSEKEEPING | SPA | TOURISM | MANAGEMENT | BAR
+  defaults    String // JSON: {employmentType, shiftPattern, salaryHint:{min,max,period}, requirementsEn[], requirementsAm[], benefitsEn[], benefitsAm[], skillSlugs[]}
+  sortOrder   Int    @default(0)
+
+  jobs Job[]
+}
+
+// ───────────────────────── Jobs ─────────────────────────
+
+model Job {
+  id               String         @id @default(cuid())
+  venueId          String
+  createdById      String
+  roleTemplateId   String?
+  titleEn          String
+  titleAm          String?
+  descriptionEn    String
+  descriptionAm    String?
+  headcount        Int            @default(1)
+  employmentType   EmploymentType
+  shiftPattern     String?
+  salaryMin        Int            // ETB — mandatory (EM-02)
+  salaryMax        Int
+  salaryPeriod     SalaryPeriod   @default(MONTH)
+  requirementsEn   String         @default("[]") // JSON string[]
+  requirementsAm   String         @default("[]")
+  benefitsEn       String         @default("[]")
+  benefitsAm       String         @default("[]")
+  languagesNeeded  String         @default("[]") // JSON string[] of "am" | "en" | "om" | ...
+  cityId           String
+  subCityId        String
+  urgency          Urgency        @default(NORMAL)
+  needByAt         DateTime?      // set when urgency != NORMAL
+  status           JobStatus      @default(DRAFT)
+  postingSource    PostingSource?
+  promoteToSocials Boolean        @default(false)
+  isRepost         Boolean        @default(false)
+  repostOfId       String?
+  contentHash      String?        // detects "unchanged repost"
+  hiredCount       Int            @default(0)
+  submittedAt      DateTime?
+  publishedAt      DateTime?
+  expiresAt        DateTime?
+  filledAt         DateTime?
+  closedAt         DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  venue        Venue            @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  createdBy    User             @relation("JobCreator", fields: [createdById], references: [id])
+  roleTemplate RoleTemplate?    @relation(fields: [roleTemplateId], references: [id])
+  city         City             @relation(fields: [cityId], references: [id])
+  subCity      SubCity          @relation(fields: [subCityId], references: [id])
+  repostOf     Job?             @relation("Repost", fields: [repostOfId], references: [id])
+  reposts      Job[]            @relation("Repost")
+  skills       JobSkill[]
+  applications Application[]
+  moderation   ModerationItem[]
+  distribution DistributionPost[]
+  payments     Payment[]
+  reports      Report[]
+
+  @@index([venueId, status])
+  @@index([status, publishedAt])
+  @@index([status, subCityId])
+  @@index([expiresAt])
+}
+
+model JobSkill {
+  jobId   String
+  skillId String
+  job     Job   @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  skill   Skill @relation(fields: [skillId], references: [id])
+
+  @@id([jobId, skillId])
+}
+
+// ───────────────────────── Jobseekers ─────────────────────────
+
+model JobseekerProfile {
+  userId             String   @id
+  headline           String?
+  experienceYears    Int      @default(0)
+  languages          String   @default("[]") // JSON: [{code:"am",level:"native"}, ...]
+  previousWorkplaces String   @default("[]") // JSON: [{name, role, years}]
+  expectedSalaryMin  Int?
+  availability       String?  // free text for demo: "Weekends + evenings"
+  preferredSubCities String   @default("[]") // JSON string[] of SubCity slugs
+  photoUrl           String?
+  completeness       Int      @default(0) // 0–100, recomputed on write
+  reliabilityScore   Float?   // null until >= 1 completed check-in
+  reliabilityCount   Int      @default(0)
+  updatedAt          DateTime @updatedAt
+
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills ProfileSkill[]
+}
+
+model ProfileSkill {
+  profileId String
+  skillId   String
+  profile   JobseekerProfile @relation(fields: [profileId], references: [userId], onDelete: Cascade)
+  skill     Skill            @relation(fields: [skillId], references: [id])
+
+  @@id([profileId, skillId])
+}
+
+// ───────────────────────── Applications ─────────────────────────
+
+model Application {
+  id                String            @id @default(cuid())
+  jobId             String
+  jobseekerId       String
+  note              String?
+  status            ApplicationStatus @default(APPLIED)
+  rejectReason      RejectReason?
+  appliedAt         DateTime          @default(now())
+  viewedAt          DateTime?
+  shortlistedAt     DateTime?
+  rejectedAt        DateTime?
+  hiredAt           DateTime?
+  contactRevealedAt DateTime?
+  contactRevealedById String?
+
+  job             Job                  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobseeker       User                 @relation(fields: [jobseekerId], references: [id])
+  contactRevealer User?                @relation("ContactRevealer", fields: [contactRevealedById], references: [id])
+  events          ApplicationEvent[]
+  checkins        PlacementCheckin[]
+
+  @@unique([jobId, jobseekerId])
+  @@index([jobId, status])
+  @@index([jobseekerId])
+}
+
+model ApplicationEvent {
+  id            String   @id @default(cuid())
+  applicationId String
+  actorId       String?
+  type          String   // APPLIED | VIEWED | SHORTLISTED | REJECTED | HIRED | CONTACT_REVEALED
+  meta          String?  // JSON
+  at            DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId, at])
+}
+
+model PlacementCheckin {
+  id            String      @id @default(cuid())
+  applicationId String
+  kind          CheckinKind
+  dueAt         DateTime
+  sentAt        DateTime?
+  employerOk    Boolean?
+  jobseekerOk   Boolean?
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, kind])
+}
+
+// ───────────────────────── Moderation & trust ─────────────────────────
+
+model ModerationItem {
+  id           String           @id @default(cuid())
+  type         ModerationType
+  status       ModerationStatus @default(PENDING)
+  jobId        String?
+  licenseId    String?
+  reportId     String?
+  flags        String           @default("[]") // JSON: [{rule, severity, message}]
+  reviewerId   String?
+  reason       String?
+  isFastApprove Boolean         @default(false) // unchanged repost
+  createdAt    DateTime         @default(now())
+  decidedAt    DateTime?
+
+  job      Job?             @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  license  LicenseDocument? @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+  report   Report?          @relation(fields: [reportId], references: [id])
+  reviewer User?            @relation("ModerationReviewer", fields: [reviewerId], references: [id])
+
+  @@index([status, type, createdAt])
+}
+
+model Report {
+  id         String       @id @default(cuid())
+  reporterId String
+  target     ReportTarget
+  jobId      String?
+  venueId    String?
+  reason     String
+  createdAt  DateTime     @default(now())
+
+  reporter   User             @relation(fields: [reporterId], references: [id])
+  job        Job?             @relation(fields: [jobId], references: [id])
+  venue      Venue?           @relation(fields: [venueId], references: [id])
+  moderation ModerationItem[]
+}
+
+model AuditLog {
+  id       String   @id @default(cuid())
+  actorId  String?
+  action   String   // e.g. "job.approve", "application.contact_reveal", "team.permission_change"
+  entity   String
+  entityId String
+  meta     String?  // JSON
+  at       DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([entity, entityId])
+  @@index([at])
+}
+
+// ───────────────────────── Money ─────────────────────────
+
+model Plan {
+  id            String   @id @default(cuid())
+  code          String   @unique // FOUNDING | URGENT_POST | STANDARD | PRO
+  kind          PlanKind
+  nameEn        String
+  nameAm        String
+  priceEtb      Int      // ex-VAT, ILLUSTRATIVE placeholder pricing
+  periodDays    Int?     // SUBSCRIPTION only
+  maxLiveJobs   Int?     // null = unlimited
+  includesSocial Boolean @default(false)
+  features      String   @default("[]") // JSON string[] of feature keys for display
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+
+  subscriptions Subscription[]
+  payments      Payment[]
+}
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  venueId            String
+  planId             String
+  status             SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelledAt        DateTime?
+
+  venue Venue @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  plan  Plan  @relation(fields: [planId], references: [id])
+
+  @@index([venueId, status])
+}
+
+model Payment {
+  id          String          @id @default(cuid())
+  venueId     String
+  planId      String
+  jobId       String?         // set for ONE_TIME urgent posts
+  amountEtb   Int             // ex-VAT
+  vatEtb      Int             // 15% — rounded to nearest ETB
+  provider    PaymentProvider
+  providerRef String?
+  status      PaymentStatus   @default(PENDING)
+  receiptNo   String?         @unique
+  createdAt   DateTime        @default(now())
+  paidAt      DateTime?
+
+  venue Venue @relation(fields: [venueId], references: [id])
+  plan  Plan  @relation(fields: [planId], references: [id])
+  job   Job?  @relation(fields: [jobId], references: [id])
+
+  @@index([venueId, createdAt])
+}
+
+// ───────────────────────── Distribution & messaging ─────────────────────────
+
+model DistributionPost {
+  id          String             @id @default(cuid())
+  jobId       String
+  channel     Channel
+  status      DistributionStatus @default(QUEUED)
+  captionEn   String
+  captionAm   String
+  hashtags    String             @default("[]")
+  cardKey     String?            // rendered image key
+  externalUrl String?
+  simulated   Boolean            @default(true)
+  publishedAt DateTime?
+  error       String?
+  createdAt   DateTime           @default(now())
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, channel])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  kind      NotificationKind
+  titleEn   String
+  titleAm   String
+  bodyEn    String?
+  bodyAm    String?
+  href      String?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+}
+
+model SmsLog {
+  id        String   @id @default(cuid())
+  toPhone   String
+  body      String
+  kind      String   // OTP | ALERT | CHECKIN | INVITE
+  createdAt DateTime @default(now())
+  // Simulated gateway: rows are shown in the Demo Toolkit "Phone" drawer instead of being sent.
+}
+
+// ───────────────────────── Demo support ─────────────────────────
+
+model DemoSetting {
+  key   String @id // e.g. "clock_offset_ms", "scenario"
+  value String
+}

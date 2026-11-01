@@ -8,6 +8,8 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:../data/ci.db
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -16,6 +18,9 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prisma validate
+      - run: pnpm db:deploy
+      - run: pnpm seed
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm format:check

@@ -823,7 +823,7 @@ export const PRESETS: Record<MemberRole, PermissionKey[]> = {
 | PENDING_REVIEW | CHANGES_REQUESTED | admin | reason saved on ModerationItem; notify |
 | PENDING_REVIEW | REJECTED | admin | reason; notify |
 | CHANGES_REQUESTED | PENDING_REVIEW | resubmit | new ModerationItem |
-| LIVE | EXPIRED | sweep (`expiresAt ≤ now`) | notify; applicants unchanged |
+| LIVE | EXPIRED | sweep (`expiresAt ≤ now`) | applicants unchanged. *No expiry notification: `NotificationKind` has no JOB_EXPIRED, and the T-3-day `JOB_EXPIRING` warning (NORMAL urgency only) covers it (decision log, 29 Oct 2026)* |
 | LIVE | CLOSED | manual close or `hiredCount ≥ headcount` | `closedAt`; if filled → `filledAt` |
 | EXPIRED/CLOSED | (new row) PENDING_REVIEW | repost | clone, `isRepost`, `repostOfId`; `isFastApprove` if `contentHash` unchanged |
 

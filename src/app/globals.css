@@ -67,10 +67,33 @@
 }
 
 @theme inline {
+  /* Inter for Latin, Noto Sans Ethiopic for Ethiopic code points (fonts.ts sets the variables) */
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Ethiopic", sans-serif;
+    var(--font-inter), var(--font-ethiopic), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
   --font-heading: var(--font-sans);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Type scale (doc 04 §2.3), Latin line heights. Amharic overrides follow below. */
+  --text-display: 2rem;
+  --text-display--line-height: 2.5rem;
+  --text-display--font-weight: 700;
+  --text-h1: 1.5rem;
+  --text-h1--line-height: 2rem;
+  --text-h1--font-weight: 700;
+  --text-h2: 1.25rem;
+  --text-h2--line-height: 1.75rem;
+  --text-h2--font-weight: 600;
+  --text-h3: 1rem;
+  --text-h3--line-height: 1.5rem;
+  --text-h3--font-weight: 600;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.25rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-caption--font-weight: 500;
 
   /* Replace Tailwind's default gray/amber with the brand scales so stray shades can't leak in */
   --color-gray-*: initial;
@@ -164,15 +187,37 @@
   --shadow-overlay: 0 8px 24px rgb(22 36 63 / 0.16);
 }
 
+/*
+ * Amharic needs ~1.2× the Latin line height (doc 04 §2.3: taller Ethiopic glyphs).
+ * The root layout sets <html lang="am">, so every text-* utility picks these up.
+ */
+:root:lang(am) {
+  --text-display--line-height: 3rem;
+  --text-h1--line-height: 2.25rem;
+  --text-h2--line-height: 2rem;
+  --text-h3--line-height: 1.75rem;
+  --text-body--line-height: 1.75rem;
+  --text-small--line-height: 1.5rem;
+  --text-caption--line-height: 1.25rem;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-body text-foreground;
   }
   html {
     @apply font-sans;
+  }
+  /* doc 04 §9: visible 2 px focus ring + 2 px offset; amber on navy surfaces */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .surface-navy :focus-visible {
+    outline-color: var(--amber-500);
   }
   @media (prefers-reduced-motion: reduce) {
     *,

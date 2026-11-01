@@ -1,4 +1,13 @@
 allowBuilds:
   sharp: false
   unrs-resolver: false
+  # Prisma downloads its query/schema engines and generates the client on install
+  prisma: true
+  "@prisma/client": true
+  "@prisma/engines": true
+  # Optional native helpers of next-intl's message extractor (unused)
+  "@swc/core": false
+  "@parcel/watcher": false
+  # Used by tsx to run the seed scripts
+  esbuild: true
 saveExact: true

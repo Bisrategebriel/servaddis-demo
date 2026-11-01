@@ -140,7 +140,7 @@ servaddis-demo/
 
 - `POST /api/auth/otp/request` creates an `Otp` row (6-digit code, **HMAC-SHA-256** hash with server secret, 5-minute expiry), writes an `SmsLog` entry via the Sms adapter, and returns `{ resendInSec: 30 }`.
 - In `DEMO_MODE`, the code is always `123456` (the row and lockout still apply, so rate-limit behaviour is demoable).
-- `POST /api/auth/otp/verify` checks hash, expiry and attempts (max 5; then 10-minute lock), consumes the OTP, upserts the `User`, and sets the cookie `sv_session` = JWT `{ sub, role, iat, exp }` (HS256, 12 h) with `HttpOnly; Secure; SameSite=Lax; Path=/`.
+- `POST /api/auth/otp/verify` checks hash, expiry and attempts (max 5; then 10-minute lock), consumes the OTP, upserts the `User`, and sets the cookie `sv_session` = JWT `{ sub, role, iat, exp }` (HS256, 12 h) with `HttpOnly; Secure; SameSite=Lax; Path=/`. *`Secure` is set only when the request is HTTPS (directly or via `X-Forwarded-Proto: https` from the Cloudflare tunnel). The phone reaches the local demo over plain http on the LAN (D-9), where browsers would drop a Secure cookie (decision log, 30 Oct 2026).*
 - Mutating requests require a same-origin `Origin`/`Referer` (CSRF mitigation with SameSite=Lax).
 - Persona switch (`/api/demo/persona`) issues a normal session for the chosen seeded user; it is disabled when `DEMO_MODE` is off.
 
@@ -236,6 +236,7 @@ All `/api/demo/*` routes return **404** when `DEMO_MODE` is not `1`.
 ## 6. Internationalisation and typography
 
 - Locale resolution order: signed-in `User.locale` → `sv_locale` cookie → `Accept-Language` → default `am` for public/jobseeker routes, `en` for employer/admin routes. The language toggle writes both.
+  *As built (decision log, 30 Oct 2026): sign-in copies `User.locale` into the `sv_locale` cookie, so the proxy resolves cookie → area default. `Accept-Language` is not used: App Flow §12 wants Amharic as the landing default, and an English-language presenter laptop would otherwise override it. The proxy rewrites unprefixed URLs to `app/[locale]/…`; a prefixed link (`/en/jobs`) sets the cookie and redirects to the clean URL.*
 - **Messages:** keys namespaced by area (`employer.composer.salary.required`). All UI text and server-generated notifications use keys; **no hard-coded strings** (CI lint rule checks JSX string literals in `src/components` against an allowlist).
 - **Content columns:** job copy is stored as `…En` / `…Am`. The composer has two tabs; the template fills both; the preview shows either; the feed shows the viewer's language with a fallback tag.
 - **Fonts:** self-host **Inter** (Latin) and **Noto Sans Ethiopic** (Ethiopic). Use `unicode-range` so Ethiopic is only fetched on Amharic pages; `font-display: swap`; preload the Latin file. Ethiopic needs extra line height (see doc 04 §2.3).
@@ -349,7 +350,7 @@ Server-Sent Events are a drop-in replacement later but add connection handling t
 
 | Variable | Example | Purpose |
 |---|---|---|
-| `DATABASE_URL` | `file:./data/servaddis.db` | SQLite file |
+| `DATABASE_URL` | `file:../data/servaddis.db` | SQLite file. Prisma resolves the path relative to `prisma/`, so `../data` puts the database in the root `data/` folder next to uploads and cards |
 | `SESSION_SECRET` | 32+ random bytes | JWT signing |
 | `OTP_HMAC_SECRET` | 32+ random bytes | OTP hashing |
 | `DEMO_MODE` | `1` | Enables toolkit, fixed OTP, demo endpoints |

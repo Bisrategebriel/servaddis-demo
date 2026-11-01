@@ -1,0 +1,106 @@
+{
+  "common": {
+    "appName": "Servaddis",
+    "skipToContent": "ወደ ዋናው ይዘት ይዝለሉ",
+    "demoEnvironment": "የማሳያ አካባቢ",
+    "comingSoon": "ይህ ገጽ በሚቀጥሉት የማሳያው ደረጃዎች ይሠራል።",
+    "signIn": "ይግቡ",
+    "signOut": "ይውጡ",
+    "loading": "በመጫን ላይ…"
+  },
+  "lang": {
+    "label": "ቋንቋ",
+    "am": "አማ",
+    "en": "EN"
+  },
+  "shell": {
+    "notifications": "ማሳወቂያዎች",
+    "unread": "{count, plural, =0 {ያልተነበበ ማሳወቂያ የለም} other {# ያልተነበቡ ማሳወቂያዎች}}",
+    "openMenu": "ምናሌውን ይክፈቱ",
+    "closeMenu": "ምናሌውን ይዝጉ",
+    "mainNav": "ዋና ማውጫ",
+    "account": "መለያ",
+    "adminTag": "አስተዳዳሪ"
+  },
+  "roles": {
+    "OWNER": "ባለቤት",
+    "HR_MANAGER": "የሰው ኃይል ሥራ አስኪያጅ",
+    "POSTER": "ማስታወቂያ አውጪ",
+    "SCREENER": "አመልካች መራጭ",
+    "VIEWER": "ተመልካች"
+  },
+  "nav": {
+    "dashboard": "ዳሽቦርድ",
+    "jobs": "ሥራዎች",
+    "team": "ቡድን",
+    "insights": "ትንታኔ",
+    "plans": "ዕቅዶች",
+    "venue": "ድርጅት",
+    "findJobs": "ሥራዎች",
+    "myApplications": "ማመልከቻዎቼ",
+    "profile": "መገለጫ",
+    "queue": "የግምገማ ወረፋ",
+    "audit": "የኦዲት መዝገብ"
+  },
+  "landing": {
+    "headline": "ለእንግዳ ተቀባይነት ዘርፍ ብቻ የተሠራ የቅጥር መድረክ።",
+    "hiring": "ሠራተኛ እየፈለግሁ ነው",
+    "looking": "ሥራ እየፈለግሁ ነው",
+    "verifiedVenues": "የተረጋገጡ ድርጅቶች",
+    "freeToApply": "ማመልከት ነጻ ነው"
+  },
+  "pages": {
+    "login": "ይግቡ",
+    "jobs": "ሥራዎች",
+    "myApplications": "ማመልከቻዎቼ",
+    "profile": "መገለጫ",
+    "dashboard": "ዳሽቦርድ",
+    "employerJobs": "ሥራዎች",
+    "team": "ቡድን",
+    "insights": "ትንታኔ",
+    "plans": "ዕቅዶች",
+    "venue": "የድርጅት መገለጫ",
+    "onboardingVenue": "ድርጅትዎን ያዘጋጁ",
+    "queue": "የግምገማ ወረፋ",
+    "audit": "የኦዲት መዝገብ"
+  },
+  "demo": {
+    "title": "የማሳያ መሣሪያዎች",
+    "open": "የማሳያ መሣሪያዎችን ይክፈቱ",
+    "close": "የማሳያ መሣሪያዎችን ይዝጉ",
+    "personas": "በዚህ ሰው ይግቡ",
+    "reset": "ማሳያውን ዳግም ያስጀምሩ",
+    "resetConfirm": "ሁሉም ለውጦች ይጥፉ?",
+    "resetting": "ዳግም በማስጀመር ላይ…",
+    "seedVersion": "የመረጃ ስሪት {version}",
+    "resetNeeded": "የማሳያ መረጃው ጊዜው አልፎበታል። ዳግም ማስጀመር ያስፈልጋል።",
+    "passcode": "የመሣሪያዎች ኮድ",
+    "unlock": "ይክፈቱ",
+    "failed": "አልተሳካም። እንደገና ይሞክሩ።",
+    "persona": {
+      "bruk": "ብሩክ፦ አዲስ የካፌ ባለቤት",
+      "selam": "ሰላም፦ የሆቴል ሥራ አስኪያጅ (ባለቤት)",
+      "yared": "ያሬድ፦ የሰው ኃይል ባለሙያ (ማስታወቂያ አውጪ)",
+      "rahel": "ራሔል፦ የሰው ኃይል ሥራ አስኪያጅ (አመልካች መራጭ)",
+      "dawit": "ዳዊት፦ አስተናጋጅ",
+      "moderator": "አወያይ"
+    }
+  },
+  "login": {
+    "phoneLabel": "ስልክ ቁጥርዎን ያስገቡ",
+    "phoneHint": "9 አሃዞች፣ ለምሳሌ 911 234 567",
+    "sendCode": "ኮድ ላክ",
+    "sending": "በመላክ ላይ…",
+    "enterCode": "ባለ 6 አሃዝ ኮዱን ያስገቡ",
+    "codeSentTo": "ኮድ ወደ {phone} ልከናል",
+    "digit": "ከ6 አሃዞች {position}ኛው",
+    "demoHint": "ማሳያ፦ 123456 ይጠቀሙ",
+    "resendIn": "በ{seconds} ሰከንድ ውስጥ ኮዱን እንደገና ይላኩ",
+    "resend": "ኮዱን እንደገና ላክ",
+    "changeNumber": "ቁጥር ቀይር",
+    "verifying": "በማረጋገጥ ላይ…",
+    "invalidPhone": "ትክክለኛ የኢትዮጵያ ሞባይል ቁጥር ያስገቡ።",
+    "chooseIntent": "ወደ Servaddis ምን አመጣዎት?",
+    "networkError": "Servaddisን ማግኘት አልቻልንም። ግንኙነትዎን አረጋግጠው እንደገና ይሞክሩ።"
+  }
+}
