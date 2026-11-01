@@ -1,4 +1,5 @@
 import "server-only";
+import { unstable_rethrow } from "next/navigation";
 import { errorResponse } from "./errors";
 
 // Thin route handlers (TRD §2): validate → service → respond. Any thrown error becomes the
@@ -11,6 +12,7 @@ export function apiHandler<Ctx = unknown>(
     try {
       return await fn(req, ctx);
     } catch (err) {
+      unstable_rethrow(err); // Next's own control-flow signals are not API errors
       return errorResponse(err);
     }
   };

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 // Icons are looked up here because components can't be passed from Server to Client Components.
@@ -38,9 +39,31 @@ function isActive(pathname: string, href: string, exact: boolean) {
   return exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 }
 
+// usePathname is request data on routes with a dynamic id, so it must sit inside <Suspense>.
+// The links themselves render in the static shell; only the active highlight waits for the URL.
+function WithPathname({ render }: { render: (pathname: string) => ReactNode }) {
+  return render(usePathname());
+}
+
 /** Sidebar links (employer/admin). `rail` = icon-only at 768–1023 px (doc 04 §4). */
 export function SidebarLinks({ items, rail = true }: { items: NavItem[]; rail?: boolean }) {
-  const pathname = usePathname();
+  const list = (pathname: string) => <SidebarList items={items} rail={rail} pathname={pathname} />;
+  return (
+    <Suspense fallback={list("")}>
+      <WithPathname render={list} />
+    </Suspense>
+  );
+}
+
+function SidebarList({
+  items,
+  rail,
+  pathname,
+}: {
+  items: NavItem[];
+  rail: boolean;
+  pathname: string;
+}) {
   return (
     <ul className="flex flex-col gap-1">
       {items.map((item, i) => {
@@ -72,7 +95,23 @@ export function SidebarLinks({ items, rail = true }: { items: NavItem[]; rail?: 
 
 /** Jobseeker bottom navigation: 3 items, 24 px icons, ≥ 44 px targets (doc 04 §4). */
 export function BottomNavLinks({ items, label }: { items: NavItem[]; label: string }) {
-  const pathname = usePathname();
+  const nav = (pathname: string) => <BottomNav items={items} label={label} pathname={pathname} />;
+  return (
+    <Suspense fallback={nav("")}>
+      <WithPathname render={nav} />
+    </Suspense>
+  );
+}
+
+function BottomNav({
+  items,
+  label,
+  pathname,
+}: {
+  items: NavItem[];
+  label: string;
+  pathname: string;
+}) {
   return (
     <nav
       aria-label={label}

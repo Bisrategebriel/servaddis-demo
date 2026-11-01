@@ -67,3 +67,18 @@ export const venueCreateBody = z.object({
 });
 
 export const venuePatchBody = z.object(venueFields).partial();
+
+export const moderationQuery = z.object({
+  type: z.enum(["LICENSE", "JOB", "REPORT"]).optional(),
+  status: z.enum(["PENDING", "APPROVED", "REJECTED", "CHANGES_REQUESTED"]).default("PENDING"),
+});
+
+export const moderationDecisionBody = z
+  .object({
+    decision: z.enum(["APPROVE", "REQUEST_CHANGES", "REJECT"]),
+    reason: optionalText(500),
+  })
+  .refine((v) => v.decision === "APPROVE" || !!v.reason, {
+    path: ["reason"],
+    message: "A reason is required",
+  });

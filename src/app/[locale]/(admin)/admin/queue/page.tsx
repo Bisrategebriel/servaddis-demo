@@ -1,7 +1,5 @@
-import { getTranslations } from "next-intl/server";
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { ModerationQueue } from "@/components/admin/moderation-queue";
 
-export default async function Page() {
-  const t = await getTranslations("pages");
-  return <PagePlaceholder title={t("queue")} />;
+export default function QueuePage() {
+  return <ModerationQueue />;
 }

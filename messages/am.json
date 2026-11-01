@@ -150,5 +150,28 @@
     "tooLarge": "ፋይሉ ከ5 ሜባ በላይ ነው።",
     "failed": "መጫኑ አልተሳካም። እንደገና ይሞክሩ።",
     "sample": "ማሳያ፦ የናሙና ፈቃድ ያውርዱ"
+  },
+  "moderation": {
+    "title": "የግምገማ ወረፋ",
+    "licenses": "ፈቃዶች",
+    "jobs": "ሥራዎች",
+    "loading": "በመጫን ላይ…",
+    "loadFailed": "ይህን መጫን አልቻልንም። እንደገና ይሞክሩ።",
+    "empty": "ለግምገማ የሚጠብቅ ነገር የለም።",
+    "colItem": "ድርጅት",
+    "colAge": "የጠበቀበት ጊዜ",
+    "colFlags": "ማስጠንቀቂያዎች",
+    "ageMinutes": "{count, plural, other {# ደቂቃ}}",
+    "ageHours": "{count, plural, other {# ሰዓት}}",
+    "ageDays": "{count, plural, other {# ቀን}}",
+    "flags": "{count, plural, other {# ማስጠንቀቂያ}}",
+    "fastApprove": "ያልተቀየረ ድጋሚ ማስታወቂያ፦ ፈጣን ማጽደቅ",
+    "back": "ወደ ወረፋው ይመለሱ",
+    "reason": "ምክንያት (ውድቅ ለማድረግ ያስፈልጋል)",
+    "reasonRequired": "ምክንያት ያስገቡ። ባለቤቱ ያየዋል።",
+    "approve": "አጽድቅ",
+    "reject": "ውድቅ አድርግ",
+    "decided": "በዚህ ጉዳይ ላይ አስቀድሞ ውሳኔ ተሰጥቷል።",
+    "openDocument": "ሰነዱን ይክፈቱ"
   }
 }

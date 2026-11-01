@@ -30,7 +30,7 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 | Field | Value |
 |---|---|
 | **Current milestone** | M1 Onboarding & verification |
-| **Next task** | T1.4 Moderation service + admin queue/review (licenses) |
+| **Next task** | T1.5 Dashboard, onboarding checklist, notification bell, SMS log (completes Demo A) |
 | **Last demoable build** | M0: `pnpm demo`, personas, Reset, shells in EN/AM |
 | **Hours spent / P0 budget** | 0 / 150 |
 | **Blockers** | None |
@@ -135,7 +135,7 @@ Each task lists its priority, estimate, dependencies, spec refs and *Done when*.
 | [x] | T1.1 | Landing + sign-in (phone, OTP, lockout, resend), EN/AM | 4 | 1 | T0.4, T0.6 | 03 SCR-00/01, 04 §7 | All states complete |
 | [x] | T1.2 | Venue setup screen + venue API. Also asks **"Your name"**: OTP sign-up creates users with an empty name (T0.4) | 3 | 1 | T1.1 | 03 SCR-E01 | Venue + OWNER membership created |
 | [x] | T1.3 | License upload: dropzone, type/size/magic bytes, storage adapter, `/api/files` | 4 | 1.5 | T1.2 | 03 SCR-E02, 02 §9 | Invalid files rejected server-side |
-| [ ] | T1.4 | Moderation service + admin queue/review (licenses), audit. **Seed:** add the 1 PENDING Lideta Corner Café re-upload license (05 §9.5) | 6 | | T1.3, T0.5 | 03 SCR-A01/A02 | Venue → VERIFIED/REJECTED |
+| [x] | T1.4 | Moderation service + admin queue/review (licenses), audit. **Seed:** add the 1 PENDING Lideta Corner Café re-upload license (05 §9.5) | 6 | 2 | T1.3, T0.5 | 03 SCR-A01/A02 | Venue → VERIFIED/REJECTED |
 | [ ] | T1.5 | Dashboard, onboarding checklist, bell, simulated SMS log | 5 | | T1.4 | 03 §3, SCR-E03 | Badge updates ≤ 5 s after approval |
 
 **M1 exit (Demo A):** script rows 1–4 of 03 §9 run from a fresh reset, in both languages.
@@ -264,6 +264,12 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-29 | T0.1 | shadcn's default button is 32 px tall (`h-8`), below the 40/44 px touch targets (doc 04 §2.4). Fix the sizes when building the shells in T0.6 | Logged so it isn't missed | n/a |
 | 2026-10-29 | T0.2 | Prisma **6.19.3** (`prisma` + `@prisma/client`), staying on 6.x as doc 05 specifies (7 and 8-rc exist but change datasource config). pnpm 11 blocks install scripts, so `prisma`, `@prisma/client` and `@prisma/engines` are allowed in `pnpm-workspace.yaml` | Schema copies verbatim from doc 05 §4 | n/a |
 | 2026-10-29 | T0.2 | `DATABASE_URL="file:../data/servaddis.db"`: Prisma resolves SQLite paths relative to `prisma/`, and this keeps the db in root `data/` with uploads/cards | The TRD's `./data` would have created `prisma/data/` | Yes: TRD §10 |
+| 2026-11-02 | T1.4 | A license has two outcomes, approve or reject (with a required reason); `REQUEST_CHANGES` returns 409 for licenses and is kept for jobs (T2.5). Rejecting lets the owner re-upload. Decisions are one transaction: item, license, venue, notification, simulated SMS, audit. The queue polls every 4 s with SWR 2.5.1 and runs `sweep()` on load | Doc 05 §6.3 has only VERIFIED/REJECTED for venues | n/a |
+| 2026-11-02 | T1.4 | **Bug fixed:** `apiHandler` caught Next's internal control-flow errors. It now calls `unstable_rethrow` first. Keep that as the first line of any new catch around Next code | Could have prerendered an error response | n/a |
+| 2026-11-02 | T1.4 | `usePathname()` must sit inside `<Suspense>` on routes with a dynamic id, or the build fails. Handled once inside `SidebarLinks`, `BottomNavLinks` and `MobileNav`, so job pages (T3.1) are already covered | Next 16.4 | n/a |
+| 2026-11-02 | T1.4 | Seed v2 adds Lideta's pending license with a real file at a fixed key. Reset now clears uploads **before** seeding, or it would delete that file | Doc 05 §9.5 | n/a |
+| 2026-11-02 | Testing | **Stopping servers:** `next` has a parent process that restarts a killed child, so kill from the top of the tree. Respawned servers caused the repeated EADDRINUSE and stale-page results, and are the likely cause of the unexplained dev-mode 500 and reload loop from T1.2 (likely, not proven) | Found during T1.4 | n/a |
+| 2026-11-02 | Testing | Edge under Playwright returns 204 for **any** PDF fetched in the page, including static files, so the automated checks can't confirm PDF display. curl and Playwright's own request client get the full file. **A person must confirm the document shows on the review screen.** "Open document" is the fallback | Found during T1.4 | n/a |
 | 2026-11-02 | T1.3 | Upload accepted only when the magic bytes match both an allowed type and the declared type. Allowed from UNSUBMITTED or REJECTED; 409 while PENDING or VERIFIED, so there is one open review per venue. Stored under a random UUID in `UPLOAD_DIR`; `/api/files/:key` serves it to the venue's `venue.edit` holders and moderators only, with `nosniff` and `no-store`. Upload uses XHR for progress | TRD §9 | n/a |
 | 2026-11-02 | T1.3 | **Bug fixed (shipped in the T1.1 and T1.2 commits):** the class merger read custom sizes such as `text-body` as colours and removed the white button text, leaving navy on navy. `src/lib/utils.ts` now registers the type scale via `createCn`; shadcn components import `cn` from `@/lib/utils`, never directly from `"cn"`. Add any new `text-*` size token there. Guarded by `tests/unit/cn.test.ts` | Name-based browser checks can't see invisible text: also look at screenshots or measure contrast | n/a |
 | 2026-11-02 | Testing | If a page sticks on "Loading…" with 404s for `/_next/static/chunks`, `.next` is inconsistent: stop servers, delete `.next`, rebuild | Seen after rebuilding around running servers; may also explain the unreproduced dev-mode 500 from T1.2, but that's unconfirmed | n/a |
@@ -330,6 +336,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-30 | T0.4 done: `POST /api/auth/otp/{request,verify}`, `POST /api/auth/logout`, `GET/PATCH /api/me`, `src/proxy.ts`, `session.ts` (jose 6.2), `rate-limit.ts`, `services/auth.ts`, SMS adapter seam, `src/lib/{phone,zod-schemas}.ts`. 83 tests green; live HTTP smoke test passed. TRD §5.1 annotated |
 | 2026-10-30 | T0.5 done: `src/lib/permissions.ts`, `src/server/policy/{authorize,with-auth}.ts`, `services/audit.ts`; `/api/me` returns permissions. 187 tests green, incl. the full doc 03 §6.1 matrix |
 | 2026-10-30 | T0.6 done: `app/[locale]` route tree (13 placeholder pages + landing), 3 shells, `LangToggle`, `POST /api/locale`, next-intl + `messages/{en,am}.json`, local Inter + Noto Sans Ethiopic, type scale with Amharic line heights, focus ring, reversed icon. 200 tests + 19 browser checks green; TRD §6 annotated |
+| 2026-11-02 | T1.4 done: `GET /api/admin/moderation`, `GET /api/admin/moderation/:id`, `POST …/:id/decision`, `services/moderation.ts`, queue + review screens, seeded Lideta item. 256 tests + 8 moderation browser checks green; earlier browser checks re-run green |
 | 2026-11-02 | T1.3 done: `POST /api/venues/:id/license`, `GET /api/files/:fileKey`, storage adapter, `services/licenses.ts`, license screen with all states, `public/samples/license-sample.pdf`. 249 tests + 16 browser checks green |
 | 2026-11-02 | T1.2 done: `POST /api/venues`, `GET/PATCH /api/venues/:id`, `services/venues.ts`, venue setup screen, license-step placeholder. 222 tests + 6 browser checks green on the production build |
 | 2026-11-01 | T1.1 done: sign-in screen (`LoginForm`, `OtpInput`) with phone validation, resend countdown, wrong-code and lockout messages, the new-number question, safe `?next=` return. 7 browser checks green |

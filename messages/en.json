@@ -150,5 +150,28 @@
     "tooLarge": "The file is larger than 5 MB.",
     "failed": "The upload failed. Try again.",
     "sample": "Demo: download a sample license"
+  },
+  "moderation": {
+    "title": "Moderation queue",
+    "licenses": "Licenses",
+    "jobs": "Jobs",
+    "loading": "Loading…",
+    "loadFailed": "We couldn't load this. Try again.",
+    "empty": "Nothing is waiting for review.",
+    "colItem": "Venue",
+    "colAge": "Waiting",
+    "colFlags": "Flags",
+    "ageMinutes": "{count, plural, one {# min} other {# min}}",
+    "ageHours": "{count, plural, one {# hour} other {# hours}}",
+    "ageDays": "{count, plural, one {# day} other {# days}}",
+    "flags": "{count, plural, one {# flag} other {# flags}}",
+    "fastApprove": "Unchanged repost: fast approve",
+    "back": "Back to queue",
+    "reason": "Reason (required to reject)",
+    "reasonRequired": "Add a reason. The owner will see it.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "decided": "This item has already been decided.",
+    "openDocument": "Open document"
   }
 }

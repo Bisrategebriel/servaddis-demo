@@ -3,7 +3,9 @@
 // and never imports `src/server/db` (which is server-only).
 //
 // Not here yet, added by the tasks that build their features (PLAN.md §9):
-//   live feed jobs + pipeline applicants (§9.5) → T3.1 · 6-month history → T5.5 · pending license → T1.4
+//   live feed jobs + pipeline applicants (§9.5) → T3.1 · 6-month history → T5.5
+import { copyFileSync, mkdirSync } from "node:fs";
+import path from "node:path";
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { profileCompleteness } from "../../src/lib/profile-completeness";
 import { ADDIS_SUB_CITIES, CITIES, type SubCitySlug } from "./data/geography";
@@ -37,7 +39,7 @@ const OROMO_SPEAKERS = new Set(["Lensa Tolera", "Chala Gemechu"]);
 export type SeedSummary = Record<string, number> & { seedVersion: number };
 
 export async function seed(db: PrismaClient, now = new Date()): Promise<SeedSummary> {
-  return db.$transaction(
+  const summary = await db.$transaction(
     async (tx) => {
       await clearAll(tx);
       const geo = await seedGeography(tx);
@@ -49,6 +51,7 @@ export async function seed(db: PrismaClient, now = new Date()): Promise<SeedSumm
       });
       await seedVenues(tx, geo, planIds, now);
       await seedJobseekers(tx, geo, skillIds);
+      await seedPendingLicense(tx, now);
       await tx.demoSetting.createMany({
         data: [
           { key: "clock_offset_ms", value: "0" },
@@ -59,6 +62,8 @@ export async function seed(db: PrismaClient, now = new Date()): Promise<SeedSumm
     },
     { timeout: 60_000 },
   );
+  copySampleLicense();
+  return summary;
 }
 
 /** Delete every row, children before parents (doc 05 §9.6). */
@@ -185,6 +190,39 @@ async function seedVenues(tx: Tx, geo: Geo, planIds: Map<string, string>, now: D
       });
     }
   }
+}
+
+/**
+ * Queue state at reset (doc 05 §9.5): one pending re-upload from Lideta Corner Café, a spare item
+ * for the demo. It needs a real file, so the moderator's document viewer works.
+ */
+const SAMPLE_LICENSE_KEY = "00000000-0000-4000-8000-000000000001.pdf";
+
+async function seedPendingLicense(tx: Tx, now: Date) {
+  const venue = await tx.venue.findFirstOrThrow({ where: { nameEn: "Lideta Corner Café" } });
+  const uploadedAt = new Date(now.getTime() - 20 * 60 * 1000);
+  const license = await tx.licenseDocument.create({
+    data: {
+      venueId: venue.id,
+      fileKey: SAMPLE_LICENSE_KEY,
+      fileName: "lideta-license-renewal.pdf",
+      mime: "application/pdf",
+      sizeBytes: 800,
+      uploadedAt,
+    },
+  });
+  await tx.moderationItem.create({
+    data: { type: "LICENSE", licenseId: license.id, createdAt: uploadedAt },
+  });
+}
+
+function copySampleLicense() {
+  const dir = path.resolve(/*turbopackIgnore: true*/ process.env.UPLOAD_DIR ?? "./data/uploads");
+  mkdirSync(/*turbopackIgnore: true*/ dir, { recursive: true });
+  copyFileSync(
+    path.resolve(/*turbopackIgnore: true*/ "public/samples/license-sample.pdf"),
+    path.join(/*turbopackIgnore: true*/ dir, SAMPLE_LICENSE_KEY),
+  );
 }
 
 type ProfileShape = {

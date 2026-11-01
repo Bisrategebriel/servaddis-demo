@@ -2,22 +2,23 @@
 
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { Suspense, useState, type ReactNode } from "react";
 import { Wordmark } from "@/components/brand/wordmark";
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 // Below 768 px the sidebar becomes a sheet opened from the top bar (doc 04 §4).
-export function MobileNav({
-  children,
-  openLabel,
-  closeLabel,
-  title,
-}: {
-  children: ReactNode;
-  openLabel: string;
-  closeLabel: string;
-  title: string;
-}) {
+type Props = { children: ReactNode; openLabel: string; closeLabel: string; title: string };
+
+export function MobileNav(props: Props) {
+  // usePathname needs <Suspense> on routes with a dynamic id.
+  return (
+    <Suspense fallback={<span className="size-11 md:hidden" />}>
+      <MobileNavSheet {...props} />
+    </Suspense>
+  );
+}
+
+function MobileNavSheet({ children, openLabel, closeLabel, title }: Props) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   // Close after navigating to another page ("adjust state when a value changes", no effect).

@@ -22,9 +22,10 @@ async function clearDir(dir: string) {
  * Every user is recreated with a new id, so all existing sessions end.
  */
 export async function resetDemo(): Promise<SeedSummary> {
-  const summary = await seed(db);
+  // Files first: the seed writes the sample license into the upload folder.
   await clearDir(process.env.UPLOAD_DIR ?? "./data/uploads");
   await clearDir(process.env.CARD_DIR ?? "./data/cards");
+  const summary = await seed(db);
   await loadClockOffset();
   resetRateLimits();
   return summary;
