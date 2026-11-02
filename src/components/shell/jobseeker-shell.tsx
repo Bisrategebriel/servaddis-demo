@@ -1,15 +1,26 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Wordmark } from "@/components/brand/wordmark";
+import { LazyBell } from "@/components/jobseeker/lazy-bell";
 import { OfflineBanner } from "@/components/jobseeker/offline-banner";
 import { LangToggle } from "@/components/lang-toggle";
 import { cn } from "@/lib/utils";
+import { getCurrentUser } from "@/server/current-user";
+import { db } from "@/server/db";
 import { BottomNavLinks } from "./nav-links";
 import { SkipLink } from "./skip-link";
 
 // Jobseeker / public shell (doc 04 §4): navy top bar with the reversed wordmark and language
 // toggle, a single column designed at 360 px (640 px max), optional bottom navigation.
+/** Signed-in jobseekers see their notifications (shortlisted, hired…, doc 03 §10). */
+async function JobseekerBell() {
+  const user = await getCurrentUser();
+  if (user?.platformRole !== "JOBSEEKER") return null;
+  const unread = await db.notification.count({ where: { userId: user.id, readAt: null } });
+  return <LazyBell initialCount={unread} />;
+}
+
 export async function JobseekerShell({
   children,
   bottomNav = false,
@@ -26,7 +37,12 @@ export async function JobseekerShell({
           <Link href="/" aria-label={t("common.appName")}>
             <Wordmark />
           </Link>
-          <LangToggle surface="navy" />
+          <div className="flex items-center gap-1">
+            <Suspense fallback={null}>
+              <JobseekerBell />
+            </Suspense>
+            <LangToggle surface="navy" />
+          </div>
         </div>
         <OfflineBanner />
       </header>

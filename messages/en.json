@@ -440,5 +440,39 @@
     "closes": "Closes {date}",
     "notOpen": "This job is no longer open.",
     "offline": "You're offline. Jobs will update when you reconnect."
+  },
+  "apply": {
+    "button": "Apply",
+    "applying": "Applying…",
+    "signIn": "Sign in to apply",
+    "signInHint": "Just your phone number. No CV needed.",
+    "addNote": "Add a short note (optional)",
+    "note": "Note to the employer (optional)",
+    "notePlaceholder": "e.g. I can start next week.",
+    "applied": "Applied",
+    "view": "See my applications",
+    "failed": "We couldn't send your application. Try again.",
+    "employerHint": "Sign in as a jobseeker to apply."
+  },
+  "tracker": {
+    "title": "My applications",
+    "empty": "You haven't applied to any jobs yet.",
+    "browse": "Browse jobs",
+    "steps": {
+      "APPLIED": "Applied",
+      "VIEWED": "Viewed",
+      "SHORTLISTED": "Shortlisted",
+      "HIRED": "Hired",
+      "REJECTED": "Not selected"
+    },
+    "progress": "Application progress",
+    "closed": "This job is no longer taking applications.",
+    "hint": {
+      "APPLIED": "The employer hasn't opened your application yet.",
+      "VIEWED": "The employer has seen your profile.",
+      "SHORTLISTED": "You're on the shortlist. The employer may call you.",
+      "HIRED": "Congratulations, you got the job!",
+      "REJECTED": "The employer chose other applicants this time."
+    }
   }
 }

@@ -124,3 +124,5 @@ export const feedQuery = z.object({
   cursor: z.preprocess(blank, z.coerce.number().int().min(0).optional()),
   limit: z.preprocess(blank, z.coerce.number().int().min(1).max(50).default(20)),
 });
+
+export const applyBody = z.object({ note: optionalText(300) });

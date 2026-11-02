@@ -1,4 +1,5 @@
 import "server-only";
+import { shortName } from "@/lib/names";
 import type { VenuePermission } from "@/lib/permissions";
 import { now } from "../clock";
 import { db } from "../db";
@@ -7,12 +8,6 @@ import { EXPIRY_WARNING_MS } from "../sweep";
 // SCR-E03 data: everything the dashboard polls. The checklist follows App Flow §3.
 
 const DAY_MS = 86_400_000;
-
-/** "Dawit Alemu" → "Dawit A." (doc 04 LiveToast): activity never shows full names. */
-const shortName = (name: string) => {
-  const [first, last] = name.trim().split(/\s+/);
-  return last ? `${first} ${last[0]}.` : first;
-};
 
 export async function venueSummary(venueId: string, permissions: Set<VenuePermission>) {
   const at = now();

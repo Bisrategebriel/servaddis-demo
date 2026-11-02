@@ -4,14 +4,17 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { ApplyBar, type ApplyState } from "@/components/jobseeker/apply-bar";
 import { deadline, pick } from "@/components/jobseeker/job-text";
 import { formatDate, formatSalary } from "@/lib/format";
 import { now } from "@/server/clock";
+import { getCurrentUser } from "@/server/current-user";
+import { db } from "@/server/db";
 import { AppError } from "@/server/http/errors";
 import { feedJob } from "@/server/services/feed";
 
 // SCR-J02 job detail: the full post in the viewer's language (with a fallback tag), venue badge,
-// and a "no longer open" state. The sticky Apply bar arrives with apply itself (T3.2).
+// a "no longer open" state and the sticky Apply bar (signed out → sign in and come back here).
 
 async function Detail({ params }: { params: Promise<{ id: string }> }) {
   await connection(); // "open" and "closes in" follow the demo clock
@@ -44,6 +47,22 @@ async function Detail({ params }: { params: Promise<{ id: string }> }) {
   const venue = (lang === "am" ? job.venueAm : null) || job.venueEn;
   const due =
     job.open && job.urgency !== "NORMAL" ? deadline(job.expiresAt, job.urgency, now()) : null;
+  const user = await getCurrentUser();
+  const applied =
+    user?.platformRole === "JOBSEEKER" &&
+    !!(await db.application.findUnique({
+      where: { jobId_jobseekerId: { jobId: job.id, jobseekerId: user.id } },
+      select: { id: true },
+    }));
+  const applyState: ApplyState | null = applied
+    ? "applied"
+    : !job.open
+      ? null
+      : !user
+        ? "signedOut"
+        : user.platformRole === "JOBSEEKER"
+          ? "canApply"
+          : "notJobseeker";
   const tag = (l: "am" | "en" | null) =>
     l ? (l === "en" ? t("inEnglish") : t("inAmharic")) : null;
 
@@ -143,6 +162,12 @@ async function Detail({ params }: { params: Promise<{ id: string }> }) {
         {t("posted", { date: formatDate(job.publishedAt, locale) })}
         {job.open && ` · ${t("closes", { date: formatDate(job.expiresAt, locale) })}`}
       </p>
+      {applyState && (
+        <>
+          <div className="h-28" aria-hidden />
+          <ApplyBar jobId={job.id} initial={applyState} />
+        </>
+      )}
     </article>
   );
 }

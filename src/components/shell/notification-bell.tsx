@@ -36,7 +36,14 @@ const markRead = (ids?: string[]) =>
     body: JSON.stringify({ ids }),
   });
 
-export function NotificationBell({ initialCount }: { initialCount: number }) {
+export function NotificationBell({
+  initialCount,
+  surface = "light",
+}: {
+  initialCount: number;
+  /** "navy" on the jobseeker top bar. */
+  surface?: "light" | "navy";
+}) {
   const t = useTranslations("shell");
   const format = useFormatter();
   const am = useLocale() === "am";
@@ -66,7 +73,12 @@ export function NotificationBell({ initialCount }: { initialCount: number }) {
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         aria-label={`${t("notifications")}: ${t("unread", { count })}`}
-        className="relative inline-flex size-10 items-center justify-center rounded-lg text-text-secondary hover:bg-muted hover:text-foreground"
+        className={cn(
+          "relative inline-flex size-10 items-center justify-center rounded-lg",
+          surface === "navy"
+            ? "text-gray-300 hover:bg-navy-800 hover:text-white"
+            : "text-text-secondary hover:bg-muted hover:text-foreground",
+        )}
       >
         <Bell className="size-5" aria-hidden />
         {count > 0 && (
