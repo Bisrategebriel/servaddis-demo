@@ -398,7 +398,12 @@
       "expiringSoon": "{days, plural, one {This job expires tomorrow} other {This job expires in # days}} ({date}). Once it expires you can repost it in one tap.",
       "viewInFeed": "View in the jobseeker feed",
       "applicantsLink": "Applicants ({count})",
-      "newCount": "{count} new"
+      "newCount": "{count} new",
+      "filledAt": "Filled",
+      "timeToFill": "Time to fill",
+      "hours": "{count, plural, one {# hour} other {# hours}}",
+      "days": "{count} days",
+      "filledNote": "All openings are filled."
     }
   },
   "feed": {
@@ -566,6 +571,7 @@
       "POSITION_FILLED": "Position filled",
       "OTHER": "Other"
     },
-    "rejected": "Rejected: {reason}"
+    "rejected": "Rejected: {reason}",
+    "jobFilled": "All openings are filled. The job is now closed and the other applicants have been told."
   }
 }

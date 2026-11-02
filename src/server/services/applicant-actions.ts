@@ -9,16 +9,16 @@ import type {
 } from "@prisma/client";
 import { shortName } from "@/lib/names";
 import { formatPhone, maskPhone } from "@/lib/phone";
-import { now } from "../clock";
+import { timeToFill } from "@/lib/format";
+import { DAY_MS, now } from "../clock";
 import { db } from "../db";
 import { conflict } from "../http/errors";
 import { audit } from "./audit";
-import { notify, sms } from "./notifications";
+import { employerRecipients, notify, sms } from "./notifications";
 
 // Employer actions on one application (App Flow §5.1, notification matrix §10). Each is one
 // transaction: status + timestamp + ApplicationEvent + jobseeker notification (+ SMS where the
-// matrix says so). Wrong state → 409 with the current status. Hire's job-closing side (headcount,
-// time-to-fill, check-ins) is T3.5.
+// matrix says so). Wrong state → 409 with the current status.
 
 type Tx = Prisma.TransactionClient;
 
@@ -34,7 +34,7 @@ async function tellJobseeker(
   tx: Tx,
   app: Application,
   job: Job,
-  step: "VIEWED" | "SHORTLISTED" | "REJECTED" | "HIRED",
+  step: "VIEWED" | "SHORTLISTED" | "REJECTED" | "FILLED" | "HIRED",
 ) {
   const seeker = await tx.user.findUniqueOrThrow({ where: { id: app.jobseekerId } });
   const venue = await tx.venue.findUniqueOrThrow({ where: { id: job.venueId } });
@@ -62,6 +62,13 @@ async function tellJobseeker(
       titleAm: "ስለ ማመልከቻዎ",
       bodyEn: `${venue.nameEn} chose other applicants for ${en} this time.`,
       bodyAm: `${vAm} ለ${am} በዚህ ጊዜ ሌሎች አመልካቾችን መርጧል።`,
+    },
+    FILLED: {
+      kind: "APPLICATION_REJECTED",
+      titleEn: "Update on your application",
+      titleAm: "ስለ ማመልከቻዎ",
+      bodyEn: `The ${en} position at ${venue.nameEn} has been filled.`,
+      bodyAm: `በ${vAm} የነበረው የ${am} ቦታ ተይዟል።`,
     },
     HIRED: {
       kind: "APPLICATION_HIRED",
@@ -140,6 +147,12 @@ export async function rejectApplication(
   });
 }
 
+/**
+ * Hire (App Flow §5.1): Shortlisted → Hired, hiredCount + 1, and the 2-week and 30-day placement
+ * check-ins scheduled (the sweep sends them when due). The hire that reaches the headcount fills
+ * the job: filledAt (time-to-fill), a live job closes, every applicant still in play is rejected
+ * as POSITION_FILLED and told, and the job's creator and owners get "job filled".
+ */
 export async function hireApplication(user: User, app: Application, job: Job) {
   if (app.status !== "SHORTLISTED") throw stateError(app.status);
   const at = now();
@@ -148,13 +161,71 @@ export async function hireApplication(user: User, app: Application, job: Job) {
       where: { id: app.id },
       data: { status: "HIRED", hiredAt: at },
     });
-    await tx.job.update({ where: { id: job.id }, data: { hiredCount: { increment: 1 } } });
+    const counted = await tx.job.update({
+      where: { id: job.id },
+      data: { hiredCount: { increment: 1 } },
+    });
     await tx.applicationEvent.create({
       data: { applicationId: app.id, type: "HIRED", actorId: user.id, at },
     });
+    await tx.placementCheckin.createMany({
+      data: [
+        { applicationId: app.id, kind: "WEEK_2", dueAt: new Date(at.getTime() + 14 * DAY_MS) },
+        { applicationId: app.id, kind: "DAY_30", dueAt: new Date(at.getTime() + 30 * DAY_MS) },
+      ],
+    });
     await tellJobseeker(tx, app, job, "HIRED");
-    return updated;
+
+    const filled = !counted.filledAt && counted.hiredCount >= counted.headcount;
+    if (filled) await fillJob(tx, counted, at);
+    return { application: updated, jobFilled: filled };
   });
+}
+
+async function fillJob(tx: Tx, job: Job, at: Date) {
+  await tx.job.update({
+    where: { id: job.id },
+    data:
+      job.status === "LIVE" ? { status: "CLOSED", closedAt: at, filledAt: at } : { filledAt: at },
+  });
+  const open = await tx.application.findMany({
+    where: { jobId: job.id, status: { in: ["APPLIED", "VIEWED", "SHORTLISTED"] } },
+  });
+  for (const other of open) {
+    await tx.application.update({
+      where: { id: other.id },
+      data: { status: "REJECTED", rejectReason: "POSITION_FILLED", rejectedAt: at },
+    });
+    await tx.applicationEvent.create({
+      data: {
+        applicationId: other.id,
+        type: "REJECTED",
+        at,
+        meta: JSON.stringify({ reason: "POSITION_FILLED", automatic: true }),
+      },
+    });
+    await tellJobseeker(tx, other, job, "FILLED");
+  }
+  const ttf = job.publishedAt ? timeToFill(job.publishedAt, at) : null;
+  const en = job.titleEn || job.titleAm!;
+  const am = job.titleAm || job.titleEn;
+  const recipients = await employerRecipients(tx, job.venueId, job.createdById);
+  await notify(
+    tx,
+    recipients.map((r) => r.id),
+    {
+      kind: "JOB_FILLED",
+      titleEn: "Job filled",
+      titleAm: "ቦታው ተይዟል",
+      bodyEn: ttf
+        ? `"${en}" is filled, in ${ttf.value} ${ttf.unit === "hours" ? "hours" : "days"}.`
+        : `"${en}" is filled.`,
+      bodyAm: ttf
+        ? `"${am}" ተይዟል፤ በ${ttf.value} ${ttf.unit === "hours" ? "ሰዓት" : "ቀን"}።`
+        : `"${am}" ተይዟል።`,
+      href: `/employer/jobs/${job.id}`,
+    },
+  );
 }
 
 /**

@@ -7,7 +7,7 @@ import { previewContext } from "@/components/employer/composer/composer-data";
 import { JobPreview } from "@/components/employer/composer/job-preview";
 import { JobActions } from "@/components/employer/job-actions";
 import { JobStatusChip } from "@/components/employer/job-status-chip";
-import { formatDate, formatDateTime } from "@/lib/format";
+import { formatDate, formatDateTime, timeToFill } from "@/lib/format";
 import { formFromJob } from "@/lib/job-form";
 import { DAY_MS, now } from "@/server/clock";
 import { getEmployerContext } from "@/server/current-user";
@@ -79,8 +79,10 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
       label: job.status === "EXPIRED" ? t("expiredAt") : t("expiresAt"),
       at: job.status === "CLOSED" ? null : job.expiresAt,
     },
-    { label: t("closedAt"), at: job.closedAt },
+    { label: job.filledAt ? t("filledAt") : t("closedAt"), at: job.filledAt ?? job.closedAt },
   ].filter((e) => e.at);
+  // Time-to-fill (App Flow §5.1): filledAt − publishedAt.
+  const ttf = job.filledAt && job.publishedAt ? timeToFill(job.publishedAt, job.filledAt) : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -146,7 +148,7 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
       )}
 
       <div className={`flex flex-col gap-2 rounded-md px-4 py-3 ${NOTE_TONE[job.status]}`}>
-        <p data-testid="status-note">{t(`notes.${job.status}`)}</p>
+        <p data-testid="status-note">{job.filledAt ? t("filledNote") : t(`notes.${job.status}`)}</p>
         {job.status === "LIVE" && (
           <Link href={`/jobs/${job.id}`} className="w-fit text-small underline underline-offset-4">
             {t("viewInFeed")}
@@ -181,6 +183,16 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
                 <dd>{formatDateTime(e.at!, locale)}</dd>
               </div>
             ))}
+            {ttf && (
+              <div>
+                <dt className="text-small text-text-secondary">{t("timeToFill")}</dt>
+                <dd data-testid="time-to-fill" className="font-semibold">
+                  {ttf.unit === "hours"
+                    ? t("hours", { count: ttf.value })
+                    : t("days", { count: ttf.value })}
+                </dd>
+              </div>
+            )}
             {job.postingSource && (
               <div>
                 <dt className="text-small text-text-secondary">{t("posting")}</dt>

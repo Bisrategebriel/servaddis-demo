@@ -398,7 +398,12 @@
       "expiringSoon": "{days, plural, one {የዚህ ሥራ ጊዜ ነገ ያልፋል} other {የዚህ ሥራ ጊዜ በ# ቀናት ውስጥ ያልፋል}} ({date})። ጊዜው ሲያልፍ በአንድ ንክኪ እንደገና መለጠፍ ይችላሉ።",
       "viewInFeed": "በሥራ ፈላጊዎች ዝርዝር ውስጥ ይመልከቱ",
       "applicantsLink": "አመልካቾች ({count})",
-      "newCount": "{count} አዲስ"
+      "newCount": "{count} አዲስ",
+      "filledAt": "የተያዘው",
+      "timeToFill": "ለመቅጠር የፈጀው ጊዜ",
+      "hours": "{count} ሰዓት",
+      "days": "{count} ቀናት",
+      "filledNote": "ሁሉም ክፍት ቦታዎች ተይዘዋል።"
     }
   },
   "feed": {
@@ -566,6 +571,7 @@
       "POSITION_FILLED": "ቦታው ተይዟል",
       "OTHER": "ሌላ"
     },
-    "rejected": "ውድቅ፦ {reason}"
+    "rejected": "ውድቅ፦ {reason}",
+    "jobFilled": "ሁሉም ክፍት ቦታዎች ተይዘዋል። ሥራው ተዘግቷል፤ ሌሎች አመልካቾችም ተነግሯቸዋል።"
   }
 }

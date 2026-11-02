@@ -3,6 +3,7 @@
 import type { ApplicationStatus } from "@prisma/client";
 import { BadgeCheck, Lock, Phone } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +49,8 @@ export function ApplicantDrawer({
 }) {
   const t = useTranslations("drawer");
   const tp = useTranslations("pipeline");
+  const router = useRouter();
+  const [filled, setFilled] = useState(false);
   const locale = useLocale();
   const am = locale === "am";
   const can = (p: string) => permissions.includes(p);
@@ -101,8 +104,15 @@ export function ApplicantDrawer({
         setError(am ? e.messageAm : e.message);
       } else {
         setRejecting(false);
+        const result = await res.json();
         const app = await load(applicationId);
         onChanged(applicationId, app.status);
+        // The last opening was filled: the job closed and other applicants were rejected, so
+        // the page's status chip and the other cards change too.
+        if (result.jobFilled) {
+          setFilled(true);
+          router.refresh();
+        }
       }
     } catch {
       setError(t("failed"));
@@ -137,6 +147,15 @@ export function ApplicantDrawer({
 
         {data && (
           <div className="flex flex-col gap-5 p-4 text-body">
+            {filled && (
+              <p
+                role="status"
+                data-testid="job-filled"
+                className="rounded-sm bg-success-bg px-3 py-2 text-small text-success-fg"
+              >
+                {t("jobFilled")}
+              </p>
+            )}
             {data.status === "REJECTED" && data.rejectReason && (
               <p className="rounded-sm bg-danger-bg px-3 py-2 text-small text-danger-fg">
                 {t("rejected", { reason: t(`reasons.${data.rejectReason}`) })}
