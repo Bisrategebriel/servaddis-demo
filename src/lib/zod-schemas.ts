@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ADDIS_SUB_CITIES, type SubCitySlug } from "../../prisma/seed/data/geography";
 import { EMPLOYMENT_TYPES, SALARY_PERIODS, URGENCIES } from "./job-form";
+import { VENUE_PERMISSIONS } from "./permissions";
 import { normalizePhone } from "./phone";
 
 // Shared client/server schemas (TRD §3: one validation source).
@@ -149,4 +150,17 @@ export const profileBody = z.object({
   headline: optionalText(120),
   experienceYears: z.coerce.number().int().min(0).max(50),
   availability: optionalText(80),
+});
+
+// Team (TRD §7.1): role preset plus per-member overrides, venue permission keys only.
+const memberRole = z.enum(["OWNER", "HR_MANAGER", "POSTER", "SCREENER", "VIEWER"]);
+const permissionKeys = z.array(z.enum(VENUE_PERMISSIONS)).max(VENUE_PERMISSIONS.length).default([]);
+export const memberBody = z.object({
+  role: memberRole,
+  grant: permissionKeys,
+  revoke: permissionKeys,
+});
+export const inviteBody = memberBody.extend({
+  name: z.string().trim().min(2).max(80),
+  phone: phoneSchema,
 });
