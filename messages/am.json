@@ -403,7 +403,8 @@
       "timeToFill": "ለመቅጠር የፈጀው ጊዜ",
       "hours": "{count} ሰዓት",
       "days": "{count} ቀናት",
-      "filledNote": "ሁሉም ክፍት ቦታዎች ተይዘዋል።"
+      "filledNote": "ሁሉም ክፍት ቦታዎች ተይዘዋል።",
+      "promoteLink": "አስተዋውቅ"
     }
   },
   "feed": {
@@ -701,5 +702,42 @@
     "noFee": "ማመልከት ነፃ ነው። ምንም ክፍያ የለም።",
     "scan": "ለማመልከት ይቃኙ",
     "urgent": "አስቸኳይ"
+  },
+  "promote": {
+    "title": "በማኅበራዊ ሚዲያ ያስተዋውቁ",
+    "back": "ወደ ሥራው ተመለስ",
+    "intro": "በአንድ ጠቅታ ይህ ሥራ በአራት ቻናሎች በአማርኛና በእንግሊዝኛ ይለጠፋል።",
+    "promote": "በማኅበራዊ ሚዲያ ያስተዋውቁ",
+    "promoting": "በማስተዋወቅ ላይ…",
+    "promoted": "ተዋውቋል",
+    "notLive": "ማስተዋወቅ የሚቻለው ክፍት ሥራዎችን ብቻ ነው።",
+    "lockedTitle": "በማኅበራዊ ሚዲያ ማስተዋወቅ የPro ዕቅድ አካል ነው",
+    "lockedBody": "ሥራዎችዎን በአንድ ጠቅታ በቴሌግራም፣ በፌስቡክ፣ በኢንስታግራምና በቲክቶክ ለመለጠፍ ወደ Pro ያሳድጉ።",
+    "upgrade": "ዕቅዶችን ይመልከቱ",
+    "card": "ካርድ",
+    "square": "ካሬ",
+    "story": "ስቶሪ",
+    "download": "ካርዱን አውርድ",
+    "channels": "ቻናሎች",
+    "caption": "መግለጫ ጽሑፍ",
+    "preview": "ቅድመ እይታ",
+    "hidePreview": "ቅድመ እይታውን ደብቅ",
+    "status": {
+      "QUEUED": "በወረፋ ላይ",
+      "RENDERED": "ካርዱ ዝግጁ ነው",
+      "PUBLISHED": "ተለጥፏል",
+      "DRAFT_FOR_TEAM": "ለቡድኑ ረቂቅ",
+      "FAILED": "አልተሳካም"
+    },
+    "channelNames": {
+      "TELEGRAM": "ቴሌግራም",
+      "FACEBOOK": "ፌስቡክ",
+      "INSTAGRAM": "ኢንስታግራም",
+      "TIKTOK": "ቲክቶክ"
+    },
+    "tiktokNote": "ቡድኑን የሚጠብቅ ረቂቅ (ተወዳጅ ድምፅ ያክሉ)።",
+    "applyButton": "በServaddis ያመልክቱ",
+    "failed": "አልተሳካም። እንደገና ይሞክሩ።",
+    "simulatedNote": "በዚህ ማሳያ ምንም ነገር በእውነት አይለጠፍም፤ ሁሉም ቻናሎች የተመሰሉ ናቸው።"
   }
 }

@@ -168,4 +168,5 @@ export const inviteBody = memberBody.extend({
 export const cardQuery = z.object({
   lang: z.enum(["am", "en"]).default("en"),
   size: z.enum(["square", "story"]).default("square"),
+  download: z.enum(["1"]).optional(),
 });

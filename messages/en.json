@@ -403,7 +403,8 @@
       "timeToFill": "Time to fill",
       "hours": "{count, plural, one {# hour} other {# hours}}",
       "days": "{count} days",
-      "filledNote": "All openings are filled."
+      "filledNote": "All openings are filled.",
+      "promoteLink": "Promote"
     }
   },
   "feed": {
@@ -701,5 +702,42 @@
     "noFee": "Free to apply. No fees, ever.",
     "scan": "Scan to apply",
     "urgent": "Urgent"
+  },
+  "promote": {
+    "title": "Promote to socials",
+    "back": "Back to job",
+    "intro": "One click posts this job to four channels, in Amharic and English.",
+    "promote": "Promote to socials",
+    "promoting": "Promoting…",
+    "promoted": "Promoted",
+    "notLive": "Only live jobs can be promoted.",
+    "lockedTitle": "Promote to socials is part of the Pro plan",
+    "lockedBody": "Upgrade to Pro to post your jobs to Telegram, Facebook, Instagram and TikTok with one click.",
+    "upgrade": "See plans",
+    "card": "Card",
+    "square": "Square",
+    "story": "Story",
+    "download": "Download card",
+    "channels": "Channels",
+    "caption": "Caption",
+    "preview": "Preview",
+    "hidePreview": "Hide preview",
+    "status": {
+      "QUEUED": "Queued",
+      "RENDERED": "Card ready",
+      "PUBLISHED": "Published",
+      "DRAFT_FOR_TEAM": "Draft for team",
+      "FAILED": "Failed"
+    },
+    "channelNames": {
+      "TELEGRAM": "Telegram",
+      "FACEBOOK": "Facebook",
+      "INSTAGRAM": "Instagram",
+      "TIKTOK": "TikTok"
+    },
+    "tiktokNote": "Draft awaiting the team (add a trending sound).",
+    "applyButton": "Apply on Servaddis",
+    "failed": "That didn't work. Try again.",
+    "simulatedNote": "Nothing is really posted in this demo: every channel is simulated."
   }
 }

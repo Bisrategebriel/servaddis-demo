@@ -1,4 +1,4 @@
-import { ArrowLeft, Clock, Pencil } from "lucide-react";
+import { ArrowLeft, Clock, Megaphone, Pencil } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -122,9 +122,20 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
             </Link>
           )}
         </div>
-        {ctx.membership.permissions.has("job.close") && (
-          <JobActions jobId={job.id} status={job.status} />
-        )}
+        <div className="flex flex-wrap items-start gap-2">
+          {job.status === "LIVE" && ctx.membership.permissions.has("social.promote") && (
+            <Link
+              href={`/employer/jobs/${job.id}/promote`}
+              className="inline-flex h-11 items-center gap-2 rounded-sm border border-input bg-card px-4 font-medium hover:bg-muted"
+            >
+              <Megaphone className="size-4" aria-hidden />
+              {t("promoteLink")}
+            </Link>
+          )}
+          {ctx.membership.permissions.has("job.close") && (
+            <JobActions jobId={job.id} status={job.status} />
+          )}
+        </div>
         {editable && ctx.membership.permissions.has("job.edit") && (
           <Link
             href={`/employer/jobs/${job.id}/edit`}

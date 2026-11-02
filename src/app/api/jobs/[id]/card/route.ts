@@ -12,7 +12,7 @@ import { renderCard } from "@/server/services/cards";
 // live (the card is what gets shared); otherwise only for venue members with job.view.
 export const GET = apiHandler<{ params: Promise<{ id: string }> }>(async (req, ctx) => {
   const { id } = await ctx.params;
-  const { lang, size } = parseQuery(req, cardQuery);
+  const { lang, size, download } = parseQuery(req, cardQuery);
   const job = await db.job.findUnique({ where: { id }, include: { venue: true, subCity: true } });
   if (!job) throw notFound();
   const live = job.status === "LIVE" && !!job.expiresAt && job.expiresAt > now();
@@ -23,7 +23,7 @@ export const GET = apiHandler<{ params: Promise<{ id: string }> }>(async (req, c
     headers: {
       "Content-Type": "image/png",
       "Cache-Control": "private, no-store",
-      "Content-Disposition": `inline; filename="servaddis-${job.id}-${lang}-${size}.png"`,
+      "Content-Disposition": `${download ? "attachment" : "inline"}; filename="servaddis-${job.id}-${lang}-${size}.png"`,
     },
   });
 });
