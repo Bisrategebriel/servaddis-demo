@@ -215,8 +215,104 @@
       "noMatch": "No role matches that search.",
       "popular": "Popular",
       "typical": "{min}–{max}k ETB",
-      "unverified": "Your venue is awaiting verification: you can draft now, and submit after approval.",
-      "composeTitle": "Compose your job"
+      "unverified": "Your venue is awaiting verification: you can draft now, and submit after approval."
+    },
+    "composer": {
+      "newTitle": "Post a job",
+      "editTitle": "Edit job draft",
+      "livePreview": "Live preview",
+      "steps": {
+        "basics": "Basics",
+        "details": "Details",
+        "pay": "Pay & urgency",
+        "preview": "Preview"
+      },
+      "jobTitle": "Job title",
+      "subCity": "Sub-city",
+      "description": "Description",
+      "requirements": "Requirements",
+      "benefits": "Benefits",
+      "onePerLine": "One per line.",
+      "shiftPattern": "Shift pattern",
+      "salary": "Salary range",
+      "salaryMin": "Minimum salary",
+      "salaryMax": "Maximum salary",
+      "salaryPeriod": "Salary period",
+      "typical": "Typical for this role: ETB {min}–{max}. An estimate, not market data.",
+      "salaryUnusual": "This looks unusual for this role. Is it correct?",
+      "employment": "Employment type",
+      "headcount": "Openings",
+      "urgency": "Urgency",
+      "urgencies": {
+        "NORMAL": "Normal",
+        "HALF_DAY": "Half-day",
+        "SAME_DAY": "Today",
+        "NEXT_DAY": "Tomorrow",
+        "TWO_DAYS": "2 days"
+      },
+      "expires": {
+        "NORMAL": "Live for 30 days.",
+        "HALF_DAY": "Expires 12 hours after publishing.",
+        "SAME_DAY": "Expires at the end of today (EAT).",
+        "NEXT_DAY": "Expires at the end of tomorrow (EAT).",
+        "TWO_DAYS": "Expires at the end of the day after tomorrow (EAT)."
+      },
+      "back": "Back",
+      "continue": "Continue",
+      "saveDraft": "Save draft",
+      "saving": "Saving…",
+      "saved": "Draft saved.",
+      "saveFailed": "We couldn't save your draft. Try again.",
+      "filled": "filled in",
+      "empty": "empty",
+      "oneLanguage": "{language} is still empty. Add it so everyone can read this job.",
+      "errors": {
+        "title": "Add a job title.",
+        "description": "Add a short description.",
+        "salary": "Add a realistic salary range. Jobseekers see this first.",
+        "headcount": "Enter at least 1 opening."
+      }
+    },
+    "preview": {
+      "requirements": "Requirements",
+      "benefits": "Benefits",
+      "notProvided": "Not provided",
+      "urgent": "Urgent",
+      "openings": "# openings",
+      "phone": "Phone view",
+      "desktop": "Desktop view",
+      "languageGroup": "Preview language",
+      "employment": {
+        "FULL_TIME": "Full-time",
+        "PART_TIME": "Part-time",
+        "CONTRACT": "Contract",
+        "SHIFT": "Shift"
+      },
+      "period": {
+        "MONTH": "month",
+        "DAY": "day",
+        "SHIFT": "shift"
+      },
+      "opening": "# opening"
+    },
+    "rules": {
+      "title": "Checks before you submit",
+      "checking": "Checking your post…",
+      "noIssues": "No issues found.",
+      "fix": "Fix this",
+      "fields": {
+        "titleEn": "Job title (English)",
+        "titleAm": "Job title (Amharic)",
+        "descriptionEn": "Description (English)",
+        "descriptionAm": "Description (Amharic)",
+        "requirementsEn": "Requirements (English)",
+        "requirementsAm": "Requirements (Amharic)",
+        "benefitsEn": "Benefits (English)",
+        "benefitsAm": "Benefits (Amharic)",
+        "shiftPattern": "Shift pattern",
+        "salary": "Salary",
+        "role": "Role"
+      }
     }
   }
 }

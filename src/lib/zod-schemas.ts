@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ADDIS_SUB_CITIES, type SubCitySlug } from "../../prisma/seed/data/geography";
+import { EMPLOYMENT_TYPES, SALARY_PERIODS, URGENCIES } from "./job-form";
 import { normalizePhone } from "./phone";
 
 // Shared client/server schemas (TRD §3: one validation source).
@@ -84,3 +85,27 @@ export const moderationDecisionBody = z
   });
 
 export const notificationsReadBody = z.object({ ids: z.array(z.string()).max(50).optional() });
+
+const jobText = (max: number) => z.string().trim().max(max);
+const jobList = z.array(z.string().trim().min(1).max(300)).max(20);
+
+/** A draft may be incomplete; completeness is checked at submit (T2.4). */
+export const jobDraftBody = z.object({
+  roleTemplateSlug: z.string().max(60).nullable(),
+  titleEn: jobText(120),
+  titleAm: jobText(120),
+  descriptionEn: jobText(3000),
+  descriptionAm: jobText(3000),
+  requirementsEn: jobList,
+  requirementsAm: jobList,
+  benefitsEn: jobList,
+  benefitsAm: jobList,
+  shiftPattern: jobText(120),
+  subCity: z.string().min(1).max(60),
+  headcount: z.number().int().min(1).max(999),
+  salaryMin: z.number().int().min(0).max(99_999_999),
+  salaryMax: z.number().int().min(0).max(99_999_999),
+  salaryPeriod: z.enum(SALARY_PERIODS),
+  employmentType: z.enum(EMPLOYMENT_TYPES),
+  urgency: z.enum(URGENCIES),
+});

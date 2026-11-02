@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "no-fee",
+      "severity": "block",
+      "patterns": [
+        "registration fee",
+        "deposit",
+        "pay to apply",
+        "send money",
+        "processing fee",
+        "application fee",
+        "ክፍያ ይላኩ",
+        "የምዝገባ ክፍያ",
+        "ቅድሚያ ክፍያ",
+        "ገንዘብ ይላኩ"
+      ],
+      "messageEn": "Servaddis jobs must never ask applicants to pay. Remove this phrase to continue.",
+      "messageAm": "በServaddis ላይ የሥራ ማስታወቂያዎች አመልካቾችን ክፍያ መጠየቅ የለባቸውም። ለመቀጠል ይህን ሐረግ ያስወግዱ።"
+    },
+    {
+      "id": "blocked-keywords",
+      "severity": "block",
+      "listRef": "blocked_keywords.txt",
+      "messageEn": "This wording isn't allowed on Servaddis.",
+      "messageAm": "ይህ አገላለጽ በServaddis ላይ አይፈቀድም።"
+    },
+    {
+      "id": "salary-required",
+      "severity": "block",
+      "check": "salaryMin>0 && salaryMax>=salaryMin",
+      "messageEn": "Add a realistic salary range. Jobseekers see this first.",
+      "messageAm": "ተጨባጭ የደመወዝ ክልል ያስገቡ። አመልካቾች መጀመሪያ የሚያዩት ይህን ነው።"
+    },
+    {
+      "id": "offplatform-contact",
+      "severity": "warn",
+      "regex": [
+        "\\+?251\\s?[79]\\d{8}",
+        "\\b0[79]\\d{8}\\b",
+        "t\\.me/",
+        "[\\w.-]+@[\\w.-]+\\.[a-z]{2,}",
+        "(?<![\\w.])@[A-Za-z0-9_]{4,}"
+      ],
+      "messageEn": "Applicants contact you through Servaddis after you shortlist them.",
+      "messageAm": "አመልካቾች በአጭር ዝርዝር ውስጥ ካስገቧቸው በኋላ በServaddis በኩል ያገኙዎታል።"
+    },
+    {
+      "id": "salary-outlier",
+      "severity": "warn",
+      "check": "salaryMax > 3*template.salaryHint.max || salaryMin < 0.3*template.salaryHint.min",
+      "messageEn": "This looks unusual for this role. Is it correct?",
+      "messageAm": "ይህ ለዚህ ሥራ ያልተለመደ ይመስላል። ትክክል ነው?"
+    },
+    {
+      "id": "sensitive-family",
+      "severity": "info",
+      "families": ["SPA"],
+      "messageEn": "Spa roles get an extra check before they go live.",
+      "messageAm": "የስፓ ሥራዎች ከመውጣታቸው በፊት ተጨማሪ ግምገማ ይደረግባቸዋል።"
+    }
+  ]
+}

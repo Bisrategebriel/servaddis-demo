@@ -174,6 +174,7 @@ export async function authorizeJob(ctx: Ctx, jobId: string, perm: PermissionKey)
 - `jobs.submit(jobId, actor)` runs, in order: permission → venue `VERIFIED` → required fields → **rules engine** → entitlement → persist (`PENDING_REVIEW`, `ModerationItem`) in one transaction.
 - The rules engine is a pure function: `run(job, template) → Flag[]` with `{ ruleId, severity: 'block'|'warn'|'info', messageEn, messageAm, field }`. Any `block` flag aborts the submit with **422** and the flag list. Rules and messages: doc 05 §7.1.
 - `POST /api/jobs/:id/check` runs the same function without side effects so the composer can show flags live (debounced).
+  > **Implementation note (T2.3):** built as `POST /api/jobs/check` with the draft in the body, so flags show before the first save (no id yet). See PLAN §9.
 - Admin decisions are transactional: update `ModerationItem`, transition `Job`/`LicenseDocument`/`Venue`, write `Notification` (both languages), `SmsLog` where required, and `AuditLog`.
 
 ### 5.4 Applications

@@ -215,8 +215,104 @@
       "noMatch": "ከፍለጋው ጋር የሚዛመድ የሥራ ዓይነት የለም።",
       "popular": "ተወዳጅ",
       "typical": "{min}–{max} ሺ ብር",
-      "unverified": "ድርጅትዎ ማረጋገጫ እየጠበቀ ነው፦ አሁን ረቂቅ ማዘጋጀት፣ ከጸደቀ በኋላ ማስገባት ይችላሉ።",
-      "composeTitle": "ሥራዎን ያዘጋጁ"
+      "unverified": "ድርጅትዎ ማረጋገጫ እየጠበቀ ነው፦ አሁን ረቂቅ ማዘጋጀት፣ ከጸደቀ በኋላ ማስገባት ይችላሉ።"
+    },
+    "composer": {
+      "newTitle": "ሥራ ይለጥፉ",
+      "editTitle": "የሥራ ረቂቅ ያስተካክሉ",
+      "livePreview": "ቀጥታ ቅድመ እይታ",
+      "steps": {
+        "basics": "መሠረታዊ",
+        "details": "ዝርዝር",
+        "pay": "ክፍያና አስቸኳይነት",
+        "preview": "ቅድመ እይታ"
+      },
+      "jobTitle": "የሥራ መደብ",
+      "subCity": "ክፍለ ከተማ",
+      "description": "መግለጫ",
+      "requirements": "መስፈርቶች",
+      "benefits": "ጥቅማ ጥቅሞች",
+      "onePerLine": "በአንድ መስመር አንድ።",
+      "shiftPattern": "የፈረቃ ሁኔታ",
+      "salary": "የደመወዝ ክልል",
+      "salaryMin": "ዝቅተኛ ደመወዝ",
+      "salaryMax": "ከፍተኛ ደመወዝ",
+      "salaryPeriod": "የደመወዝ ጊዜ",
+      "typical": "ለዚህ ሥራ የተለመደ፦ ETB {min}–{max}። ግምት ነው፣ የገበያ መረጃ አይደለም።",
+      "salaryUnusual": "ይህ ለዚህ ሥራ ያልተለመደ ይመስላል። ትክክል ነው?",
+      "employment": "የቅጥር ዓይነት",
+      "headcount": "ክፍት ቦታዎች",
+      "urgency": "አስቸኳይነት",
+      "urgencies": {
+        "NORMAL": "መደበኛ",
+        "HALF_DAY": "ግማሽ ቀን",
+        "SAME_DAY": "ዛሬ",
+        "NEXT_DAY": "ነገ",
+        "TWO_DAYS": "2 ቀን"
+      },
+      "expires": {
+        "NORMAL": "ለ30 ቀናት ክፍት ይሆናል።",
+        "HALF_DAY": "ከወጣ ከ12 ሰዓት በኋላ ያበቃል።",
+        "SAME_DAY": "ዛሬ ቀኑ ሲያበቃ ያበቃል።",
+        "NEXT_DAY": "ነገ ቀኑ ሲያበቃ ያበቃል።",
+        "TWO_DAYS": "ከነገ ወዲያ ቀኑ ሲያበቃ ያበቃል።"
+      },
+      "back": "ተመለስ",
+      "continue": "ቀጥል",
+      "saveDraft": "ረቂቅ አስቀምጥ",
+      "saving": "በማስቀመጥ ላይ…",
+      "saved": "ረቂቁ ተቀምጧል።",
+      "saveFailed": "ረቂቁን ማስቀመጥ አልቻልንም። እንደገና ይሞክሩ።",
+      "filled": "ተሞልቷል",
+      "empty": "ባዶ ነው",
+      "oneLanguage": "{language} ገና ባዶ ነው። ሁሉም እንዲያነቡት ይሙሉት።",
+      "errors": {
+        "title": "የሥራ መደብ ያስገቡ።",
+        "description": "አጭር መግለጫ ያስገቡ።",
+        "salary": "ተጨባጭ የደመወዝ ክልል ያስገቡ። አመልካቾች መጀመሪያ የሚያዩት ይህን ነው።",
+        "headcount": "ቢያንስ 1 ክፍት ቦታ ያስገቡ።"
+      }
+    },
+    "preview": {
+      "requirements": "መስፈርቶች",
+      "benefits": "ጥቅማ ጥቅሞች",
+      "notProvided": "አልተሞላም",
+      "urgent": "አስቸኳይ",
+      "openings": "# ክፍት ቦታዎች",
+      "phone": "የስልክ እይታ",
+      "desktop": "የኮምፒውተር እይታ",
+      "languageGroup": "የቅድመ እይታ ቋንቋ",
+      "employment": {
+        "FULL_TIME": "ሙሉ ጊዜ",
+        "PART_TIME": "ትርፍ ጊዜ",
+        "CONTRACT": "ኮንትራት",
+        "SHIFT": "ፈረቃ"
+      },
+      "period": {
+        "MONTH": "በወር",
+        "DAY": "በቀን",
+        "SHIFT": "በፈረቃ"
+      },
+      "opening": "# ክፍት ቦታ"
+    },
+    "rules": {
+      "title": "ከማስገባትዎ በፊት የሚደረጉ ፍተሻዎች",
+      "checking": "ማስታወቂያዎን በመፈተሽ ላይ…",
+      "noIssues": "ምንም ችግር አልተገኘም።",
+      "fix": "ያስተካክሉ",
+      "fields": {
+        "titleEn": "የሥራ መደብ (እንግሊዝኛ)",
+        "titleAm": "የሥራ መደብ (አማርኛ)",
+        "descriptionEn": "መግለጫ (እንግሊዝኛ)",
+        "descriptionAm": "መግለጫ (አማርኛ)",
+        "requirementsEn": "መስፈርቶች (እንግሊዝኛ)",
+        "requirementsAm": "መስፈርቶች (አማርኛ)",
+        "benefitsEn": "ጥቅማ ጥቅሞች (እንግሊዝኛ)",
+        "benefitsAm": "ጥቅማ ጥቅሞች (አማርኛ)",
+        "shiftPattern": "የፈረቃ ሁኔታ",
+        "salary": "ደመወዝ",
+        "role": "የሥራ ዓይነት"
+      }
     }
   }
 }
