@@ -162,7 +162,7 @@
     "loading": "በመጫን ላይ…",
     "loadFailed": "ይህን መጫን አልቻልንም። እንደገና ይሞክሩ።",
     "empty": "ለግምገማ የሚጠብቅ ነገር የለም።",
-    "colItem": "ድርጅት",
+    "colItem": "ጉዳይ",
     "colAge": "የጠበቀበት ጊዜ",
     "colFlags": "ማስጠንቀቂያዎች",
     "ageMinutes": "{count, plural, other {# ደቂቃ}}",
@@ -172,11 +172,16 @@
     "fastApprove": "ያልተቀየረ ድጋሚ ማስታወቂያ፦ ፈጣን ማጽደቅ",
     "back": "ወደ ወረፋው ይመለሱ",
     "reason": "ምክንያት (ውድቅ ለማድረግ ያስፈልጋል)",
-    "reasonRequired": "ምክንያት ያስገቡ። ባለቤቱ ያየዋል።",
+    "reasonRequired": "ምክንያት ያስገቡ። ቀጣሪው ያየዋል።",
     "approve": "አጽድቅ",
     "reject": "ውድቅ አድርግ",
     "decided": "በዚህ ጉዳይ ላይ አስቀድሞ ውሳኔ ተሰጥቷል።",
-    "openDocument": "ሰነዱን ይክፈቱ"
+    "openDocument": "ሰነዱን ይክፈቱ",
+    "requestChanges": "ማስተካከያ ጠይቅ",
+    "reasonJob": "ምክንያት (ውድቅ ለማድረግ ወይም ማስተካከያ ለመጠየቅ ያስፈልጋል)",
+    "enhancedScrutiny": "ጥብቅ ምርመራ",
+    "flagsTitle": "የደንብ ፍተሻ ማስታወሻዎች",
+    "noFlags": "ምንም የደንብ ማስታወሻ የለም።"
   },
   "dashboard": {
     "welcome": "እንኳን ደህና መጡ፣ {name}",

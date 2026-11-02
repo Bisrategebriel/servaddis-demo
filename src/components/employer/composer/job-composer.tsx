@@ -2,7 +2,6 @@
 
 import { Check } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -53,7 +52,6 @@ export type ComposerProps = {
 export function JobComposer(props: ComposerProps) {
   const { initial, hint, venueEn, venueAm, verified, subCities, labels, canSubmit, posting } =
     props;
-  const router = useRouter();
   const t = useTranslations("jobs.composer");
   const locale = useLocale();
   const am = locale === "am";
@@ -176,7 +174,10 @@ export function JobComposer(props: ComposerProps) {
       try {
         const res = await fetch(`/api/jobs/${id}/submit`, { method: "POST" });
         if (res.ok) {
-          router.push(`/employer/jobs/${id}`);
+          // A full load, not router.push: after a resubmit the router cache still holds the
+          // overview as it was, and would flash the old status first.
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- see above
+          window.location.assign(`/employer/jobs/${id}`);
           return; // stay "submitting" until the overview replaces the composer
         }
         const { error } = await res.json();

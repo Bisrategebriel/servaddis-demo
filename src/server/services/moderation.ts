@@ -1,19 +1,26 @@
 import "server-only";
 import type { ModerationStatus, ModerationType, Prisma, User } from "@prisma/client";
+import { computeExpiresAt } from "@/lib/expiry";
 import { now } from "../clock";
 import { db } from "../db";
 import { conflict, notFound } from "../http/errors";
 import { audit } from "./audit";
-import { notify, sms } from "./notifications";
+import { employerRecipients, notify, sms } from "./notifications";
 
 // Moderation queue (A-01…A-03). Every decision is one transaction: item + target + notification
-// + simulated SMS + audit (TRD §5.3). Job decisions join this switch in T2.5.
+// + simulated SMS + audit (TRD §5.3).
 
 export type Decision = "APPROVE" | "REQUEST_CHANGES" | "REJECT";
 
 const itemInclude = {
   license: { include: { venue: { select: { id: true, nameEn: true, nameAm: true } } } },
-  job: { include: { venue: { select: { id: true, nameEn: true, nameAm: true } } } },
+  job: {
+    include: {
+      venue: { select: { id: true, nameEn: true, nameAm: true } },
+      subCity: true,
+      roleTemplate: true,
+    },
+  },
 } satisfies Prisma.ModerationItemInclude;
 
 export async function listQueue(type: ModerationType | undefined, status: ModerationStatus) {
@@ -60,7 +67,7 @@ const DECIDED_STATUS: Record<Decision, ModerationStatus> = {
 async function decideLicense(
   tx: Prisma.TransactionClient,
   admin: User,
-  item: Awaited<ReturnType<typeof getItem>>,
+  item: Item,
   decision: Decision,
   reason: string | undefined,
   at: Date,
@@ -119,6 +126,98 @@ async function decideLicense(
   }
 }
 
+type Item = Awaited<ReturnType<typeof getItem>>;
+
+/** Job decisions (doc 05 §6.1, notification matrix doc 03 §10). */
+async function decideJob(
+  tx: Prisma.TransactionClient,
+  item: Item,
+  decision: Decision,
+  reason: string | undefined,
+  at: Date,
+) {
+  const job = item.job!;
+  if (job.status !== "PENDING_REVIEW") {
+    throw conflict("This job is no longer waiting for review.", "ይህ ሥራ ከእንግዲህ ግምገማ አይጠብቅም።", {
+      status: job.status,
+    });
+  }
+  const titleAm = job.titleAm || job.titleEn;
+  const titleEn = job.titleEn || job.titleAm!;
+  const everyone = await employerRecipients(tx, job.venueId, job.createdById);
+  const creator = everyone.filter((u) => u.id === job.createdById);
+
+  if (decision === "APPROVE") {
+    const expiresAt = computeExpiresAt(job.urgency, at);
+    await tx.job.update({
+      where: { id: job.id },
+      data: {
+        status: "LIVE",
+        publishedAt: at,
+        expiresAt,
+        needByAt: job.urgency === "NORMAL" ? null : expiresAt,
+      },
+    });
+    // The founding post was only held at submit; approval uses it up (doc 05 §6.1).
+    if (job.postingSource === "FOUNDING_FREE") {
+      await tx.venue.updateMany({
+        where: { id: job.venueId, foundingPostsLeft: { gt: 0 } },
+        data: { foundingPostsLeft: { decrement: 1 } },
+      });
+    }
+    await notify(
+      tx,
+      everyone.map((u) => u.id),
+      {
+        kind: "JOB_APPROVED",
+        titleEn: "Your job is live",
+        titleAm: "ሥራዎ ወጥቷል",
+        bodyEn: `"${titleEn}" is now in the jobseeker feed.`,
+        bodyAm: `"${titleAm}" አሁን በሥራ ፈላጊዎች ዝርዝር ውስጥ ይታያል።`,
+        href: `/employer/jobs/${job.id}`,
+      },
+    );
+    return;
+  }
+
+  const changes = decision === "REQUEST_CHANGES";
+  await tx.job.update({
+    where: { id: job.id },
+    data: { status: changes ? "CHANGES_REQUESTED" : "REJECTED" },
+  });
+  const recipients = changes ? creator : everyone;
+  await notify(
+    tx,
+    recipients.map((u) => u.id),
+    changes
+      ? {
+          kind: "JOB_CHANGES_REQUESTED",
+          titleEn: "Changes requested",
+          titleAm: "ማስተካከያ ተጠይቋል",
+          bodyEn: `"${titleEn}": ${reason}`,
+          bodyAm: `"${titleAm}"፦ ${reason}`,
+          href: `/employer/jobs/${job.id}/edit`,
+        }
+      : {
+          kind: "JOB_REJECTED",
+          titleEn: "Your job was not accepted",
+          titleAm: "ሥራዎ ተቀባይነት አላገኘም",
+          bodyEn: `"${titleEn}": ${reason}`,
+          bodyAm: `"${titleAm}"፦ ${reason}`,
+          href: `/employer/jobs/${job.id}`,
+        },
+  );
+  for (const u of recipients) {
+    const en = changes
+      ? `Servaddis: please update your job "${titleEn}". ${reason}`
+      : `Servaddis: your job "${titleEn}" was not accepted. ${reason}`;
+    const am = changes
+      ? `Servaddis፦ እባክዎ "${titleAm}" የሚለውን ሥራ ያስተካክሉ። ${reason}`
+      : `Servaddis፦ "${titleAm}" የሚለው ሥራ ተቀባይነት አላገኘም። ${reason}`;
+    await sms(tx, u.phone, u.locale === "AM" ? am : en, "ALERT");
+  }
+}
+
 export async function decide(admin: User, id: string, decision: Decision, reason?: string) {
   const item = await getItem(id);
   if (item.status !== "PENDING") {
@@ -126,10 +225,10 @@ export async function decide(admin: User, id: string, decision: Decision, reason
       status: item.status,
     });
   }
-  if (item.type !== "LICENSE") {
+  if (item.type === "REPORT") {
     throw conflict("This item type can't be decided yet.", "ይህ ዓይነት ጉዳይ ገና ውሳኔ ሊሰጥበት አይችልም።");
   }
-  if (decision === "REQUEST_CHANGES") {
+  if (item.type === "LICENSE" && decision === "REQUEST_CHANGES") {
     throw conflict(
       "A license is approved or rejected. Rejecting lets the owner upload a new one.",
       "ፈቃድ ይጸድቃል ወይም ውድቅ ይሆናል። ውድቅ ሲሆን ባለቤቱ አዲስ መጫን ይችላል።",
@@ -138,17 +237,18 @@ export async function decide(admin: User, id: string, decision: Decision, reason
 
   const at = now();
   return db.$transaction(async (tx) => {
-    await decideLicense(tx, admin, item, decision, reason, at);
+    if (item.type === "JOB") await decideJob(tx, item, decision, reason, at);
+    else await decideLicense(tx, admin, item, decision, reason, at);
     const updated = await tx.moderationItem.update({
       where: { id },
       data: { status: DECIDED_STATUS[decision], reviewerId: admin.id, reason, decidedAt: at },
     });
     await audit(tx, {
       actorId: admin.id,
-      action: `license.${decision.toLowerCase()}`,
+      action: `${item.type.toLowerCase()}.${decision.toLowerCase()}`,
       entity: "ModerationItem",
       entityId: id,
-      meta: { venueId: item.license!.venueId, reason },
+      meta: { venueId: item.license?.venueId ?? item.job!.venueId, jobId: item.jobId, reason },
     });
     return updated;
   });

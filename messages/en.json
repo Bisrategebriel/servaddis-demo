@@ -162,7 +162,7 @@
     "loading": "Loading…",
     "loadFailed": "We couldn't load this. Try again.",
     "empty": "Nothing is waiting for review.",
-    "colItem": "Venue",
+    "colItem": "Item",
     "colAge": "Waiting",
     "colFlags": "Flags",
     "ageMinutes": "{count, plural, one {# min} other {# min}}",
@@ -172,11 +172,16 @@
     "fastApprove": "Unchanged repost: fast approve",
     "back": "Back to queue",
     "reason": "Reason (required to reject)",
-    "reasonRequired": "Add a reason. The owner will see it.",
+    "reasonRequired": "Add a reason. The employer will see it.",
     "approve": "Approve",
     "reject": "Reject",
     "decided": "This item has already been decided.",
-    "openDocument": "Open document"
+    "openDocument": "Open document",
+    "requestChanges": "Request changes",
+    "reasonJob": "Reason (required to reject or request changes)",
+    "enhancedScrutiny": "Enhanced scrutiny",
+    "flagsTitle": "Rules engine notes",
+    "noFlags": "No rule flags."
   },
   "dashboard": {
     "welcome": "Welcome, {name}",

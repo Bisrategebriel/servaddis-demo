@@ -2,7 +2,7 @@ import "server-only";
 import type { CheckinKind, Prisma } from "@prisma/client";
 import { DAY_MS, now } from "./clock";
 import { db } from "./db";
-import { notify, sms } from "./services/notifications";
+import { employerRecipients, notify, sms } from "./services/notifications";
 
 // Time-based work without background workers (TRD §5.9). Idempotent, so it is safe to call
 // from the 60 s timer, after a time-skip, and on admin-queue load.
@@ -47,20 +47,6 @@ async function expireJobs(tx: Tx, at: Date) {
     data: { status: "EXPIRED" },
   });
   return count;
-}
-
-/** venue owners + the job's creator: the "job creator + Owner" recipients in doc 03 §10. */
-async function employerRecipients(tx: Tx, venueId: string, createdById: string) {
-  const owners = await tx.venueMember.findMany({
-    where: { venueId, role: "OWNER", status: "ACTIVE", userId: { not: null } },
-    select: { user: { select: { id: true, phone: true, locale: true } } },
-  });
-  const creator = await tx.user.findUniqueOrThrow({
-    where: { id: createdById },
-    select: { id: true, phone: true, locale: true },
-  });
-  const byId = new Map([creator, ...owners.map((o) => o.user!)].map((u) => [u.id, u]));
-  return [...byId.values()];
 }
 
 /**

@@ -5,8 +5,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-// SCR-A02 decision panel. A reason is required to reject, because the owner reads it.
-export function LicenseDecision({ itemId }: { itemId: string }) {
+// SCR-A02 decision panel. A reason is required to reject or request changes: the employer reads
+// it. Licenses have no request-changes path (a rejected owner uploads again).
+type Decision = "APPROVE" | "REQUEST_CHANGES" | "REJECT";
+
+export function DecisionPanel({ itemId, allowChanges }: { itemId: string; allowChanges: boolean }) {
   const t = useTranslations("moderation");
   const locale = useLocale();
   const router = useRouter();
@@ -14,8 +17,8 @@ export function LicenseDecision({ itemId }: { itemId: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function send(decision: "APPROVE" | "REJECT") {
-    if (decision === "REJECT" && !reason.trim()) return setError(t("reasonRequired"));
+  async function send(decision: Decision) {
+    if (decision !== "APPROVE" && !reason.trim()) return setError(t("reasonRequired"));
     setBusy(true);
     setError(null);
     try {
@@ -41,7 +44,7 @@ export function LicenseDecision({ itemId }: { itemId: string }) {
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="reason" className="text-small font-medium">
-          {t("reason")}
+          {allowChanges ? t("reasonJob") : t("reason")}
         </label>
         <textarea
           id="reason"
@@ -57,10 +60,20 @@ export function LicenseDecision({ itemId }: { itemId: string }) {
           {error}
         </p>
       )}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button className="h-11 flex-1 text-body" disabled={busy} onClick={() => send("APPROVE")}>
           {t("approve")}
         </Button>
+        {allowChanges && (
+          <Button
+            variant="outline"
+            className="h-11 flex-1 text-body"
+            disabled={busy}
+            onClick={() => send("REQUEST_CHANGES")}
+          >
+            {t("requestChanges")}
+          </Button>
+        )}
         <Button
           variant="destructive"
           className="h-11 flex-1 text-body"
