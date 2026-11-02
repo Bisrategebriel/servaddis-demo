@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { locale as rootLocale } from "next/root-params";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { DemoDock } from "@/components/demo/demo-dock";
+import { ServiceWorkerRegister } from "@/components/sw-register";
 import { LOCALES, isLocale } from "@/i18n/locales";
 import { inter, notoEthiopic } from "../fonts";
 import "../globals.css";
@@ -19,8 +20,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { default: "Servaddis", template: "%s · Servaddis" },
     description: t("headline"),
+    // PWA (T6.2): the manifest is app/manifest.ts; iOS reads these instead.
+    appleWebApp: { capable: true, title: "Servaddis", statusBarStyle: "black-translucent" },
+    icons: { apple: "/icons/apple-touch-icon.png" },
   };
 }
+
+export const viewport: Viewport = { themeColor: "#16243f" };
 
 export default async function RootLayout({ children }: LayoutProps<"/[locale]">) {
   const locale = await rootLocale();
@@ -30,6 +36,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[locale]">)
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
           {children}
+          <ServiceWorkerRegister />
           <div className="print:hidden">
             <DemoDock />
           </div>
