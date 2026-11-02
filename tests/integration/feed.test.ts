@@ -69,10 +69,14 @@ describe("GET /api/public/jobs", () => {
   it("is public and pins urgent jobs first, soonest deadline first, then newest", async () => {
     const { items, total } = await feed();
     expect(total).toBe(18);
-    expect(items.slice(0, 3).map((j) => j.urgency)).toEqual(["HALF_DAY", "SAME_DAY", "NEXT_DAY"]);
+    // Which urgent job closes first depends on the time of day in Addis, so check the order rule.
+    const urgent = items.slice(0, 3);
+    expect(urgent.map((j) => j.urgency).sort()).toEqual(["HALF_DAY", "NEXT_DAY", "SAME_DAY"]);
+    const deadlines = urgent.map((j) => +new Date(j.expiresAt));
+    expect(deadlines).toEqual([...deadlines].sort((a, b) => a - b));
     const rest = items.slice(3).map((j) => +new Date(j.publishedAt));
     expect(rest).toEqual([...rest].sort((a, b) => b - a));
-    expect(items[0]).toMatchObject({ venueEn: "Hiwot Garden Hotel", verified: true });
+    expect(items.every((j) => j.verified)).toBe(true);
   });
 
   it.each([

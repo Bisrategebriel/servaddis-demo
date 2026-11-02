@@ -126,3 +126,9 @@ export const feedQuery = z.object({
 });
 
 export const applyBody = z.object({ note: optionalText(300) });
+
+export const applicantsQuery = z.object({
+  sort: z.enum(["completeness", "experience"]).default("completeness"),
+  status: z.enum(["APPLIED", "VIEWED", "SHORTLISTED", "HIRED", "REJECTED"]).optional(),
+  since: z.iso.datetime().optional(),
+});

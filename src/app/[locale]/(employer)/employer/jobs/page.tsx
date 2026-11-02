@@ -62,7 +62,12 @@ async function JobsList({ searchParams }: { searchParams: Promise<{ status?: str
   const all = await db.job.findMany({
     where: { venueId: ctx.membership.venueId },
     orderBy: { createdAt: "desc" },
-    include: { subCity: true, _count: { select: { applications: true } } },
+    include: {
+      subCity: true,
+      _count: { select: { applications: true } },
+      // "new" = not opened by anyone yet (E-19 unread badge on the job)
+      applications: { where: { status: "APPLIED", viewedAt: null }, select: { id: true } },
+    },
   });
   const jobs = status ? all.filter((j) => j.status === status) : all;
   const counts = new Map<JobStatus, number>();
@@ -145,6 +150,14 @@ async function JobsList({ searchParams }: { searchParams: Promise<{ status?: str
                     <span className="text-small text-text-secondary">
                       {t("applicants", { count: job._count.applications })}
                     </span>
+                    {job.applications.length > 0 && (
+                      <span
+                        data-testid="new-badge"
+                        className="rounded-full bg-brand-accent px-2 py-0.5 text-caption font-semibold text-navy-900"
+                      >
+                        {t("newCount", { count: job.applications.length })}
+                      </span>
+                    )}
                     <JobStatusChip status={job.status} />
                   </div>
                 </Link>

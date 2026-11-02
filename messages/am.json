@@ -356,7 +356,8 @@
       "submitted": "የገባው {date}",
       "expires": "የሚያበቃው {date}",
       "expired": "ያበቃው {date}",
-      "closed": "የተዘጋው {date}"
+      "closed": "የተዘጋው {date}",
+      "newCount": "{count} አዲስ"
     },
     "overview": {
       "back": "ሁሉም ሥራዎች",
@@ -395,7 +396,9 @@
       "repostOf": "የቀድሞ ሥራ ድጋሚ ማስታወቂያ",
       "actionFailed": "አልተሳካም። እንደገና ይሞክሩ።",
       "expiringSoon": "{days, plural, one {የዚህ ሥራ ጊዜ ነገ ያልፋል} other {የዚህ ሥራ ጊዜ በ# ቀናት ውስጥ ያልፋል}} ({date})። ጊዜው ሲያልፍ በአንድ ንክኪ እንደገና መለጠፍ ይችላሉ።",
-      "viewInFeed": "በሥራ ፈላጊዎች ዝርዝር ውስጥ ይመልከቱ"
+      "viewInFeed": "በሥራ ፈላጊዎች ዝርዝር ውስጥ ይመልከቱ",
+      "applicantsLink": "አመልካቾች ({count})",
+      "newCount": "{count} አዲስ"
     }
   },
   "feed": {
@@ -474,5 +477,39 @@
       "HIRED": "እንኳን ደስ አለዎት፣ ሥራውን አግኝተዋል!",
       "REJECTED": "ቀጣሪው በዚህ ጊዜ ሌሎች አመልካቾችን መርጧል።"
     }
+  },
+  "pipeline": {
+    "title": "አመልካቾች",
+    "back": "ወደ ሥራው ተመለስ",
+    "board": "ሰሌዳ",
+    "list": "ዝርዝር",
+    "view": "እይታ",
+    "sort": "ደርድር",
+    "sorts": {
+      "completeness": "የመገለጫ ሙሉነት",
+      "experience": "ልምድ"
+    },
+    "columns": {
+      "APPLIED": "አመልክተዋል",
+      "VIEWED": "ታይቷል",
+      "SHORTLISTED": "አጭር ዝርዝር ውስጥ",
+      "HIRED": "ተቀጥረዋል",
+      "REJECTED": "ውድቅ"
+    },
+    "empty": "እስካሁን አመልካች የለም። አዳዲሶቹ እዚህ በራሳቸው ይታያሉ።",
+    "emptyColumn": "የለም",
+    "years": "{count, plural, =0 {ልምድ የለም} other {# ዓመት}}",
+    "complete": "{percent}% ሙሉ",
+    "verified": "የተረጋገጠ",
+    "newDot": "አዲስ",
+    "applied": "ያመለከተው {date}",
+    "noAccessTitle": "አመልካቾችን ማየት አይችሉም",
+    "noAccess": "የእርስዎ ሚና አመልካቾችን ማየት አይፈቅድም። ባለቤቱን ፈቃድ እንዲሰጥዎ ይጠይቁ።",
+    "live": "በራሱ ይታደሳል",
+    "unnamed": "አዲስ ሥራ ፈላጊ"
+  },
+  "toast": {
+    "view": "ይመልከቱ",
+    "dismiss": "ዝጋ"
   }
 }

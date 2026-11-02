@@ -356,7 +356,8 @@
       "submitted": "Submitted {date}",
       "expires": "Expires {date}",
       "expired": "Expired {date}",
-      "closed": "Closed {date}"
+      "closed": "Closed {date}",
+      "newCount": "{count} new"
     },
     "overview": {
       "back": "All jobs",
@@ -395,7 +396,9 @@
       "repostOf": "Repost of an earlier job",
       "actionFailed": "That didn't work. Try again.",
       "expiringSoon": "{days, plural, one {This job expires tomorrow} other {This job expires in # days}} ({date}). Once it expires you can repost it in one tap.",
-      "viewInFeed": "View in the jobseeker feed"
+      "viewInFeed": "View in the jobseeker feed",
+      "applicantsLink": "Applicants ({count})",
+      "newCount": "{count} new"
     }
   },
   "feed": {
@@ -474,5 +477,39 @@
       "HIRED": "Congratulations, you got the job!",
       "REJECTED": "The employer chose other applicants this time."
     }
+  },
+  "pipeline": {
+    "title": "Applicants",
+    "back": "Back to job",
+    "board": "Board",
+    "list": "List",
+    "view": "View",
+    "sort": "Sort",
+    "sorts": {
+      "completeness": "Profile completeness",
+      "experience": "Experience"
+    },
+    "columns": {
+      "APPLIED": "Applied",
+      "VIEWED": "Viewed",
+      "SHORTLISTED": "Shortlisted",
+      "HIRED": "Hired",
+      "REJECTED": "Rejected"
+    },
+    "empty": "No applicants yet. New ones appear here automatically.",
+    "emptyColumn": "None",
+    "years": "{count, plural, =0 {No experience} one {# yr} other {# yrs}}",
+    "complete": "{percent}% complete",
+    "verified": "Verified",
+    "newDot": "New",
+    "applied": "Applied {date}",
+    "noAccessTitle": "You can't view applicants",
+    "noAccess": "Your role can't view applicants. Ask the owner to change your access.",
+    "live": "Updates automatically",
+    "unnamed": "New jobseeker"
+  },
+  "toast": {
+    "view": "View",
+    "dismiss": "Dismiss"
   }
 }

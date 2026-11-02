@@ -45,6 +45,8 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
       roleTemplate: true,
       moderation: { where: { type: "JOB" }, orderBy: { createdAt: "desc" }, take: 1 },
       repostOf: { select: { id: true } },
+      _count: { select: { applications: true } },
+      applications: { where: { status: "APPLIED", viewedAt: null }, select: { id: true } },
     },
   });
   // Another venue's job looks exactly like a missing one (doc 05 §5.3).
@@ -94,6 +96,19 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
         <div className="flex min-w-0 flex-col gap-2">
           <h1 className="text-h1 wrap-break-word">{title}</h1>
           <JobStatusChip status={job.status} />
+          {ctx.membership.permissions.has("applicant.view") && job.publishedAt && (
+            <Link
+              href={`/employer/jobs/${job.id}/applicants`}
+              className="inline-flex w-fit items-center gap-2 font-medium text-navy-700 underline underline-offset-4"
+            >
+              {t("applicantsLink", { count: job._count.applications })}
+              {job.applications.length > 0 && (
+                <span className="rounded-full bg-brand-accent px-2 py-0.5 text-caption font-semibold text-navy-900 no-underline">
+                  {t("newCount", { count: job.applications.length })}
+                </span>
+              )}
+            </Link>
+          )}
           {job.repostOf && (
             <Link
               href={`/employer/jobs/${job.repostOf.id}`}
