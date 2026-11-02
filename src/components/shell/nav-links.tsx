@@ -16,7 +16,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { cx } from "@/lib/cx";
 
 // Icons are looked up here because components can't be passed from Server to Client Components.
 const ICONS = {
@@ -75,7 +75,7 @@ function SidebarList({
               href={item.href}
               aria-current={active ? "page" : undefined}
               title={item.label}
-              className={cn(
+              className={cx(
                 "flex min-h-10 items-center gap-3 rounded-lg px-3 text-small font-medium transition-colors",
                 active
                   ? "bg-sidebar-accent text-white"
@@ -84,7 +84,7 @@ function SidebarList({
               )}
             >
               <Icon className="size-5 shrink-0" strokeWidth={1.75} aria-hidden />
-              <span className={cn(rail && "md:sr-only lg:not-sr-only")}>{item.label}</span>
+              <span className={cx(rail && "md:sr-only lg:not-sr-only")}>{item.label}</span>
             </Link>
           </li>
         );
@@ -126,7 +126,7 @@ function BottomNav({
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={cn(
+                className={cx(
                   "flex min-h-14 flex-col items-center justify-center gap-0.5 text-caption",
                   active ? "text-primary" : "text-text-secondary",
                 )}

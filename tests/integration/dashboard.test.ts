@@ -32,6 +32,12 @@ const read = async (user: User, body: unknown) =>
   );
 
 const hiwot = () => db.venue.findFirstOrThrow({ where: { nameEn: "Hiwot Garden Hotel" } });
+/** Hiwot with its seeded feed jobs (and their applicants) removed, for exact counts. */
+const emptyHiwot = async () => {
+  const venue = await hiwot();
+  await db.job.deleteMany({ where: { venueId: venue.id } });
+  return venue;
+};
 const lideta = () => db.venue.findFirstOrThrow({ where: { nameEn: "Lideta Corner Café" } });
 const SELAM = "+251911000001";
 const YARED = "+251911000002";
@@ -55,7 +61,7 @@ describe("venue summary", () => {
   });
 
   it("marks the first job done once one has been published", async () => {
-    const venue = await hiwot();
+    const venue = await emptyHiwot();
     const selam = await byPhone(SELAM);
     expect((await (await summary(selam, venue.id)).json()).checklist.firstJob).toBe(false);
     await createJob(venue.id, selam.id, { publishedAt: new Date() });
@@ -63,7 +69,7 @@ describe("venue summary", () => {
   });
 
   it("computes KPIs and the plan", async () => {
-    const venue = await hiwot();
+    const venue = await emptyHiwot();
     const selam = await byPhone(SELAM);
     const dawit = await byPhone("+251922000001");
     const job = await createJob(venue.id, selam.id);
@@ -82,7 +88,7 @@ describe("venue summary", () => {
   });
 
   it("shows applicant names only to members who may see applicants", async () => {
-    const venue = await hiwot();
+    const venue = await emptyHiwot();
     const selam = await byPhone(SELAM);
     const dawit = await byPhone("+251922000001");
     const job = await createJob(venue.id, selam.id);

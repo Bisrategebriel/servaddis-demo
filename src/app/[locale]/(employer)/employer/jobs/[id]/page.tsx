@@ -132,6 +132,11 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
 
       <div className={`flex flex-col gap-2 rounded-md px-4 py-3 ${NOTE_TONE[job.status]}`}>
         <p data-testid="status-note">{t(`notes.${job.status}`)}</p>
+        {job.status === "LIVE" && (
+          <Link href={`/jobs/${job.id}`} className="w-fit text-small underline underline-offset-4">
+            {t("viewInFeed")}
+          </Link>
+        )}
         {reason && (
           <p className="text-small">
             <span className="font-semibold">{t("reason")}:</span> {reason}

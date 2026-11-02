@@ -1,8 +1,8 @@
 import "server-only";
-import { createHash } from "node:crypto";
 import type { Job, Prisma, User } from "@prisma/client";
 import type { z } from "zod";
 import { resolveEntitlement } from "@/lib/entitlement";
+import { contentHash } from "@/lib/job-hash";
 import { firstInvalidStep, formFromJob, toJobPayload } from "@/lib/job-form";
 import { parseRoleTemplateDefaults } from "@/lib/role-template";
 import { jobDraftBody } from "@/lib/zod-schemas";
@@ -90,33 +90,6 @@ export async function venueEntitlement(tx: Tx | typeof db, venueId: string) {
       : null,
     foundingLeft: venue.foundingPostsLeft - pendingFounding,
   };
-}
-
-// Editing any of these on a LIVE job re-queues it; they also make up the repost hash (doc 05 §6.1).
-const MATERIAL_FIELDS = [
-  "titleEn",
-  "titleAm",
-  "descriptionEn",
-  "descriptionAm",
-  "salaryMin",
-  "salaryMax",
-  "salaryPeriod",
-  "requirementsEn",
-  "requirementsAm",
-  "employmentType",
-  "subCityId",
-  "urgency",
-] as const;
-
-/** SHA-256 of the normalised material fields, JSON with sorted keys (doc 05 §6.4). */
-export function contentHash(job: Pick<Job, (typeof MATERIAL_FIELDS)[number]>) {
-  const normalised = Object.fromEntries(
-    [...MATERIAL_FIELDS].sort().map((k) => {
-      const v = job[k];
-      return [k, typeof v === "string" ? v.trim() : (v ?? "")];
-    }),
-  );
-  return createHash("sha256").update(JSON.stringify(normalised)).digest("hex");
 }
 
 const SUBMITTABLE: Job["status"][] = ["DRAFT", "CHANGES_REQUESTED"];

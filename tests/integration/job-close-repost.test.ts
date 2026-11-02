@@ -5,7 +5,7 @@ import { POST as repostRoute } from "@/app/api/jobs/[id]/repost/route";
 import { DAY_MS, now, setClockOffset } from "@/server/clock";
 import { db } from "@/server/db";
 import { venueSummary } from "@/server/services/dashboard";
-import { contentHash } from "@/server/services/jobs";
+import { contentHash } from "@/lib/job-hash";
 import { signSessionToken } from "@/server/session";
 import { createJob, hiwot, resetDb } from "./helpers";
 

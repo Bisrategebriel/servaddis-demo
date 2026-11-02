@@ -27,3 +27,8 @@ export function computeExpiresAt(urgency: Urgency, publishedAt: Date): Date {
       return new Date(publishedAt.getTime() + 30 * DAY_MS);
   }
 }
+
+/** Whole EAT calendar days from `from` to `to`: 0 = same day, 1 = tomorrow. */
+export function eatDaysBetween(from: Date, to: Date): number {
+  return Math.round((endOfEatDay(to).getTime() - endOfEatDay(from).getTime()) / DAY_MS);
+}

@@ -7,7 +7,7 @@ import { prefillFromTemplate } from "@/lib/role-template";
 import { DAY_MS, now, setClockOffset } from "@/server/clock";
 import { db } from "@/server/db";
 import { signSessionToken } from "@/server/session";
-import { createJob, resetDb } from "./helpers";
+import { resetDb } from "./helpers";
 
 const BASE = "http://localhost:3000";
 const SELAM = "+251911000001"; // Hiwot, PRO (unlimited)
@@ -137,11 +137,14 @@ describe("POST /api/jobs/:id/submit", () => {
     const venue = await db.venue.findFirstOrThrow({
       where: { nameEn: "Piassa Terrace Restaurant" },
     });
-    for (let i = 0; i < 4; i++) await createJob(venue.id, henock.id);
-    const fifth = await draft(henock);
-    expect((await submit(henock, fifth)).status).toBe(200); // 4 live + this = 5
-    const sixth = await draft(henock);
-    expect((await submit(henock, sixth)).status).toBe(409);
+    // The seed leaves Piassa at its Standard limit: 5 live jobs.
+    const id = await draft(henock);
+    expect((await submit(henock, id)).status).toBe(409);
+    const live = await db.job.findFirstOrThrow({ where: { venueId: venue.id, status: "LIVE" } });
+    await db.job.update({ where: { id: live.id }, data: { status: "CLOSED" } });
+    expect((await submit(henock, id)).status).toBe(200);
+    const another = await draft(henock);
+    expect((await submit(henock, another)).status).toBe(409); // 4 live + 1 pending = 5
   });
 
   it("ignores an expired subscription", async () => {

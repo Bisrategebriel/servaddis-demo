@@ -1,13 +1,16 @@
-// Seed v1 (doc 05 §9.1–9.4). Idempotent: wipes every table and re-inserts, in one transaction.
+// Seed (doc 05 §9.1–9.5). Idempotent: wipes every table and re-inserts, in one transaction.
 // Shared by `pnpm seed` and the Demo Toolkit reset (T0.9), so it takes the client as a parameter
 // and never imports `src/server/db` (which is server-only).
 //
 // Not here yet, added by the tasks that build their features (PLAN.md §9):
-//   live feed jobs + pipeline applicants (§9.5) → T3.1 · 6-month history → T5.5
+//   6-month history → T5.5
 import { copyFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import type { Prisma, PrismaClient } from "@prisma/client";
+import { computeExpiresAt } from "../../src/lib/expiry";
+import { contentHash } from "../../src/lib/job-hash";
 import { profileCompleteness } from "../../src/lib/profile-completeness";
+import { FEED_JOBS, PIPELINE_APPLICANTS, PIPELINE_JOB } from "./data/feed-jobs";
 import { ADDIS_SUB_CITIES, CITIES, type SubCitySlug } from "./data/geography";
 import {
   ADMIN,
@@ -52,6 +55,7 @@ export async function seed(db: PrismaClient, now = new Date()): Promise<SeedSumm
       await seedVenues(tx, geo, planIds, now);
       await seedJobseekers(tx, geo, skillIds);
       await seedPendingLicense(tx, now);
+      await seedFeedJobs(tx, geo, skillIds, now);
       await tx.demoSetting.createMany({
         data: [
           { key: "clock_offset_ms", value: "0" },
@@ -225,6 +229,108 @@ function copySampleLicense() {
   );
 }
 
+const HOUR = 60 * 60 * 1000;
+
+/**
+ * Doc 05 §9.5 feed: LIVE jobs with real publish/expiry times (EAT rules), their template's skills,
+ * and the Front Desk Agent pipeline. Posted by each venue's owner.
+ */
+async function seedFeedJobs(tx: Tx, geo: Geo, skillIds: Map<string, string>, now: Date) {
+  const venues = await tx.venue.findMany({
+    include: { members: { where: { role: "OWNER" }, select: { userId: true } } },
+  });
+  for (const f of FEED_JOBS) {
+    const venue = venues.find((v) => v.nameEn === f.venue)!;
+    const t = ROLE_TEMPLATES.find((r) => r.slug === f.template)!;
+    const template = await tx.roleTemplate.findUniqueOrThrow({ where: { slug: t.slug } });
+    const d = t.defaults;
+    const urgency = f.urgency ?? "NORMAL";
+    const publishedAt = new Date(now.getTime() - f.ageHours * HOUR);
+    const expiresAt = computeExpiresAt(urgency, publishedAt);
+    const [salaryMin, salaryMax] = f.salary ?? [d.salaryHint.min, d.salaryHint.max];
+    const content = {
+      titleEn: t.nameEn,
+      titleAm: t.nameAm,
+      descriptionEn: d.descriptionEn,
+      descriptionAm: d.descriptionAm,
+      requirementsEn: JSON.stringify(d.requirementsEn),
+      requirementsAm: JSON.stringify(d.requirementsAm),
+      salaryMin,
+      salaryMax,
+      salaryPeriod: d.salaryHint.period,
+      employmentType: d.employmentType,
+      subCityId: geo.subCityIds.get(f.subCity)!,
+      urgency,
+    };
+    const job = await tx.job.create({
+      data: {
+        ...content,
+        venueId: venue.id,
+        createdById: venue.members[0].userId!,
+        roleTemplateId: template.id,
+        cityId: geo.addisId,
+        headcount: f.headcount ?? 1,
+        shiftPattern: d.shiftPattern,
+        benefitsEn: JSON.stringify(d.benefitsEn),
+        benefitsAm: JSON.stringify(d.benefitsAm),
+        status: "LIVE",
+        postingSource: f.source,
+        contentHash: contentHash(content),
+        createdAt: new Date(publishedAt.getTime() - 3 * HOUR),
+        submittedAt: new Date(publishedAt.getTime() - 2 * HOUR),
+        publishedAt,
+        expiresAt,
+        needByAt: urgency === "NORMAL" ? null : expiresAt,
+      },
+    });
+    await tx.jobSkill.createMany({
+      data: d.skillSlugs.map((slug) => ({ jobId: job.id, skillId: skillIds.get(slug)! })),
+    });
+    if (f.venue === PIPELINE_JOB.venue && f.template === PIPELINE_JOB.template) {
+      await seedPipeline(tx, job.id, publishedAt, venue.members[0].userId!);
+    }
+  }
+}
+
+/** The 9 Front Desk Agent applicants, each with the events of every step they reached. */
+async function seedPipeline(tx: Tx, jobId: string, publishedAt: Date, ownerId: string) {
+  for (const a of PIPELINE_APPLICANTS) {
+    const seeker = await tx.user.findFirstOrThrow({
+      where: { name: a.name, platformRole: "JOBSEEKER" },
+    });
+    const appliedAt = new Date(publishedAt.getTime() + a.appliedAfterHours * HOUR);
+    const viewedAt = a.status === "APPLIED" ? null : new Date(appliedAt.getTime() + 3 * HOUR);
+    const shortlistedAt =
+      a.status === "SHORTLISTED" ? new Date(appliedAt.getTime() + 5 * HOUR) : null;
+    const rejectedAt = a.status === "REJECTED" ? new Date(appliedAt.getTime() + 6 * HOUR) : null;
+    const events = [
+      { type: "APPLIED", at: appliedAt, actorId: seeker.id },
+      viewedAt && { type: "VIEWED", at: viewedAt, actorId: ownerId },
+      shortlistedAt && { type: "SHORTLISTED", at: shortlistedAt, actorId: ownerId },
+      rejectedAt && {
+        type: "REJECTED",
+        at: rejectedAt,
+        actorId: ownerId,
+        meta: JSON.stringify({ reason: "LANGUAGE_REQUIREMENT" }),
+      },
+    ].filter((e): e is NonNullable<typeof e> => !!e);
+    await tx.application.create({
+      data: {
+        jobId,
+        jobseekerId: seeker.id,
+        note: a.note,
+        status: a.status,
+        rejectReason: rejectedAt ? "LANGUAGE_REQUIREMENT" : null,
+        appliedAt,
+        viewedAt,
+        shortlistedAt,
+        rejectedAt,
+        events: { create: events },
+      },
+    });
+  }
+}
+
 type ProfileShape = {
   experienceYears: number;
   faydaVerified: boolean;
@@ -354,18 +460,31 @@ function headlineFor(roleName: string, years: number) {
 }
 
 async function summarise(tx: Tx): Promise<SeedSummary> {
-  const [cities, subCities, skills, roleTemplates, plans, users, venues, members, profiles] =
-    await Promise.all([
-      tx.city.count(),
-      tx.subCity.count(),
-      tx.skill.count(),
-      tx.roleTemplate.count(),
-      tx.plan.count(),
-      tx.user.count(),
-      tx.venue.count(),
-      tx.venueMember.count(),
-      tx.jobseekerProfile.count(),
-    ]);
+  const [
+    cities,
+    subCities,
+    skills,
+    roleTemplates,
+    plans,
+    users,
+    venues,
+    members,
+    profiles,
+    liveJobs,
+    applications,
+  ] = await Promise.all([
+    tx.city.count(),
+    tx.subCity.count(),
+    tx.skill.count(),
+    tx.roleTemplate.count(),
+    tx.plan.count(),
+    tx.user.count(),
+    tx.venue.count(),
+    tx.venueMember.count(),
+    tx.jobseekerProfile.count(),
+    tx.job.count({ where: { status: "LIVE" } }),
+    tx.application.count(),
+  ]);
   return {
     seedVersion: Number(SEED_VERSION),
     cities,
@@ -377,5 +496,7 @@ async function summarise(tx: Tx): Promise<SeedSummary> {
     venues,
     members,
     jobseekers: profiles,
+    liveJobs,
+    applications,
   };
 }

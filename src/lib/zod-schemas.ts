@@ -109,3 +109,18 @@ export const jobDraftBody = z.object({
   employmentType: z.enum(EMPLOYMENT_TYPES),
   urgency: z.enum(URGENCIES),
 });
+
+// Public feed filters (TRD §7.1). The filter sheet is a plain GET form, so empty fields arrive
+// as "" and mean "any".
+const blank = (v: unknown) => (v === "" ? undefined : v);
+export const feedQuery = z.object({
+  sub: z.preprocess(blank, z.string().max(40).optional()),
+  type: z.preprocess(blank, z.enum(EMPLOYMENT_TYPES).optional()),
+  role: z.preprocess(blank, z.string().max(40).optional()),
+  min: z.preprocess(blank, z.coerce.number().int().min(0).max(1_000_000).optional()),
+  max: z.preprocess(blank, z.coerce.number().int().min(0).max(1_000_000).optional()),
+  urgent: z.preprocess(blank, z.enum(["1", "true", "on"]).optional()).transform((v) => !!v),
+  q: z.preprocess(blank, z.string().trim().max(60).optional()),
+  cursor: z.preprocess(blank, z.coerce.number().int().min(0).optional()),
+  limit: z.preprocess(blank, z.coerce.number().int().min(1).max(50).default(20)),
+});

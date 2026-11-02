@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import type { AppLocale } from "@/i18n/locales";
-import { cn } from "@/lib/utils";
+import { cx } from "@/lib/cx";
 
 // አማ | EN segmented control (doc 04 §5 LangToggle). Always in the top bar, never in a menu.
 // The choice is saved server-side (cookie + User.locale), then the page reloads so <html lang>,
@@ -36,7 +36,7 @@ export function LangToggle({ surface = "light" }: { surface?: "light" | "navy" }
     <div
       role="group"
       aria-label={t("label")}
-      className={cn(
+      className={cx(
         "inline-flex rounded-md border p-0.5",
         surface === "navy" ? "border-navy-700" : "border-border-strong",
       )}
@@ -52,7 +52,7 @@ export function LangToggle({ surface = "light" }: { surface?: "light" | "navy" }
             aria-label={o.name}
             disabled={pending !== null}
             onClick={() => choose(o.locale)}
-            className={cn(
+            className={cx(
               "min-h-9 min-w-11 rounded-sm px-2.5 text-small font-semibold transition-colors",
               surface === "navy"
                 ? active

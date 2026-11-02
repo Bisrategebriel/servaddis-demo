@@ -118,10 +118,12 @@ describe("sweep", () => {
     const job = await createJob(venue.id, selam.id, {
       expiresAt: new Date(Date.now() + 2 * DAY_MS),
     });
-    expect((await sweep()).expired).toBe(0);
+    await sweep();
+    expect((await db.job.findUniqueOrThrow({ where: { id: job.id } })).status).toBe("LIVE");
     await advanceClock(3 * DAY_MS);
     expect(now().getTime()).toBeGreaterThan(job.expiresAt!.getTime());
-    expect((await sweep()).expired).toBe(1);
+    expect((await sweep()).expired).toBeGreaterThanOrEqual(1); // seeded urgent jobs expire too
+    expect((await db.job.findUniqueOrThrow({ where: { id: job.id } })).status).toBe("EXPIRED");
   });
 
   it("shares one run between concurrent callers", async () => {

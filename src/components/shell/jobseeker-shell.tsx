@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { Wordmark } from "@/components/brand/wordmark";
+import { OfflineBanner } from "@/components/jobseeker/offline-banner";
 import { LangToggle } from "@/components/lang-toggle";
 import { cn } from "@/lib/utils";
 import { BottomNavLinks } from "./nav-links";
@@ -27,6 +28,7 @@ export async function JobseekerShell({
           </Link>
           <LangToggle surface="navy" />
         </div>
+        <OfflineBanner />
       </header>
       <main
         id="main"
