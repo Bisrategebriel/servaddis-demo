@@ -1,6 +1,6 @@
 import "server-only";
 import { createHmac, randomInt, timingSafeEqual } from "node:crypto";
-import type { PlatformRole, Prisma, User } from "@prisma/client";
+import type { Locale, PlatformRole, Prisma, User } from "@prisma/client";
 import { MINUTE_MS, now } from "../clock";
 import { db } from "../db";
 import { AppError, unauthorized } from "../http/errors";
@@ -94,6 +94,7 @@ export async function verifyOtp(
   phone: string,
   code: string,
   intent?: SignUpIntent,
+  locale: Locale = "AM",
 ): Promise<{ user: User; isNew: boolean; redirectTo: string }> {
   const lock = await activeLock(phone);
   if (lock) throw lockedError(lock.expiresAt);
@@ -151,7 +152,7 @@ export async function verifyOtp(
             phone,
             name: "",
             platformRole: invited ? "EMPLOYER" : intent!,
-            locale: "AM",
+            locale,
             createdAt: at,
             lastLoginAt: at,
           },

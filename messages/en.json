@@ -6,7 +6,8 @@
     "comingSoon": "This screen is built in a later step of the demo.",
     "signIn": "Sign in",
     "signOut": "Sign out",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "simulated": "Simulated"
   },
   "lang": {
     "label": "Language",
@@ -20,7 +21,9 @@
     "closeMenu": "Close menu",
     "mainNav": "Main navigation",
     "account": "Account",
-    "adminTag": "Admin"
+    "adminTag": "Admin",
+    "markAllRead": "Mark all read",
+    "noNotifications": "No notifications yet."
   },
   "roles": {
     "OWNER": "Owner",
@@ -54,7 +57,6 @@
     "jobs": "Jobs",
     "myApplications": "My applications",
     "profile": "Profile",
-    "dashboard": "Dashboard",
     "employerJobs": "Jobs",
     "team": "Team",
     "insights": "Insights",
@@ -84,7 +86,9 @@
       "rahel": "Rahel: HR manager (Screener)",
       "dawit": "Dawit: Waiter",
       "moderator": "Moderator"
-    }
+    },
+    "smsLog": "SMS log",
+    "smsEmpty": "No messages yet."
   },
   "login": {
     "phoneLabel": "Enter your phone number",
@@ -173,5 +177,34 @@
     "reject": "Reject",
     "decided": "This item has already been decided.",
     "openDocument": "Open document"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {name}",
+    "welcomeBack": "Welcome",
+    "loadFailed": "We couldn't load your dashboard. Retrying…",
+    "getStarted": "Get started",
+    "progress": "{done}/{total}",
+    "stepRegister": "Register",
+    "stepVenue": "Venue profile",
+    "stepLicense": "Business license",
+    "stepFirstJob": "Publish your first job",
+    "firstJobLocked": "You can publish once your venue is verified.",
+    "uploadLicense": "Upload license",
+    "postFirstJob": "Post your first job",
+    "liveJobs": "Live jobs",
+    "newApplicants": "New applicants",
+    "timeToFill": "Avg time-to-fill",
+    "days": "{days} days",
+    "plan": "Plan",
+    "founding": "Founding ({left} free)",
+    "recentActivity": "Recent activity",
+    "noActivity": "Nothing yet. Applications will show up here.",
+    "applied": "{name} applied to {job}",
+    "verification": {
+      "UNSUBMITTED": "Not verified yet",
+      "PENDING": "Pending verification",
+      "VERIFIED": "Verified venue",
+      "REJECTED": "License not accepted"
+    }
   }
 }

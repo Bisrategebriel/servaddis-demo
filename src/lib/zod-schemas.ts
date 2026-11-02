@@ -82,3 +82,5 @@ export const moderationDecisionBody = z
     path: ["reason"],
     message: "A reason is required",
   });
+
+export const notificationsReadBody = z.object({ ids: z.array(z.string()).max(50).optional() });

@@ -209,7 +209,7 @@ export async function authorizeJob(ctx: Ctx, jobId: string, perm: PermissionKey)
 
 - `notify(userIds, kind, params)` creates `Notification` rows with both languages; `sms(to, text, kind)` writes `SmsLog`.
 - The Demo Toolkit **Phone drawer** renders `SmsLog` as a phone-style conversation list, so "SMS sent" is visible.
-- Bell badge: SWR poll `/api/notifications` every 10 s (3 s on the pipeline screen via a dedicated endpoint).
+- Bell badge: SWR poll `/api/notifications` every 4 s *(10 s in the original spec; changed 2 Nov 2026 because script step 4 needs the notification within 5 s)*.
 
 ### 5.9 Clock and sweep
 
@@ -312,7 +312,7 @@ Status codes: `200/201` ok · `400` validation · `401` no session · `403` miss
 | Jobseeker tracker | `GET /api/me/applications` | 5 s | ETag / `If-None-Match` → 304 |
 | Admin queue | `GET /api/admin/moderation?status=PENDING` | 4 s | |
 | Promote log | `GET /api/jobs/:id/distribution` | 2 s until settled | |
-| Notification bell | `GET /api/notifications` | 10 s | |
+| Notification bell | `GET /api/notifications` | 4 s | Was 10 s; see §5.8 |
 
 Server-Sent Events are a drop-in replacement later but add connection handling that is not worth it for a demo.
 

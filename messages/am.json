@@ -6,7 +6,8 @@
     "comingSoon": "ይህ ገጽ በሚቀጥሉት የማሳያው ደረጃዎች ይሠራል።",
     "signIn": "ይግቡ",
     "signOut": "ይውጡ",
-    "loading": "በመጫን ላይ…"
+    "loading": "በመጫን ላይ…",
+    "simulated": "ማስመሰያ"
   },
   "lang": {
     "label": "ቋንቋ",
@@ -20,7 +21,9 @@
     "closeMenu": "ምናሌውን ይዝጉ",
     "mainNav": "ዋና ማውጫ",
     "account": "መለያ",
-    "adminTag": "አስተዳዳሪ"
+    "adminTag": "አስተዳዳሪ",
+    "markAllRead": "ሁሉንም እንደተነበበ ምልክት አድርግ",
+    "noNotifications": "ገና ማሳወቂያ የለም።"
   },
   "roles": {
     "OWNER": "ባለቤት",
@@ -54,7 +57,6 @@
     "jobs": "ሥራዎች",
     "myApplications": "ማመልከቻዎቼ",
     "profile": "መገለጫ",
-    "dashboard": "ዳሽቦርድ",
     "employerJobs": "ሥራዎች",
     "team": "ቡድን",
     "insights": "ትንታኔ",
@@ -84,7 +86,9 @@
       "rahel": "ራሔል፦ የሰው ኃይል ሥራ አስኪያጅ (አመልካች መራጭ)",
       "dawit": "ዳዊት፦ አስተናጋጅ",
       "moderator": "አወያይ"
-    }
+    },
+    "smsLog": "የኤስኤምኤስ መዝገብ",
+    "smsEmpty": "ገና መልዕክት የለም።"
   },
   "login": {
     "phoneLabel": "ስልክ ቁጥርዎን ያስገቡ",
@@ -173,5 +177,34 @@
     "reject": "ውድቅ አድርግ",
     "decided": "በዚህ ጉዳይ ላይ አስቀድሞ ውሳኔ ተሰጥቷል።",
     "openDocument": "ሰነዱን ይክፈቱ"
+  },
+  "dashboard": {
+    "welcome": "እንኳን ደህና መጡ፣ {name}",
+    "welcomeBack": "እንኳን ደህና መጡ",
+    "loadFailed": "ዳሽቦርድዎን መጫን አልቻልንም። እንደገና በመሞከር ላይ…",
+    "getStarted": "ይጀምሩ",
+    "progress": "{done}/{total}",
+    "stepRegister": "ምዝገባ",
+    "stepVenue": "የድርጅት መገለጫ",
+    "stepLicense": "የንግድ ፈቃድ",
+    "stepFirstJob": "የመጀመሪያ ሥራዎን ያውጡ",
+    "firstJobLocked": "ድርጅትዎ ሲረጋገጥ ማውጣት ይችላሉ።",
+    "uploadLicense": "ፈቃድ ይጫኑ",
+    "postFirstJob": "የመጀመሪያ ሥራዎን ይለጥፉ",
+    "liveJobs": "ክፍት ሥራዎች",
+    "newApplicants": "አዲስ አመልካቾች",
+    "timeToFill": "አማካይ የቅጥር ጊዜ",
+    "days": "{days} ቀናት",
+    "plan": "ዕቅድ",
+    "founding": "መሥራች ({left} ነጻ)",
+    "recentActivity": "የቅርብ ጊዜ እንቅስቃሴ",
+    "noActivity": "ገና ምንም የለም። ማመልከቻዎች እዚህ ይታያሉ።",
+    "applied": "{name} ለ{job} አመልክተዋል",
+    "verification": {
+      "UNSUBMITTED": "ገና አልተረጋገጠም",
+      "PENDING": "በማረጋገጥ ላይ",
+      "VERIFIED": "የተረጋገጠ ድርጅት",
+      "REJECTED": "ፈቃዱ ተቀባይነት አላገኘም"
+    }
   }
 }

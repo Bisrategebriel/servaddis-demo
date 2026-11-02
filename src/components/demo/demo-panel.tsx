@@ -3,6 +3,7 @@
 import { RotateCcw, Wrench, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
+import { SimulatedTag } from "@/components/simulated-tag";
 import { Button } from "@/components/ui/button";
 import { PERSONAS, type DemoStatus, type PersonaKey } from "@/lib/demo";
 
@@ -15,6 +16,39 @@ const post = (path: string, body?: unknown) =>
 
 // A full load, not client navigation: the language, and with it the root layout, may change.
 const goTo = (path: string) => window.location.replace(new URL(path, window.location.origin).href);
+
+type Sms = { id: string; toPhone: string; body: string };
+
+/** The simulated SMS gateway's outbox, loaded when opened (doc 03 §10). */
+function SmsLog() {
+  const t = useTranslations("demo");
+  const [items, setItems] = useState<Sms[] | null>(null);
+  async function load() {
+    const res = await fetch("/api/demo/sms").catch(() => null);
+    if (res?.ok) setItems((await res.json()).items);
+  }
+  return (
+    <details
+      onToggle={(e) => {
+        if (e.currentTarget.open) void load();
+      }}
+      className="border-t border-border pt-3 text-small"
+    >
+      <summary className="flex min-h-10 cursor-pointer items-center gap-2">
+        {t("smsLog")} <SimulatedTag />
+      </summary>
+      {items?.length === 0 && <p className="text-text-secondary">{t("smsEmpty")}</p>}
+      <ul className="flex flex-col gap-2">
+        {items?.map((s) => (
+          <li key={s.id} className="rounded-lg bg-muted p-2">
+            <p className="text-caption text-text-secondary">{s.toPhone}</p>
+            <p className="whitespace-pre-line">{s.body}</p>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
 
 export default function DemoPanel({ status }: { status: DemoStatus }) {
   const t = useTranslations("demo");
@@ -113,6 +147,7 @@ export default function DemoPanel({ status }: { status: DemoStatus }) {
               </button>
             ))}
           </div>
+          <SmsLog />
           <div className="flex flex-col gap-1 border-t border-border pt-3">
             <Button
               variant={confirming ? "destructive" : "outline"}

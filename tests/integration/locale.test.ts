@@ -42,6 +42,28 @@ describe("language toggle API", () => {
     expect((await setLocale(post("/api/locale", { locale: "fr" }), undefined)).status).toBe(400);
   });
 
+  it("keeps the language chosen before registering on a new account", async () => {
+    const phone = "+251911000011";
+    await requestOtp(post("/api/auth/otp/request", { phone }), undefined);
+    const res = await verifyOtp(
+      post("/api/auth/otp/verify", { phone, code: "123456", intent: "EMPLOYER" }, "sv_locale=en"),
+      undefined,
+    );
+    expect(res.status).toBe(200);
+    expect((await db.user.findUniqueOrThrow({ where: { phone } })).locale).toBe("EN");
+    expect(res.headers.getSetCookie().join("\n")).toMatch(/sv_locale=en;/);
+  });
+
+  it("does not let the cookie override an existing user's saved language", async () => {
+    const phone = "+251922000001"; // Dawit, AM
+    await requestOtp(post("/api/auth/otp/request", { phone }), undefined);
+    await verifyOtp(
+      post("/api/auth/otp/verify", { phone, code: "123456" }, "sv_locale=en"),
+      undefined,
+    );
+    expect((await db.user.findUniqueOrThrow({ where: { phone } })).locale).toBe("AM");
+  });
+
   it("applies the user's saved language at sign-in", async () => {
     await requestOtp(post("/api/auth/otp/request", { phone: "+251922000001" }), undefined);
     const res = await verifyOtp(

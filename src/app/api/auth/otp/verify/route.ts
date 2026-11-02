@@ -5,8 +5,8 @@ import { apiHandler } from "@/server/http/handler";
 import { parseBody } from "@/server/http/validate";
 import { RATE_RULES, clientIp, take } from "@/server/rate-limit";
 import { publicUser, verifyOtp } from "@/server/services/auth";
-import { fromDbLocale, localeCookie } from "@/i18n/locales";
-import { isSecureRequest, sessionCookie, signSessionToken } from "@/server/session";
+import { LOCALE_COOKIE, fromDbLocale, isLocale, localeCookie, toDbLocale } from "@/i18n/locales";
+import { isSecureRequest, readCookie, sessionCookie, signSessionToken } from "@/server/session";
 
 export const POST = apiHandler(async (req) => {
   const wait = take(`otp-verify:ip:${clientIp(req)}`, RATE_RULES.otpVerifyPerIp);
@@ -17,7 +17,14 @@ export const POST = apiHandler(async (req) => {
     });
   }
   const { phone, code, intent } = await parseBody(req, otpVerifyBody);
-  const { user, isNew, redirectTo } = await verifyOtp(phone, code, intent);
+  // New accounts keep the language chosen before registering.
+  const chosen = readCookie(req, LOCALE_COOKIE);
+  const { user, isNew, redirectTo } = await verifyOtp(
+    phone,
+    code,
+    intent,
+    isLocale(chosen) ? toDbLocale(chosen) : undefined,
+  );
 
   const res = NextResponse.json({ user: publicUser(user), isNew, redirectTo });
   res.cookies.set(

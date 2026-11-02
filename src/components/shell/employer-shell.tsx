@@ -68,7 +68,7 @@ async function Account() {
   if (!ctx) return null;
   return (
     <>
-      <NotificationBell count={ctx.unreadCount} />
+      <NotificationBell initialCount={ctx.unreadCount} />
       <span className="hidden max-w-40 truncate px-2 text-small font-medium sm:inline">
         {ctx.user.name}
       </span>
