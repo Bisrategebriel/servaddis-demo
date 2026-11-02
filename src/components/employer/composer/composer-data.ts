@@ -1,7 +1,10 @@
 import "server-only";
+import type { Job } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { parseRoleTemplateDefaults } from "@/lib/role-template";
+import type { EmployerContext } from "@/server/current-user";
 import { db } from "@/server/db";
+import { venueEntitlement } from "@/server/services/jobs";
 import { ADDIS_SUB_CITIES } from "../../../../prisma/seed/data/geography";
 import type { ComposerProps } from "./job-composer";
 import type { PreviewLabels } from "./job-preview";
@@ -28,25 +31,50 @@ async function labelsFor(locale: "am" | "en"): Promise<PreviewLabels> {
   };
 }
 
-/** Everything the composer needs besides the form itself. */
-export async function composerContext(
-  venueId: string,
-  templateDefaults: string | null,
-): Promise<Omit<ComposerProps, "jobId" | "initial">> {
+/** What the bilingual preview needs besides the form (also used by the job overview). */
+export async function previewContext(venueId: string) {
   const [venue, am, en] = await Promise.all([
     db.venue.findUniqueOrThrow({ where: { id: venueId } }),
     labelsFor("am"),
     labelsFor("en"),
   ]);
-  const salaryHint = templateDefaults
-    ? parseRoleTemplateDefaults(templateDefaults).salaryHint
-    : null;
   return {
-    hint: salaryHint ? { min: salaryHint.min, max: salaryHint.max } : null,
     venueEn: venue.nameEn,
     venueAm: venue.nameAm,
     verified: venue.verification === "VERIFIED",
     subCities: [...ADDIS_SUB_CITIES],
     labels: { am, en },
+  };
+}
+
+/** Everything the composer needs besides the form itself. */
+export async function composerContext(
+  membership: NonNullable<EmployerContext["membership"]>,
+  templateDefaults: string | null,
+  job: Pick<Job, "postingSource"> | null,
+): Promise<Omit<ComposerProps, "jobId" | "initial">> {
+  const [preview, entitlement] = await Promise.all([
+    previewContext(membership.venueId),
+    venueEntitlement(db, membership.venueId),
+  ]);
+  const salaryHint = templateDefaults
+    ? parseRoleTemplateDefaults(templateDefaults).salaryHint
+    : null;
+  return {
+    ...preview,
+    hint: salaryHint ? { min: salaryHint.min, max: salaryHint.max } : null,
+    canSubmit: membership.permissions.has("job.submit"),
+    // A resubmit keeps the post it already uses (doc 03 §4.2).
+    posting: job?.postingSource
+      ? { kind: "RESUBMIT" }
+      : entitlement.source === "SUBSCRIPTION"
+        ? {
+            kind: "SUBSCRIPTION",
+            planEn: entitlement.plan!.nameEn,
+            planAm: entitlement.plan!.nameAm,
+          }
+        : entitlement.source === "FOUNDING_FREE"
+          ? { kind: "FOUNDING_FREE", left: entitlement.foundingLeft }
+          : { kind: "NONE" },
   };
 }

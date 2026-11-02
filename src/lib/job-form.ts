@@ -1,4 +1,4 @@
-import type { EmploymentType, SalaryPeriod, Urgency } from "@prisma/client";
+import type { EmploymentType, Job, SalaryPeriod, Urgency } from "@prisma/client";
 import type { prefillFromTemplate } from "./role-template";
 
 // Composer form model (E-07, E-08), shared by the UI, the server pages and the tests.
@@ -72,6 +72,51 @@ export function formFromTemplate(
     salaryMax: String(t.salaryMax),
     salaryPeriod: t.salaryPeriod,
     employmentType: t.employmentType,
+  };
+}
+
+/** A stored job back into the form (lists are JSON string arrays in the database). */
+export function formFromJob(
+  job: Pick<
+    Job,
+    | "titleEn"
+    | "titleAm"
+    | "descriptionEn"
+    | "descriptionAm"
+    | "requirementsEn"
+    | "requirementsAm"
+    | "benefitsEn"
+    | "benefitsAm"
+    | "shiftPattern"
+    | "headcount"
+    | "salaryMin"
+    | "salaryMax"
+    | "salaryPeriod"
+    | "employmentType"
+    | "urgency"
+  >,
+  subCity: string,
+  roleTemplateSlug: string | null,
+): JobForm {
+  const list = (json: string) => (JSON.parse(json) as string[]).join("\n");
+  return {
+    roleTemplateSlug,
+    titleEn: job.titleEn,
+    titleAm: job.titleAm ?? "",
+    descriptionEn: job.descriptionEn,
+    descriptionAm: job.descriptionAm ?? "",
+    requirementsEn: list(job.requirementsEn),
+    requirementsAm: list(job.requirementsAm),
+    benefitsEn: list(job.benefitsEn),
+    benefitsAm: list(job.benefitsAm),
+    shiftPattern: job.shiftPattern ?? "",
+    subCity,
+    headcount: String(job.headcount),
+    salaryMin: job.salaryMin ? String(job.salaryMin) : "",
+    salaryMax: job.salaryMax ? String(job.salaryMax) : "",
+    salaryPeriod: job.salaryPeriod,
+    employmentType: job.employmentType,
+    urgency: job.urgency,
   };
 }
 

@@ -27,7 +27,7 @@ async function Compose({ searchParams }: { searchParams: Promise<{ template?: st
     <JobComposer
       jobId={null}
       initial={initial}
-      {...await composerContext(venueId, template?.defaults ?? null)}
+      {...await composerContext(ctx.membership, template?.defaults ?? null, null)}
     />
   );
 }

@@ -13,6 +13,7 @@ export type Decision = "APPROVE" | "REQUEST_CHANGES" | "REJECT";
 
 const itemInclude = {
   license: { include: { venue: { select: { id: true, nameEn: true, nameAm: true } } } },
+  job: { include: { venue: { select: { id: true, nameEn: true, nameAm: true } } } },
 } satisfies Prisma.ModerationItemInclude;
 
 export async function listQueue(type: ModerationType | undefined, status: ModerationStatus) {
@@ -26,7 +27,9 @@ export async function listQueue(type: ModerationType | undefined, status: Modera
     id: i.id,
     type: i.type,
     status: i.status,
-    title: i.license?.venue.nameEn ?? "",
+    title: i.job
+      ? `${i.job.titleEn || i.job.titleAm} · ${i.job.venue.nameEn}`
+      : (i.license?.venue.nameEn ?? ""),
     fileName: i.license?.fileName ?? null,
     ageMinutes: Math.max(0, Math.floor((at - i.createdAt.getTime()) / 60_000)),
     flagCount: (JSON.parse(i.flags) as unknown[]).length,

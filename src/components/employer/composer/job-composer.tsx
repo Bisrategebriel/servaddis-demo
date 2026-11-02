@@ -1,6 +1,8 @@
 "use client";
 
 import { Check } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -23,10 +25,17 @@ import { BilingualField } from "./bilingual-field";
 import { JobPreview, type PreviewLabels } from "./job-preview";
 import { RuleFlagList } from "./rule-flag-list";
 
-// SCR-E06: Basics → Details → Pay & urgency → Preview. Rule flags (T2.3) and Submit (T2.4)
-// join step 4. Saving a draft is always allowed, whatever is missing (E-04).
+// SCR-E06: Basics → Details → Pay & urgency → Preview & submit. Saving a draft is always
+// allowed, whatever is missing (E-04); Submit needs a verified venue, no block flags and a post.
 
 const inputClass = "h-11 w-full rounded-sm border border-input bg-card px-3";
+
+/** Which post a submit would use (doc 03 §4.2), worked out on the server. */
+export type Posting =
+  | { kind: "RESUBMIT" }
+  | { kind: "SUBSCRIPTION"; planEn: string; planAm: string }
+  | { kind: "FOUNDING_FREE"; left: number }
+  | { kind: "NONE" };
 
 export type ComposerProps = {
   jobId: string | null;
@@ -37,10 +46,14 @@ export type ComposerProps = {
   verified: boolean;
   subCities: { slug: string; nameEn: string; nameAm: string }[];
   labels: Record<"am" | "en", PreviewLabels>;
+  canSubmit: boolean;
+  posting: Posting;
 };
 
 export function JobComposer(props: ComposerProps) {
-  const { initial, hint, venueEn, venueAm, verified, subCities, labels } = props;
+  const { initial, hint, venueEn, venueAm, verified, subCities, labels, canSubmit, posting } =
+    props;
+  const router = useRouter();
   const t = useTranslations("jobs.composer");
   const locale = useLocale();
   const am = locale === "am";
@@ -51,6 +64,7 @@ export function JobComposer(props: ComposerProps) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [flags, setFlags] = useState<Flag[] | null>(null);
   const [checking, setChecking] = useState(false);
   // Where "Fix this" sends the employer: a field group and the language tab to open.
@@ -120,8 +134,8 @@ export function JobComposer(props: ComposerProps) {
     setStep(target);
   }
 
-  async function saveDraft() {
-    setSaving(true);
+  /** Saves the form; returns the job id, or null after showing the error. */
+  async function save(): Promise<string | null> {
     setSaveError(null);
     try {
       const res = await fetch(jobId ? `/api/jobs/${jobId}` : "/api/jobs", {
@@ -132,20 +146,76 @@ export function JobComposer(props: ComposerProps) {
       const body = await res.json();
       if (!res.ok) {
         setSaveError(am ? body.error.messageAm : body.error.message);
-      } else {
-        setSaved(true);
-        if (!jobId) {
-          setJobId(body.job.id);
-          // Point the URL at the draft so a reload keeps it. Not a router navigation: that would
-          // remount the composer and lose the current step.
-          window.history.replaceState(null, "", `/employer/jobs/${body.job.id}/edit`);
-        }
+        return null;
       }
+      setSaved(true);
+      if (!jobId) {
+        setJobId(body.job.id);
+        // Point the URL at the draft so a reload keeps it. Not a router navigation: that would
+        // remount the composer and lose the current step.
+        window.history.replaceState(null, "", `/employer/jobs/${body.job.id}/edit`);
+      }
+      return body.job.id;
     } catch {
       setSaveError(t("saveFailed"));
+      return null;
     }
+  }
+
+  async function saveDraft() {
+    setSaving(true);
+    await save();
     setSaving(false);
   }
+
+  // Save, then submit: the server re-runs every check on the stored job.
+  async function submit() {
+    setSubmitting(true);
+    const id = await save();
+    if (id) {
+      try {
+        const res = await fetch(`/api/jobs/${id}/submit`, { method: "POST" });
+        if (res.ok) {
+          router.push(`/employer/jobs/${id}`);
+          return; // stay "submitting" until the overview replaces the composer
+        }
+        const { error } = await res.json();
+        setSaved(false);
+        if (error.code === "RULE_BLOCKED") setFlags(error.details.flags);
+        setSaveError(am ? error.messageAm : error.message);
+      } catch {
+        setSaveError(t("submitFailed"));
+      }
+    }
+    setSubmitting(false);
+  }
+
+  const blocked = flags?.some((f) => f.severity === "block") ?? false;
+  const submitBlocker = !verified ? (
+    <>
+      {t("submit.unverified")}{" "}
+      <Link href="/employer/onboarding/license" className="font-medium underline">
+        {t("submit.licenseLink")}
+      </Link>
+    </>
+  ) : !canSubmit ? (
+    t("submit.noPermission")
+  ) : posting.kind === "NONE" ? (
+    <>
+      {t("submit.noPosts")}{" "}
+      <Link href="/employer/plans" className="font-medium underline">
+        {t("submit.plansLink")}
+      </Link>
+    </>
+  ) : null;
+  const postingNote =
+    posting.kind === "RESUBMIT"
+      ? t("submit.resubmit")
+      : posting.kind === "SUBSCRIPTION"
+        ? t("submit.subscription", { plan: am ? posting.planAm : posting.planEn })
+        : posting.kind === "FOUNDING_FREE"
+          ? t("submit.founding", { left: posting.left })
+          : null;
 
   const preview = (
     <JobPreview
@@ -387,6 +457,16 @@ export function JobComposer(props: ComposerProps) {
             <>
               <RuleFlagList flags={flags} loading={checking} onFix={fix} />
               {preview}
+              {submitBlocker ? (
+                <p
+                  data-testid="submit-blocker"
+                  className="rounded-sm bg-warning-bg px-3 py-2 text-small text-warning-fg"
+                >
+                  {submitBlocker}
+                </p>
+              ) : (
+                postingNote && <p className="text-small text-text-secondary">{postingNote}</p>
+              )}
             </>
           )}
 
@@ -408,12 +488,25 @@ export function JobComposer(props: ComposerProps) {
               </Button>
             )}
             <div className="ml-auto flex flex-wrap gap-2">
-              <Button variant="outline" className="h-11 px-4" disabled={saving} onClick={saveDraft}>
+              <Button
+                variant="outline"
+                className="h-11 px-4"
+                disabled={saving || submitting}
+                onClick={saveDraft}
+              >
                 {saving ? t("saving") : t("saveDraft")}
               </Button>
-              {step < 3 && (
+              {step < 3 ? (
                 <Button className="h-11 px-4" onClick={() => goTo(step + 1)}>
                   {t("continue")}
+                </Button>
+              ) : (
+                <Button
+                  className="h-11 px-4"
+                  disabled={!!submitBlocker || blocked || checking || !flags || submitting}
+                  onClick={submit}
+                >
+                  {submitting ? t("submit.submitting") : t("submit.button")}
                 </Button>
               )}
             </div>

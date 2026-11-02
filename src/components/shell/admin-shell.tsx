@@ -68,7 +68,7 @@ export async function AdminShell({ children }: { children: ReactNode }) {
             </Suspense>
           </div>
         </header>
-        <main id="main" className="w-full flex-1 p-4 lg:p-6">
+        <main id="main" className="w-full flex-1 p-4 lg:p-6 lg:pb-20">
           {children}
         </main>
       </div>

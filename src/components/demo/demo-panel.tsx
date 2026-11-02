@@ -81,7 +81,9 @@ export default function DemoPanel({ status }: { status: DemoStatus }) {
     );
   }
 
-  // Top-right on phones, so it never covers the bottom nav or sticky Apply bar (doc 04 §4).
+  // Phones: the open panel sits under the top bar, and the closed handle is a tab on the right
+  // edge, so neither covers header actions, the bottom nav or a sticky Apply bar (doc 04 §4).
+  // Desktop: bottom-right; the shells leave room below the content for it.
   const position = "fixed top-16 right-2 z-40 md:top-auto md:right-4 md:bottom-4";
 
   if (!open) {
@@ -90,7 +92,7 @@ export default function DemoPanel({ status }: { status: DemoStatus }) {
         type="button"
         aria-label={t("open")}
         onClick={() => setOpen(true)}
-        className={`${position} inline-flex size-11 items-center justify-center rounded-full bg-navy-700 text-white shadow-overlay hover:bg-navy-600`}
+        className="fixed top-1/2 right-0 z-40 inline-flex h-11 w-9 -translate-y-1/2 items-center justify-center rounded-l-full bg-navy-700 text-white shadow-overlay hover:bg-navy-600 md:top-auto md:right-4 md:bottom-4 md:size-11 md:translate-y-0 md:rounded-full"
       >
         <Wrench className="size-5" aria-hidden />
       </button>

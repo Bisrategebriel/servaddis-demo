@@ -271,6 +271,19 @@
         "description": "Add a short description.",
         "salary": "Add a realistic salary range. Jobseekers see this first.",
         "headcount": "Enter at least 1 opening."
+      },
+      "submitFailed": "We couldn't submit your job. Try again.",
+      "submit": {
+        "button": "Submit for review",
+        "submitting": "Submitting…",
+        "unverified": "You can't submit yet: your venue is awaiting verification. Save this job as a draft now and submit it once your license is approved.",
+        "licenseLink": "Check license status",
+        "noPermission": "Your role can't submit jobs. Ask the owner to change your access.",
+        "noPosts": "You have no posts left on your plan. Buy a one-time urgent post or upgrade to submit this job.",
+        "plansLink": "See plans",
+        "subscription": "This post is included in your {plan} plan.",
+        "founding": "This uses one of your free founding posts ({left} left). It's counted when the post is approved.",
+        "resubmit": "Resubmitting doesn't use another post."
       }
     },
     "preview": {
@@ -313,6 +326,61 @@
         "salary": "Salary",
         "role": "Role"
       }
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "PENDING_REVIEW": "In review",
+      "CHANGES_REQUESTED": "Changes requested",
+      "LIVE": "Live",
+      "EXPIRED": "Expired",
+      "CLOSED": "Closed",
+      "REJECTED": "Rejected"
+    },
+    "list": {
+      "title": "Jobs",
+      "post": "Post a job",
+      "filters": "Filter by status",
+      "all": "All",
+      "empty": "No jobs yet. Start from a role template: a complete post takes minutes.",
+      "emptyFiltered": "No jobs with this status.",
+      "untitled": "Untitled draft",
+      "applicants": "{count, plural, =0 {No applicants} one {# applicant} other {# applicants}}",
+      "urgent": "Urgent",
+      "edited": "Edited {date}",
+      "submitted": "Submitted {date}",
+      "expires": "Expires {date}",
+      "expired": "Expired {date}",
+      "closed": "Closed {date}"
+    },
+    "overview": {
+      "back": "All jobs",
+      "edit": "Edit",
+      "continueDraft": "Continue editing",
+      "timeline": "Timeline",
+      "created": "Created",
+      "submittedAt": "Submitted for review",
+      "published": "Published",
+      "expiresAt": "Expires",
+      "expiredAt": "Expired",
+      "closedAt": "Closed",
+      "posting": "Posted with",
+      "sources": {
+        "SUBSCRIPTION": "Your subscription",
+        "FOUNDING_FREE": "A free founding post",
+        "URGENT_PAID": "A one-time urgent post"
+      },
+      "notes": {
+        "DRAFT": "This job is a draft. Only your team can see it.",
+        "PENDING_REVIEW": "A moderator is reviewing this job. You'll get a notification when it's decided.",
+        "CHANGES_REQUESTED": "The moderator asked for changes. Edit the job and submit it again.",
+        "LIVE": "This job is live in the jobseeker feed.",
+        "EXPIRED": "This job has expired and no longer takes applications.",
+        "CLOSED": "This job is closed.",
+        "REJECTED": "This job was not accepted and can't be published."
+      },
+      "reason": "Moderator's note",
+      "warnings": "Submitted with these notes for the moderator",
+      "preview": "Preview"
     }
   }
 }

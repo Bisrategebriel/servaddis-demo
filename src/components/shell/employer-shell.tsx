@@ -123,7 +123,10 @@ export async function EmployerShell({ children }: { children: ReactNode }) {
             </Suspense>
           </div>
         </header>
-        <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 p-4 lg:p-8">
+        <main
+          id="main"
+          className="mx-auto w-full max-w-[1200px] flex-1 p-4 md:pb-20 lg:p-8 lg:pb-20"
+        >
           {children}
         </main>
       </div>
