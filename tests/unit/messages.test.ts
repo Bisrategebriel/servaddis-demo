@@ -36,6 +36,7 @@ describe("messages", () => {
       "lang.en",
       "dashboard.progress",
       "profile.points", // "+15%"
+      "insights.noData", // "—"
     ]);
     const get = (k: string) =>
       k.split(".").reduce<unknown>((o, p) => (o as never)[p], am) as string;

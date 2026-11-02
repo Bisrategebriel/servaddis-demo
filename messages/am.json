@@ -819,5 +819,45 @@
     "back": "ወደ ዕቅዶች ተመለስ",
     "demo": "የማሳያ ደረሰኝ፦ ለማሳያ ዋጋዎች፣ እውነተኛ ክፍያ የለም።",
     "seller": "Servaddis ኃ/የተ/የግ/ማ (ማሳያ)"
+  },
+  "insights": {
+    "title": "ትንታኔ",
+    "range": "ጊዜ",
+    "ranges": {
+      "30d": "30 ቀናት",
+      "90d": "90 ቀናት",
+      "180d": "6 ወራት"
+    },
+    "kpis": {
+      "liveJobs": "ክፍት ሥራዎች",
+      "applicants": "አመልካቾች",
+      "avgDaysToFill": "አማካይ የቅጥር ጊዜ",
+      "hires": "ቅጥሮች"
+    },
+    "days": "{count} ቀናት",
+    "noData": "—",
+    "inPeriod": "በተመረጠው ጊዜ",
+    "trendTitle": "የቅጥር ጊዜ",
+    "trendSub": "ከማስታወቂያ እስከ መጨረሻው ቅጥር ያለው አማካይ ቀን፣ በወር",
+    "faster": "ሥራዎች ከስድስት ወር በፊት ከነበረው በ{days} ቀናት ፈጥነው እየተያዙ ነው።",
+    "slower": "ሥራዎች ከስድስት ወር በፊት ከነበረው በ{days} ቀናት ዘግይተው እየተያዙ ነው።",
+    "funnelTitle": "የአመልካቾች ሂደት",
+    "funnelSub": "በተመረጠው ጊዜ ያመለከቱ ሁሉ",
+    "funnel": {
+      "applied": "አመልክተዋል",
+      "viewed": "ታይተዋል",
+      "shortlisted": "አጭር ዝርዝር ውስጥ",
+      "hired": "ተቀጥረዋል"
+    },
+    "perJob": "በአማካይ ለአንድ ሥራ {count} አመልካቾች",
+    "qualityTitle": "የአመልካቾች ጥራት",
+    "completeness": "አማካይ የመገለጫ ሙሉነት",
+    "verified": "በፋይዳ የተረጋገጡ አመልካቾች",
+    "showTable": "በሰንጠረዥ አሳይ",
+    "month": "ወር",
+    "value": "ዋጋ",
+    "filledJobs": "{count, plural, =0 {የተያዘ ሥራ የለም} other {# ሥራዎች ተይዘዋል}}",
+    "applicantsCount": "{count, plural, other {# አመልካቾች}}",
+    "empty": "እስካሁን የቅጥር መረጃ የለም። ሥራዎች አመልካቾችንና ቅጥሮችን ሲያገኙ ትንታኔው ይሞላል።"
   }
 }

@@ -43,7 +43,9 @@ const get = async (u: User, id: string) =>
 /** A seeded Front Desk Agent applicant by name. */
 const appOf = async (name: string) => {
   const seeker = await db.user.findFirstOrThrow({ where: { name } });
-  return db.application.findFirstOrThrow({ where: { jobseekerId: seeker.id } });
+  return db.application.findFirstOrThrow({
+    where: { jobseekerId: seeker.id, job: { status: "LIVE" } },
+  });
 };
 const status = async (id: string) =>
   (await db.application.findUniqueOrThrow({ where: { id } })).status;

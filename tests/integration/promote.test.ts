@@ -31,7 +31,9 @@ describe("promote to socials (App Flow §7)", () => {
 
   it("queues four posts, then renders, stores and publishes them; TikTok is a team draft", async () => {
     const selam = await byPhone("+251911000001"); // Hiwot: Pro plan includes socials
-    const job = await db.job.findFirstOrThrow({ where: { titleEn: "Front Desk Agent" } });
+    const job = await db.job.findFirstOrThrow({
+      where: { titleEn: "Front Desk Agent", status: "LIVE" },
+    });
     expect(await promoteJob(selam, job)).toEqual({ created: true });
     const queued = await log(selam, job.id);
     expect(queued.body.posts.map((p) => p.status)).toEqual([
@@ -101,7 +103,9 @@ describe("promote to socials (App Flow §7)", () => {
   });
 
   it("the log is for members with job.view; other venues get 404", async () => {
-    const job = await db.job.findFirstOrThrow({ where: { titleEn: "Front Desk Agent" } });
+    const job = await db.job.findFirstOrThrow({
+      where: { titleEn: "Front Desk Agent", status: "LIVE" },
+    });
     expect((await log(await byPhone("+251911000002"), job.id)).status).toBe(200); // Poster
     expect((await log(await byPhone("+251911000005"), job.id)).status).toBe(404);
   });

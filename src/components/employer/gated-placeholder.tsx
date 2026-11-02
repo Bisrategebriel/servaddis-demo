@@ -11,7 +11,7 @@ export async function GatedPlaceholder({
   titleKey,
 }: {
   perm: VenuePermission;
-  titleKey: "insights" | "plans" | "venue";
+  titleKey: "venue";
 }) {
   const [ctx, t] = await Promise.all([getEmployerContext(), getTranslations("pages")]);
   if (!ctx) redirect("/");

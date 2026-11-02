@@ -31,7 +31,10 @@ const post = async (
 };
 const appOf = async (name: string) => {
   const seeker = await db.user.findFirstOrThrow({ where: { name } });
-  return db.application.findFirstOrThrow({ where: { jobseekerId: seeker.id } });
+  // The live job's application (the seeded history adds older ones on closed jobs).
+  return db.application.findFirstOrThrow({
+    where: { jobseekerId: seeker.id, job: { status: "LIVE" } },
+  });
 };
 
 describe("hire → fill (App Flow §5.1)", () => {
@@ -52,7 +55,9 @@ describe("hire → fill (App Flow §5.1)", () => {
 
   it("the first of two openings keeps the job live; the second fills and closes it", async () => {
     const selam = await byPhone("+251911000001");
-    const job = await db.job.findFirstOrThrow({ where: { titleEn: "Front Desk Agent" } });
+    const job = await db.job.findFirstOrThrow({
+      where: { titleEn: "Front Desk Agent", status: "LIVE" },
+    });
     expect(job.headcount).toBe(2);
 
     const first = await post(hireRoute, selam, (await appOf("Hana Bekele")).id);
@@ -71,10 +76,11 @@ describe("hire → fill (App Flow §5.1)", () => {
 
   it("rejects everyone still in play as POSITION_FILLED and tells them; finished ones stay", async () => {
     const selam = await byPhone("+251911000001");
-    await post(hireRoute, selam, (await appOf("Hana Bekele")).id);
+    const hana = await appOf("Hana Bekele");
+    await post(hireRoute, selam, hana.id);
     await post(hireRoute, selam, (await appOf("Henok Abera")).id);
     const apps = await db.application.findMany({
-      where: { job: { titleEn: "Front Desk Agent" } },
+      where: { jobId: hana.jobId },
       include: { jobseeker: true },
     });
     const by = (s: string) =>
@@ -107,6 +113,10 @@ describe("hire → fill (App Flow §5.1)", () => {
   it("shows on the dashboard's average time-to-fill", async () => {
     const selam = await byPhone("+251911000001");
     const venue = await db.venue.findFirstOrThrow({ where: { nameEn: "Hiwot Garden Hotel" } });
+    // Without the seeded history, so the average is this job's alone.
+    await db.job.deleteMany({
+      where: { venueId: venue.id, status: { in: ["CLOSED", "EXPIRED"] } },
+    });
     expect((await venueSummary(venue.id, new Set())).kpis.avgDaysToFill).toBeNull();
     await post(hireRoute, selam, (await appOf("Hana Bekele")).id);
     await post(hireRoute, selam, (await appOf("Henok Abera")).id);

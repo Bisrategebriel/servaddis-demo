@@ -1,9 +1,6 @@
 // Seed (doc 05 §9.1–9.5). Idempotent: wipes every table and re-inserts, in one transaction.
 // Shared by `pnpm seed` and the Demo Toolkit reset (T0.9), so it takes the client as a parameter
 // and never imports `src/server/db` (which is server-only).
-//
-// Not here yet, added by the tasks that build their features (PLAN.md §9):
-//   6-month history → T5.5
 import { copyFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import type { Prisma, PrismaClient } from "@prisma/client";
@@ -11,6 +8,7 @@ import { computeExpiresAt } from "../../src/lib/expiry";
 import { contentHash } from "../../src/lib/job-hash";
 import { profileCompleteness } from "../../src/lib/profile-completeness";
 import { FEED_JOBS, PIPELINE_APPLICANTS, PIPELINE_JOB } from "./data/feed-jobs";
+import { seedHistory } from "./history";
 import { ADDIS_SUB_CITIES, CITIES, type SubCitySlug } from "./data/geography";
 import {
   ADMIN,
@@ -56,6 +54,7 @@ export async function seed(db: PrismaClient, now = new Date()): Promise<SeedSumm
       await seedJobseekers(tx, geo, skillIds);
       await seedPendingLicense(tx, now);
       await seedFeedJobs(tx, geo, skillIds, now);
+      await seedHistory(tx, geo, now);
       await tx.demoSetting.createMany({
         data: [
           { key: "clock_offset_ms", value: "0" },

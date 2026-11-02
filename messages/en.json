@@ -819,5 +819,45 @@
     "back": "Back to plans",
     "demo": "Demo receipt: illustrative prices, no real payment.",
     "seller": "Servaddis PLC (demo)"
+  },
+  "insights": {
+    "title": "Insights",
+    "range": "Period",
+    "ranges": {
+      "30d": "30 days",
+      "90d": "90 days",
+      "180d": "6 months"
+    },
+    "kpis": {
+      "liveJobs": "Live jobs",
+      "applicants": "Applicants",
+      "avgDaysToFill": "Avg time to fill",
+      "hires": "Hires"
+    },
+    "days": "{count} days",
+    "noData": "—",
+    "inPeriod": "in the selected period",
+    "trendTitle": "Time to fill",
+    "trendSub": "Average days from publishing to the last hire, by month",
+    "faster": "Jobs are filling {days} days faster than six months ago.",
+    "slower": "Jobs are filling {days} days slower than six months ago.",
+    "funnelTitle": "Applicant funnel",
+    "funnelSub": "Everyone who applied in the selected period",
+    "funnel": {
+      "applied": "Applied",
+      "viewed": "Viewed",
+      "shortlisted": "Shortlisted",
+      "hired": "Hired"
+    },
+    "perJob": "{count} applicants per job on average",
+    "qualityTitle": "Applicant quality",
+    "completeness": "Average profile completeness",
+    "verified": "Fayda-verified applicants",
+    "showTable": "Show as table",
+    "month": "Month",
+    "value": "Value",
+    "filledJobs": "{count, plural, =0 {no jobs filled} one {# job filled} other {# jobs filled}}",
+    "applicantsCount": "{count, plural, one {# applicant} other {# applicants}}",
+    "empty": "No hiring data yet. Insights fill in as jobs get applicants and hires."
   }
 }

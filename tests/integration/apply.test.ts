@@ -130,13 +130,15 @@ describe("GET /api/me/applications", () => {
     const res = await mine(hana);
     expect(res.status).toBe(200);
     const { items } = await res.json();
-    expect(items).toHaveLength(1);
-    expect(items[0]).toMatchObject({
+    // Her live application (the seeded history adds older ones on closed jobs).
+    const live = items.filter((i: { job: { open: boolean } }) => i.job.open);
+    expect(live).toHaveLength(1);
+    expect(live[0]).toMatchObject({
       status: "SHORTLISTED",
       job: { titleEn: "Front Desk Agent", venueEn: "Hiwot Garden Hotel", open: true },
     });
-    expect(items[0].viewedAt).not.toBeNull();
-    expect(items[0].shortlistedAt).not.toBeNull();
+    expect(live[0].viewedAt).not.toBeNull();
+    expect(live[0].shortlistedAt).not.toBeNull();
   });
 
   it("answers 304 to an unchanged poll, 200 once something changed", async () => {

@@ -140,7 +140,9 @@ describe("GET /api/public/jobs/:id", () => {
   beforeEach(resetDb);
 
   it("returns the full post, open", async () => {
-    const job = await db.job.findFirstOrThrow({ where: { titleEn: "Front Desk Agent" } });
+    const job = await db.job.findFirstOrThrow({
+      where: { titleEn: "Front Desk Agent", status: "LIVE" },
+    });
     const res = await detail(job.id);
     expect(res.status).toBe(200);
     const body = (await res.json()).job;
@@ -150,7 +152,9 @@ describe("GET /api/public/jobs/:id", () => {
   });
 
   it("shows a closed job as not open, and hides unpublished ones", async () => {
-    const job = await db.job.findFirstOrThrow({ where: { titleEn: "Front Desk Agent" } });
+    const job = await db.job.findFirstOrThrow({
+      where: { titleEn: "Front Desk Agent", status: "LIVE" },
+    });
     await db.job.update({ where: { id: job.id }, data: { status: "CLOSED" } });
     expect((await (await detail(job.id)).json()).job.open).toBe(false);
     const { venue, selam } = await hiwot();

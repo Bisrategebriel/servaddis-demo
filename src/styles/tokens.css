@@ -45,4 +45,9 @@
   --danger-fg: #9a1b14;
   --danger-bg: #fdecea;
   --danger-solid: #b3261e;
+
+  /* Charts (T5.5): one validated series hue (dataviz validate_palette: lightness, chroma and
+     contrast pass on the light surface). Text never takes this colour. */
+  --viz-series: #3567b5;
+  --viz-grid: #e7e9ee;
 }

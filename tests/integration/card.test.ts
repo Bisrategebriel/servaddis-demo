@@ -37,7 +37,9 @@ describe("GET /api/jobs/:id/card (TRD §5.6)", () => {
   ] as const)(
     "renders a %s %s PNG at %i×%i, publicly for a live job",
     async (lang, size, w, h) => {
-      const job = await db.job.findFirstOrThrow({ where: { titleEn: "Front Desk Agent" } });
+      const job = await db.job.findFirstOrThrow({
+        where: { titleEn: "Front Desk Agent", status: "LIVE" },
+      });
       const res = await card(job.id, `?lang=${lang}&size=${size}`);
       expect(res.status).toBe(200);
       expect(res.headers.get("content-type")).toBe("image/png");
@@ -61,7 +63,9 @@ describe("GET /api/jobs/:id/card (TRD §5.6)", () => {
   }, 30_000);
 
   it("rejects bad options and unknown jobs", async () => {
-    const job = await db.job.findFirstOrThrow({ where: { titleEn: "Front Desk Agent" } });
+    const job = await db.job.findFirstOrThrow({
+      where: { titleEn: "Front Desk Agent", status: "LIVE" },
+    });
     expect((await card(job.id, "?lang=fr")).status).toBe(400);
     expect((await card(job.id, "?size=banner")).status).toBe(400);
     expect((await card("nope")).status).toBe(404);

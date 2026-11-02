@@ -159,7 +159,9 @@ describe("team API (App Flow §6.3, doc 05 §5.3)", () => {
     it("applies to the member's very next request", async () => {
       const venue = await hiwot();
       const yared = await byPhone(YARED);
-      const job = await db.job.findFirstOrThrow({ where: { titleEn: "Front Desk Agent" } });
+      const job = await db.job.findFirstOrThrow({
+        where: { titleEn: "Front Desk Agent", status: "LIVE" },
+      });
       const applicants = async () =>
         applicantsRoute(
           new Request(`${BASE}/api/jobs/${job.id}/applicants`, { headers: await headers(yared) }),
@@ -264,7 +266,9 @@ describe("team API (App Flow §6.3, doc 05 §5.3)", () => {
       const res = await remove(await byPhone(SELAM), venue.id, (await memberRow(RAHEL)).id);
       expect(res.status).toBe(204);
       expect((await memberRow(RAHEL)).status).toBe("REMOVED");
-      const job = await db.job.findFirstOrThrow({ where: { titleEn: "Front Desk Agent" } });
+      const job = await db.job.findFirstOrThrow({
+        where: { titleEn: "Front Desk Agent", status: "LIVE" },
+      });
       const after = await applicantsRoute(
         new Request(`${BASE}/api/jobs/${job.id}/applicants`, { headers: await headers(rahel) }),
         { params: Promise.resolve({ id: job.id }) },
