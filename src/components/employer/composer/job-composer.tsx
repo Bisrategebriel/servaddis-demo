@@ -47,6 +47,8 @@ export type ComposerProps = {
   labels: Record<"am" | "en", PreviewLabels>;
   canSubmit: boolean;
   posting: Posting;
+  /** Set when the member may buy an urgent post (billing.manage). */
+  urgentPost: { totalEtb: number } | null;
 };
 
 export function JobComposer(props: ComposerProps) {
@@ -191,6 +193,32 @@ export function JobComposer(props: ComposerProps) {
     setSubmitting(false);
   }
 
+  // No posts left: save, open a checkout for this job, and go to the hosted payment page.
+  // After payment the job is submitted by itself (App Flow §4.2).
+  async function buyUrgentPost() {
+    setSubmitting(true);
+    const id = await save();
+    if (id) {
+      try {
+        const res = await fetch("/api/billing/checkout", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ planCode: "URGENT_POST", jobId: id }),
+        });
+        const body = await res.json();
+        if (res.ok) {
+          window.location.assign(body.checkoutUrl);
+          return;
+        }
+        if (body.error.code === "RULE_BLOCKED") setFlags(body.error.details.flags);
+        setSaveError(am ? body.error.messageAm : body.error.message);
+      } catch {
+        setSaveError(t("submitFailed"));
+      }
+    }
+    setSubmitting(false);
+  }
+
   const blocked = flags?.some((f) => f.severity === "block") ?? false;
   const submitBlocker = !verified ? (
     <>
@@ -204,9 +232,23 @@ export function JobComposer(props: ComposerProps) {
   ) : posting.kind === "NONE" ? (
     <>
       {t("submit.noPosts")}{" "}
-      <Link href="/employer/plans" className="font-medium underline">
-        {t("submit.plansLink")}
-      </Link>
+      {props.urgentPost ? (
+        <>
+          <Link href="/employer/plans" className="font-medium underline">
+            {t("submit.plansLink")}
+          </Link>
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={buyUrgentPost}
+            className="mt-2 flex min-h-10 items-center rounded-sm bg-primary px-3 font-medium text-primary-foreground disabled:opacity-60"
+          >
+            {t("submit.buy", { total: props.urgentPost.totalEtb.toLocaleString("en-US") })}
+          </button>
+        </>
+      ) : (
+        t("submit.askOwner")
+      )}
     </>
   ) : null;
   const postingNote =

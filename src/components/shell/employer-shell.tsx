@@ -90,7 +90,7 @@ export async function EmployerShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-full flex-1">
       <SkipLink />
-      <aside className="surface-navy sticky top-0 hidden h-screen shrink-0 flex-col gap-6 bg-sidebar p-3 md:flex md:w-16 lg:w-62 lg:p-4">
+      <aside className="surface-navy sticky top-0 hidden h-screen shrink-0 flex-col gap-6 bg-sidebar p-3 md:flex md:w-16 lg:w-62 lg:p-4 print:hidden">
         <Link href="/employer" aria-label={t("common.appName")} className="md:mx-auto lg:mx-0">
           <Wordmark labelClassName="md:sr-only lg:not-sr-only" />
         </Link>
@@ -103,7 +103,7 @@ export async function EmployerShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-14 items-center gap-2 border-b border-border bg-card px-2 sm:px-4">
+        <header className="sticky top-0 z-20 flex h-14 items-center gap-2 border-b border-border bg-card px-2 sm:px-4 print:hidden">
           <MobileNav
             openLabel={t("shell.openMenu")}
             closeLabel={t("shell.closeMenu")}

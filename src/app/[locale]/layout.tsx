@@ -30,7 +30,9 @@ export default async function RootLayout({ children }: LayoutProps<"/[locale]">)
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
           {children}
-          <DemoDock />
+          <div className="print:hidden">
+            <DemoDock />
+          </div>
         </NextIntlClientProvider>
       </body>
     </html>

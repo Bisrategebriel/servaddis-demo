@@ -170,3 +170,14 @@ export const cardQuery = z.object({
   size: z.enum(["square", "story"]).default("square"),
   download: z.enum(["1"]).optional(),
 });
+
+// Billing (TRD §5.7)
+export const checkoutBody = z.object({
+  planCode: z.enum(["STANDARD", "PRO", "URGENT_POST"]),
+  jobId: z.string().min(1).max(40).optional(),
+});
+export const webhookBody = z.object({
+  providerRef: z.string().min(1).max(80),
+  outcome: z.enum(["SUCCEEDED", "FAILED", "CANCELLED"]),
+});
+export const simPaymentBody = z.object({ action: z.enum(["pay", "fail", "cancel", "bank"]) });

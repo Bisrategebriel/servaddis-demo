@@ -96,7 +96,7 @@ const SUBMITTABLE: Job["status"][] = ["DRAFT", "CHANGES_REQUESTED"];
 const REPOSTABLE: Job["status"][] = ["EXPIRED", "CLOSED"];
 
 /** Venue VERIFIED → required fields → rules, on the stored job (TRD §5.3). Returns the flags. */
-async function submissionChecks(jobId: string) {
+export async function submissionChecks(jobId: string) {
   const full = await db.job.findUniqueOrThrow({
     where: { id: jobId },
     include: { venue: true, subCity: true, roleTemplate: true, skills: true },

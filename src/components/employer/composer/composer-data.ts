@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { parseRoleTemplateDefaults } from "@/lib/role-template";
 import type { EmployerContext } from "@/server/current-user";
 import { db } from "@/server/db";
+import { vatOf } from "@/server/services/billing";
 import { venueEntitlement } from "@/server/services/jobs";
 import { ADDIS_SUB_CITIES } from "../../../../prisma/seed/data/geography";
 import type { ComposerProps } from "./job-composer";
@@ -53,9 +54,10 @@ export async function composerContext(
   templateDefaults: string | null,
   job: Pick<Job, "postingSource"> | null,
 ): Promise<Omit<ComposerProps, "jobId" | "initial">> {
-  const [preview, entitlement] = await Promise.all([
+  const [preview, entitlement, urgent] = await Promise.all([
     previewContext(membership.venueId),
     venueEntitlement(db, membership.venueId),
+    db.plan.findUnique({ where: { code: "URGENT_POST" } }),
   ]);
   const salaryHint = templateDefaults
     ? parseRoleTemplateDefaults(templateDefaults).salaryHint
@@ -64,6 +66,11 @@ export async function composerContext(
     ...preview,
     hint: salaryHint ? { min: salaryHint.min, max: salaryHint.max } : null,
     canSubmit: membership.permissions.has("job.submit"),
+    // No posts left: owners can buy a one-time urgent post for this job (App Flow §4.2).
+    urgentPost:
+      urgent && membership.permissions.has("billing.manage")
+        ? { totalEtb: urgent.priceEtb + vatOf(urgent.priceEtb) }
+        : null,
     // A resubmit keeps the post it already uses (doc 03 §4.2).
     posting: job?.postingSource
       ? { kind: "RESUBMIT" }

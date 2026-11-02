@@ -289,7 +289,9 @@
         "plansLink": "See plans",
         "subscription": "This post is included in your {plan} plan.",
         "founding": "This uses one of your free founding posts ({left} left). It's counted when the post is approved.",
-        "resubmit": "Resubmitting doesn't use another post."
+        "resubmit": "Resubmitting doesn't use another post.",
+        "buy": "Buy an urgent post (ETB {total} incl. VAT)",
+        "askOwner": "Ask the owner to buy an urgent post or upgrade the plan."
       }
     },
     "preview": {
@@ -739,5 +741,83 @@
     "applyButton": "Apply on Servaddis",
     "failed": "That didn't work. Try again.",
     "simulatedNote": "Nothing is really posted in this demo: every channel is simulated."
+  },
+  "plans": {
+    "title": "Plans",
+    "illustrative": "Prices are illustrative and exclude 15% VAT.",
+    "current": "Current plan",
+    "recommended": "Recommended",
+    "until": "Renews {date}",
+    "perMonth": "ETB {price} / 30 days",
+    "oneTime": "ETB {price} one-time",
+    "choose": "Choose",
+    "switch": "Switch to {name}",
+    "redirecting": "Opening checkout…",
+    "urgentHow": "Buy it from a job's Submit step when you have no posts left.",
+    "founding": "Founding partner: {count, plural, =0 {no free posts left} one {# free post left} other {# free posts left}}",
+    "features": {
+      "free_posts_3": "3 free posts",
+      "one_job": "1 job",
+      "live_jobs_5": "5 live jobs",
+      "unlimited_jobs": "Unlimited live jobs",
+      "pipeline": "Applicant pipeline",
+      "social": "Promote to socials",
+      "priority_placement": "Priority placement",
+      "insights": "Insights",
+      "urgent_badge": "Urgent badge"
+    },
+    "noSocial": "Promote to socials",
+    "history": "Payments",
+    "noPayments": "No payments yet.",
+    "receipt": "Receipt",
+    "statuses": {
+      "PENDING": "Pending",
+      "SUCCEEDED": "Paid",
+      "FAILED": "Failed"
+    },
+    "failed": "The payment didn't go through. Nothing was charged; you can try again.",
+    "cancelled": "You cancelled the payment. Nothing was charged.",
+    "error": "That didn't work. Try again."
+  },
+  "checkout": {
+    "title": "Checkout",
+    "banner": "Simulated payment: no money moves. This page stands in for the payment gateway.",
+    "merchant": "Paying",
+    "item": "Item",
+    "amount": "Amount",
+    "vat": "VAT (15%)",
+    "total": "Total",
+    "pay": "Pay ETB {total}",
+    "fail": "Simulate failure",
+    "cancel": "Cancel",
+    "bank": "Pay by bank transfer instead",
+    "bankTitle": "Bank transfer (simulated)",
+    "bankBody": "Transfer the total to the account below with reference {ref}. Your plan starts once the transfer is confirmed.",
+    "bankAccount": "Account: Demo Bank · 1000-0000-0000 · Servaddis PLC (sample)",
+    "done": "This payment is {status}.",
+    "backToPlans": "Back to plans",
+    "viewReceipt": "View receipt",
+    "working": "Processing…",
+    "error": "That didn't work. Try again.",
+    "forJob": "For job: {title}"
+  },
+  "receipt": {
+    "title": "Receipt",
+    "number": "Receipt no.",
+    "date": "Date",
+    "billedTo": "Billed to",
+    "description": "Description",
+    "method": "Payment method",
+    "methods": {
+      "CHAPA_SIM": "Online payment (simulated)",
+      "BANK_TRANSFER_SIM": "Bank transfer (simulated)"
+    },
+    "amount": "Amount (ex. VAT)",
+    "vat": "VAT 15%",
+    "total": "Total paid",
+    "print": "Print",
+    "back": "Back to plans",
+    "demo": "Demo receipt: illustrative prices, no real payment.",
+    "seller": "Servaddis PLC (demo)"
   }
 }

@@ -7,11 +7,13 @@ import { SESSION_COOKIE, isSecureRequest, verifySessionToken } from "./server/se
 // Next 16 "proxy" (formerly middleware). Optimistic checks only: it reads cookies, never the
 // database (Next authentication guide). Every route handler still enforces auth itself.
 //   API:   /api/demo/* is 404 unless DEMO_MODE=1 · mutating requests must be same-origin
+//          (except the payment webhook, which carries a shared secret instead)
 //   Pages: role areas redirect when signed out / in the wrong area, then the URL is rewritten
 //          to /{locale}/… so app/[locale] renders it. URLs stay unprefixed (doc 03 routes).
 
 const AREAS: { prefix: string; role: PlatformRole }[] = [
   { prefix: "/employer", role: "EMPLOYER" },
+  { prefix: "/sim", role: "EMPLOYER" }, // simulated payment page (owners checking out)
   { prefix: "/admin", role: "ADMIN" },
   { prefix: "/me", role: "JOBSEEKER" },
 ];
@@ -57,7 +59,9 @@ function handleApi(req: NextRequest, pathname: string) {
   if (pathname.startsWith("/api/demo") && process.env.DEMO_MODE !== "1") {
     return errorJson(new AppError("NOT_FOUND"));
   }
-  if (!SAFE_METHODS.has(req.method) && !isSameOrigin(req)) {
+  // The payment webhook comes from the gateway, not the app; it authenticates with WEBHOOK_SECRET.
+  const webhook = pathname === "/api/billing/webhook";
+  if (!SAFE_METHODS.has(req.method) && !webhook && !isSameOrigin(req)) {
     return errorJson(
       new AppError("FORBIDDEN", {
         message: "This request must come from the Servaddis app.",

@@ -58,6 +58,16 @@ export async function authorizeVenue(
   return access;
 }
 
+/** The signed-in member's own (first active) venue, for endpoints without a venue id in the URL. */
+export async function authorizeOwnVenue(user: User, perm: VenuePermission): Promise<VenueAccess> {
+  const member = await db.venueMember.findFirst({
+    where: { userId: user.id, status: "ACTIVE" },
+    orderBy: { createdAt: "asc" },
+  });
+  if (!member) throw notFound();
+  return authorizeVenue(user, member.venueId, perm);
+}
+
 export async function authorizeJob(
   user: User,
   jobId: string,
