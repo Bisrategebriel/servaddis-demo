@@ -612,5 +612,85 @@
     "availabilityHint": "e.g. Evenings and weekends",
     "failed": "We couldn't save your profile. Try again.",
     "builderNote": "Skills, languages and past workplaces come from your Servaddis registration. Editing them arrives in a later version."
+  },
+  "forbidden": {
+    "title": "You don't have access to this page",
+    "body": "Your role can't do this. Ask the owner to change your access.",
+    "owners": "Who can help: {names}",
+    "back": "Back to dashboard"
+  },
+  "permissions": {
+    "groups": {
+      "jobs": "Jobs",
+      "applicants": "Applicants",
+      "business": "Business"
+    },
+    "keys": {
+      "job": {
+        "view": "View jobs",
+        "create": "Create jobs",
+        "edit": "Edit jobs",
+        "submit": "Submit for review",
+        "close": "Close / repost"
+      },
+      "social": {
+        "promote": "Promote to socials"
+      },
+      "applicant": {
+        "view": "View applicants",
+        "shortlist": "Shortlist",
+        "reject": "Reject",
+        "hire": "Mark hired"
+      },
+      "contact": {
+        "reveal": "Reveal contact"
+      },
+      "insights": {
+        "view": "View insights"
+      },
+      "billing": {
+        "manage": "Billing & plans"
+      },
+      "team": {
+        "manage": "Manage team"
+      },
+      "venue": {
+        "edit": "Edit venue profile"
+      }
+    }
+  },
+  "team": {
+    "title": "Team",
+    "invite": "Invite member",
+    "inviteTitle": "Invite a team member",
+    "name": "Name",
+    "phone": "Phone number",
+    "role": "Role",
+    "send": "Send invite",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "invited": "Invite sent by SMS.",
+    "you": "you",
+    "pending": "Invited · waiting for first sign-in",
+    "preset": "Preset",
+    "customised": "Customised",
+    "expand": "Permissions for {name}",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved.",
+    "reset": "Reset to preset",
+    "remove": "Remove from team",
+    "removeConfirm": "Remove {name}? They lose access right away.",
+    "confirmRemove": "Remove",
+    "failed": "That didn't work. Try again.",
+    "ownerOnly": "Only an owner can give this",
+    "selfLock": "You can't turn this off for yourself",
+    "helper": {
+      "OWNER": "Owner can do everything, including billing and managing the team.",
+      "HR_MANAGER": "HR manager runs jobs and hiring, but not billing or the team.",
+      "POSTER": "Poster can create and submit jobs but cannot see applicants.",
+      "SCREENER": "Screener reviews applicants but cannot post jobs or hire.",
+      "VIEWER": "Viewer can see jobs and insights only."
+    }
   }
 }

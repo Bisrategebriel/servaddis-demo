@@ -1,15 +1,16 @@
-import { ArrowLeft, Lock } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { Forbidden } from "@/components/employer/forbidden";
 import { JobStatusChip } from "@/components/employer/job-status-chip";
 import { Pipeline } from "@/components/employer/pipeline";
 import { getEmployerContext } from "@/server/current-user";
 import { db } from "@/server/db";
 import { listApplicants } from "@/server/services/pipeline";
 
-// SCR-E08. Members without applicant.view (a Poster) get the doc 03 §11 explainer instead.
+// SCR-E08. Members without applicant.view (a Poster) get the 403 page instead (doc 03 §11).
 
 async function Applicants({ params }: { params: Promise<{ id: string }> }) {
   const [ctx, { id }, locale, t] = await Promise.all([
@@ -35,19 +36,7 @@ async function Applicants({ params }: { params: Promise<{ id: string }> }) {
   );
 
   if (!ctx.membership.permissions.has("applicant.view")) {
-    return (
-      <div className="flex flex-col gap-4">
-        {back}
-        <section
-          data-testid="no-access"
-          className="flex flex-col items-start gap-2 rounded-md border border-border bg-card p-6"
-        >
-          <Lock className="size-6 text-text-secondary" aria-hidden />
-          <h1 className="text-h2">{t("noAccessTitle")}</h1>
-          <p className="text-text-secondary">{t("noAccess")}</p>
-        </section>
-      </div>
-    );
+    return <Forbidden venueId={ctx.membership.venueId} />;
   }
 
   const title = (locale === "am" ? job.titleAm || job.titleEn : job.titleEn || job.titleAm) || "—";

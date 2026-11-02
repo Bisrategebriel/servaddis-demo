@@ -10,6 +10,7 @@ import { JobStatusChip } from "@/components/employer/job-status-chip";
 import { formatDate, formatDateTime, timeToFill } from "@/lib/format";
 import { formFromJob } from "@/lib/job-form";
 import { DAY_MS, now } from "@/server/clock";
+import { Forbidden } from "@/components/employer/forbidden";
 import { getEmployerContext } from "@/server/current-user";
 import { db } from "@/server/db";
 import type { Flag } from "@/server/rules/engine";
@@ -51,7 +52,8 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
   });
   // Another venue's job looks exactly like a missing one (doc 05 §5.3).
   if (!job || job.venueId !== ctx.membership.venueId) notFound();
-  if (!ctx.membership.permissions.has("job.view")) redirect("/employer");
+  if (!ctx.membership.permissions.has("job.view"))
+    return <Forbidden venueId={ctx.membership.venueId} />;
 
   const am = locale === "am";
   const latest = job.moderation[0];

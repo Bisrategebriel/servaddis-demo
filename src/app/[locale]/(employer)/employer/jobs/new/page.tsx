@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { TemplatePicker } from "@/components/employer/template-picker";
 import { parseRoleTemplateDefaults } from "@/lib/role-template";
+import { Forbidden } from "@/components/employer/forbidden";
 import { getEmployerContext } from "@/server/current-user";
 import { db } from "@/server/db";
 
@@ -10,7 +11,8 @@ async function Picker() {
   const [ctx, t] = await Promise.all([getEmployerContext(), getTranslations("jobs.picker")]);
   if (!ctx) redirect("/");
   if (!ctx.membership) redirect("/employer/onboarding/venue");
-  if (!ctx.membership.permissions.has("job.create")) redirect("/employer");
+  if (!ctx.membership.permissions.has("job.create"))
+    return <Forbidden venueId={ctx.membership.venueId} />;
 
   const [venue, rows] = await Promise.all([
     db.venue.findUniqueOrThrow({

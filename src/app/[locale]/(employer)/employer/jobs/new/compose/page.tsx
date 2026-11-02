@@ -5,6 +5,7 @@ import { composerContext } from "@/components/employer/composer/composer-data";
 import { JobComposer } from "@/components/employer/composer/job-composer";
 import { emptyJobForm, formFromTemplate } from "@/lib/job-form";
 import { prefillFromTemplate } from "@/lib/role-template";
+import { Forbidden } from "@/components/employer/forbidden";
 import { getEmployerContext } from "@/server/current-user";
 import { db } from "@/server/db";
 
@@ -12,7 +13,8 @@ async function Compose({ searchParams }: { searchParams: Promise<{ template?: st
   const [ctx, { template: slug }] = await Promise.all([getEmployerContext(), searchParams]);
   if (!ctx) redirect("/");
   if (!ctx.membership) redirect("/employer/onboarding/venue");
-  if (!ctx.membership.permissions.has("job.create")) redirect("/employer");
+  if (!ctx.membership.permissions.has("job.create"))
+    return <Forbidden venueId={ctx.membership.venueId} />;
 
   const { venueId } = ctx.membership;
   const [venue, template] = await Promise.all([

@@ -29,8 +29,8 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 
 | Field | Value |
 |---|---|
-| **Current milestone** | M4 Team & RBAC |
-| **Next task** | T4.2 Team screen + `PermissionMatrix`; permission-aware UI everywhere; 403 page |
+| **Current milestone** | M5 Promote, plans & insights |
+| **Next task** | T5.1 Card renderer (`next/og`) incl. Amharic font spike, QR, card endpoint |
 | **Last demoable build** | **Demo C**: post → fee rule → approve → feed → apply → toast → view → shortlist → reveal → hire → job closes with time-to-fill (script rows 5–9, EN + AM) |
 | **Hours spent / P0 budget** | 0 / 150 |
 | **Blockers** | None |
@@ -44,7 +44,7 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 | M1 Onboarding & verification | 22 | 22 | `[x]` | **Demo A**: register → upload license → admin verifies → notification |
 | M2 Job posting loop | 29 | 32 | `[x]` | **Demo B**: template → composer → fee rule blocks → admin publishes |
 | M3 Jobseeker & pipeline | 24 | 26 | `[x]` | **Demo C**: apply → shortlist → reveal → hire (first full loop) |
-| M4 Team & RBAC | 8 | 8 | `[ ]` | Poster vs Screener differ in UI **and** API |
+| M4 Team & RBAC | 8 | 8 | `[x]` | Poster vs Screener differ in UI **and** API |
 | M5 Promote, plans & insights | 10 | 25 | `[ ]` | Card render + previews; checkout; insights |
 | M6 Bilingual, PWA & polish | 6 | 17 | `[ ]` | Full AM/EN; installable; polished |
 | M7 Toolkit, tests & rehearsal | 22 | 24 | `[ ]` | E2E green; 3 clean rehearsals; fallback video |
@@ -172,7 +172,7 @@ Each task lists its priority, estimate, dependencies, spec refs and *Done when*.
 | ✓ | ID | Task | Est | Act | Deps | Refs | Done when |
 |:-:|---|---|--:|--:|---|---|---|
 | [x] | T4.1 | Team API: invite, role/grants, remove, last-owner guards | 3 | 1.5 | T0.5 | 03 §6.3, 05 §5.3 | Guards enforced server-side |
-| [ ] | T4.2 | Team screen + `PermissionMatrix`; permission-aware UI everywhere; 403 page | 5 | | T4.1, T3.4 | 03 SCR-E14, 04 §7 | Poster can't reach applicants; Screener can't create jobs (UI + API) |
+| [x] | T4.2 | Team screen + `PermissionMatrix`; permission-aware UI everywhere; 403 page | 5 | 2 | T4.1, T3.4 | 03 SCR-E14, 04 §7 | Poster can't reach applicants; Screener can't create jobs (UI + API) |
 
 **M4 exit:** script rows 10–12.
 
@@ -266,6 +266,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-29 | T0.2 | `DATABASE_URL="file:../data/servaddis.db"`: Prisma resolves SQLite paths relative to `prisma/`, and this keeps the db in root `data/` with uploads/cards | The TRD's `./data` would have created `prisma/data/` | Yes: TRD §10 |
 | 2026-11-03 | T2.2 | Composer state is plain React plus `src/lib/job-form.ts`, not React Hook Form: one form object spans four steps and a live preview, so the T1.2 decision stands. Drafts may be incomplete; `validateStep` gates Continue and stepper jumps, and submit (T2.4) must re-validate on the server. Preview labels for both languages come from the server because the client only holds the page language's messages |
 | 2026-11-03 | T2.2 | After the first save the URL changes with `window.history.replaceState`, not `router.replace`: a router navigation remounts the composer, which lost the step and the saved message (Next keeps the old page hidden). Use the same approach whenever a client form gains an id |
+| 2026-11-03 | T4.2 | Pages a member can't use render a shared 403 page (`Forbidden`: "You don't have access…" + the owners' names as "who can help") instead of silently redirecting to the dashboard: applicants, new/compose/edit job, jobs list/overview, license upload, team, and the Insights/Plans/Venue placeholders (`GatedPlaceholder`) until their screens exist. Nav items, the jobs-list "Post a job", the overview actions and the dashboard checklist buttons already follow permissions; the API still enforces on its own. Team screen: changing a role resets the toggles to that role's preset; the invite form takes name, phone and role (toggles are adjusted after inviting, from the member row); your own row has no role change, no "Manage team" switch and no Remove; non-owners can't pick Owner or switch on team/billing access | doc 04 §6.1, SCR-E14 | n/a |
 | 2026-11-03 | T4.1 | Team guards, all server-side in `services/team.ts`: ≥ 1 active OWNER (no removing/downgrading the last one, checked inside the transaction); **nobody can end up without their own `team.manage`, and nobody can remove themselves** (doc only names the Owner case; applying it to anyone with team access avoids lock-outs); only an OWNER can grant `team.manage`/`billing.manage` **or the OWNER role** (making someone an owner hands out both). Grant/revoke are stored normalised against the preset (grant = extras, revoke = preset keys turned off). 409 bodies carry `reason` (LAST_OWNER, SELF_LOCKOUT, SELF_REMOVE, ALREADY_MEMBER, NOT_AN_EMPLOYER, OTHER_VENUE); OWNER_ONLY is a 403 | doc 05 §5.3, App Flow §6.3 | n/a |
 | 2026-11-03 | T4.1 | Invites: a phone with an existing employer account and no venue joins at once (ACTIVE); otherwise the row is INVITED and the existing sign-in hook activates it. Jobseeker numbers and people already at another venue are refused (one venue per person, matching the single-venue demo). A removed member can be re-invited (the row is reused, keeping the unique (venue, phone/user) keys). Every invite sends a simulated bilingual SMS and is audited; role/toggle changes are audited with before/after; removal sets REMOVED and access ends on the next request (venue access requires ACTIVE) | Single-venue demo | n/a |
 | 2026-11-03 | T3.6 | The profile is read-mostly as J-05 says: skills, languages, past workplaces and preferred sub-cities show from the seed; only the basics (name, headline, years of experience, availability) are editable, via `PATCH /api/me/profile`, which upserts the profile and recomputes completeness (doc 05 §6.4). This also gives brand-new jobseekers a name, which employers otherwise saw as "New jobseeker". The meter lists each missing item with its weight (`completenessItems` in `src/lib/profile-completeness.ts`). Jobseeker routes signed in: /jobs 175 KB, /me/profile 176 KB, /me/applications 180 KB before load | PRD §5 keeps the profile builder out of scope | n/a |
@@ -364,6 +365,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-30 | T0.4 done: `POST /api/auth/otp/{request,verify}`, `POST /api/auth/logout`, `GET/PATCH /api/me`, `src/proxy.ts`, `session.ts` (jose 6.2), `rate-limit.ts`, `services/auth.ts`, SMS adapter seam, `src/lib/{phone,zod-schemas}.ts`. 83 tests green; live HTTP smoke test passed. TRD §5.1 annotated |
 | 2026-10-30 | T0.5 done: `src/lib/permissions.ts`, `src/server/policy/{authorize,with-auth}.ts`, `services/audit.ts`; `/api/me` returns permissions. 187 tests green, incl. the full doc 03 §6.1 matrix |
 | 2026-10-30 | T0.6 done: `app/[locale]` route tree (13 placeholder pages + landing), 3 shells, `LangToggle`, `POST /api/locale`, next-intl + `messages/{en,am}.json`, local Inter + Noto Sans Ethiopic, type scale with Amharic line heights, focus ring, reversed icon. 200 tests + 19 browser checks green; TRD §6 annotated |
+| 2026-11-03 | T4.2 done: `/employer/team` (`TeamManager` + `PermissionMatrix` switches grouped Jobs/Applicants/Business, preset vs customised badge, role helper, invite form, pending invites, remove with confirm), `Forbidden` 403 page across gated employer pages, dashboard checklist buttons by permission. 439 tests + 24 browser checks (demo rows 10–12). **M4 complete** |
 | 2026-11-03 | T4.1 done: `GET/POST /api/venues/:id/team`, `PATCH/DELETE /api/venues/:id/team/:memberId`, `services/team.ts`, `memberBody`/`inviteBody` schemas. 439 tests (17 new) + 10 live HTTP checks (invite → SMS → invitee signs in → revoke → remove) |
 | 2026-11-03 | T3.6 done: `/me/profile` (photo/avatar, headline, Fayda badge, completeness meter with "to reach 100%" list, skills, languages, previous work, availability, preferred sub-cities), edit-basics form, `GET/PATCH /api/me/profile`, `services/profile.ts`. 422 tests + 10 browser checks. **M3 complete (Demo C)** |
 | 2026-11-03 | T3.5 done: hire schedules check-ins and fills the job at headcount (close, auto-reject POSITION_FILLED, JOB_FILLED notification), `timeToFill` in `src/lib/format.ts`, "Filled" + "Time to fill" on the job page, filled notice in the drawer. 418 tests + 10 browser checks; demo rows 8–9 now run end to end |

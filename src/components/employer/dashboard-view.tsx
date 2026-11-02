@@ -75,7 +75,10 @@ function Step({
   );
 }
 
-function Checklist({ data }: { data: VenueSummary }) {
+/** What the viewer may act on: the checklist only offers buttons that will work for them. */
+type Can = { createJob: boolean; editVenue: boolean };
+
+function Checklist({ data, can }: { data: VenueSummary; can: Can }) {
   const t = useTranslations("dashboard");
   const { verification } = data.venue;
   const licenseDone = verification === "PENDING" || verification === "VERIFIED";
@@ -114,7 +117,7 @@ function Checklist({ data }: { data: VenueSummary }) {
                 : null
           }
         >
-          {!licenseDone && (
+          {!licenseDone && can.editVenue && (
             <Button asChild variant="outline" className="h-10">
               <Link href="/employer/onboarding/license">{t("uploadLicense")}</Link>
             </Button>
@@ -125,7 +128,7 @@ function Checklist({ data }: { data: VenueSummary }) {
           title={t("stepFirstJob")}
           hint={verification === "VERIFIED" ? null : t("firstJobLocked")}
         >
-          {verification === "VERIFIED" && (
+          {verification === "VERIFIED" && can.createJob && (
             <Button asChild className="h-10">
               <Link href="/employer/jobs/new">{t("postFirstJob")}</Link>
             </Button>
@@ -145,7 +148,7 @@ function Kpi({ label, value }: { label: string; value: string | number }) {
   );
 }
 
-export function DashboardView({ venueId, name }: { venueId: string; name: string }) {
+export function DashboardView({ venueId, name, can }: { venueId: string; name: string; can: Can }) {
   const t = useTranslations("dashboard");
   const format = useFormatter();
   const am = useLocale() === "am";
@@ -176,7 +179,7 @@ export function DashboardView({ venueId, name }: { venueId: string; name: string
 
       {data && (
         <>
-          <Checklist data={data} />
+          <Checklist data={data} can={can} />
           {data.expiringSoon.length > 0 && (
             <section
               data-testid="expiring-banner"

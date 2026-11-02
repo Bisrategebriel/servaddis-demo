@@ -1,7 +1,10 @@
-import { getTranslations } from "next-intl/server";
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { Suspense } from "react";
+import { GatedPlaceholder } from "@/components/employer/gated-placeholder";
 
-export default async function Page() {
-  const t = await getTranslations("pages");
-  return <PagePlaceholder title={t("insights")} />;
+export default function Page() {
+  return (
+    <Suspense fallback={null}>
+      <GatedPlaceholder perm="insights.view" titleKey="insights" />
+    </Suspense>
+  );
 }

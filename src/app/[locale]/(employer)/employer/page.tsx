@@ -10,7 +10,14 @@ async function Dashboard() {
   const ctx = await getEmployerContext();
   if (!ctx) redirect("/"); // session ended, e.g. by a demo reset
   if (!ctx.membership) redirect("/employer/onboarding/venue");
-  return <DashboardView venueId={ctx.membership.venueId} name={ctx.user.name.split(" ")[0]} />;
+  const perms = ctx.membership.permissions;
+  return (
+    <DashboardView
+      venueId={ctx.membership.venueId}
+      name={ctx.user.name.split(" ")[0]}
+      can={{ createJob: perms.has("job.create"), editVenue: perms.has("venue.edit") }}
+    />
+  );
 }
 
 export default async function DashboardPage() {

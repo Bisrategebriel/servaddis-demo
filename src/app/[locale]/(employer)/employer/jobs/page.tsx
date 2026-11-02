@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { JobStatusChip } from "@/components/employer/job-status-chip";
 import { formatDate, formatSalary } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { Forbidden } from "@/components/employer/forbidden";
 import { getEmployerContext } from "@/server/current-user";
 import { db } from "@/server/db";
 
@@ -55,7 +56,8 @@ async function JobsList({ searchParams }: { searchParams: Promise<{ status?: str
   ]);
   if (!ctx) redirect("/");
   if (!ctx.membership) redirect("/employer/onboarding/venue");
-  if (!ctx.membership.permissions.has("job.view")) redirect("/employer");
+  if (!ctx.membership.permissions.has("job.view"))
+    return <Forbidden venueId={ctx.membership.venueId} />;
   const am = locale === "am";
   const status = STATUSES.find((s) => s === rawStatus);
 

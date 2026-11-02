@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { composerContext } from "@/components/employer/composer/composer-data";
 import { JobComposer } from "@/components/employer/composer/job-composer";
 import { formFromJob } from "@/lib/job-form";
+import { Forbidden } from "@/components/employer/forbidden";
 import { getEmployerContext } from "@/server/current-user";
 import { db } from "@/server/db";
 
@@ -18,7 +19,8 @@ async function Edit({ params }: { params: Promise<{ id: string }> }) {
   });
   // Another venue's job looks exactly like a missing one (doc 05 §5.3).
   if (!job || job.venueId !== ctx.membership.venueId) notFound();
-  if (!ctx.membership.permissions.has("job.edit")) redirect("/employer");
+  if (!ctx.membership.permissions.has("job.edit"))
+    return <Forbidden venueId={ctx.membership.venueId} />;
   if (job.status !== "DRAFT" && job.status !== "CHANGES_REQUESTED") redirect("/employer/jobs");
 
   return (
