@@ -4,6 +4,7 @@ import { BadgeCheck, Clock, Monitor, Smartphone } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useState } from "react";
 import { previewList, type JobForm } from "@/lib/job-form";
+import { shiftPatternIn } from "@/lib/shift-patterns";
 import { cn } from "@/lib/utils";
 
 // E-08 bilingual preview. Its language is independent of the page, so labels for both languages
@@ -122,13 +123,13 @@ export function JobPreview({
           {verified && <BadgeCheck className="size-4 text-success-fg" aria-hidden />}
         </p>
         <p className="font-semibold tabular-nums">
-          ETB {min}–{max} / {l.period[form.salaryPeriod]}
+          {am ? `${min}–${max} ብር` : `ETB ${min}–${max}`} / {l.period[form.salaryPeriod]}
         </p>
         <p className="text-small text-text-secondary">
           {[
             am ? sub?.nameAm : sub?.nameEn,
             l.employment[form.employmentType],
-            form.shiftPattern.trim(),
+            shiftPatternIn(lang, form.shiftPattern.trim()),
             (Number(form.headcount || 1) === 1 ? l.opening : l.openings).replace(
               "#",
               form.headcount || "1",

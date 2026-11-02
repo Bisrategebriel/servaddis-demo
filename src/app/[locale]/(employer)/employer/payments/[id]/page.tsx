@@ -4,7 +4,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { PrintButton } from "@/components/billing/print-button";
 import { Forbidden } from "@/components/employer/forbidden";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, formatMoney } from "@/lib/format";
 import { getEmployerContext } from "@/server/current-user";
 import { AppError } from "@/server/http/errors";
 import { paymentDetail } from "@/server/services/billing";
@@ -29,7 +29,7 @@ async function Receipt({ params }: { params: Promise<{ id: string }> }) {
   });
   if (p.status !== "SUCCEEDED" || !p.receiptNo) notFound();
   const am = locale === "am";
-  const money = (n: number) => `ETB ${n.toLocaleString("en-US")}`;
+  const money = (n: number) => formatMoney(n, locale);
   const row = "flex justify-between gap-4 py-2";
 
   return (

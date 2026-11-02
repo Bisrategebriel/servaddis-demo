@@ -228,7 +228,7 @@ export async function renderCard(job: CardJob, lang: CardLang, size: CardSize) {
             }}
           >
             {/* Separate pieces: Satori adds extra space where the text switches fonts. */}
-            <span>{formatSalary(job.salaryMin, job.salaryMax)}</span>
+            <span>{formatSalary(job.salaryMin, job.salaryMax, lang)}</span>
             <span>/</span>
             <span>{tp(`period.${job.salaryPeriod}`)}</span>
           </div>

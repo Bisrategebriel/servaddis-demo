@@ -389,7 +389,7 @@ export function JobComposer(props: ComposerProps) {
               <fieldset className="flex flex-col gap-1.5">
                 <legend className="text-small font-medium">{t("salary")}</legend>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span aria-hidden>ETB</span>
+                  <span aria-hidden>{am ? "ብር" : "ETB"}</span>
                   <input
                     aria-label={t("salaryMin")}
                     inputMode="numeric"

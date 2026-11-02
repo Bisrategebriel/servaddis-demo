@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { BillingOverview } from "@/server/services/billing";
 
@@ -181,7 +181,7 @@ export function PlansView({
                 className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-small"
               >
                 <span className="font-medium">{am ? p.planAm : p.planEn}</span>
-                <span>ETB {money(p.totalEtb)}</span>
+                <span>{formatMoney(p.totalEtb, locale)}</span>
                 <span className="text-text-secondary">{formatDate(p.createdAt, locale)}</span>
                 <span
                   className={cn(

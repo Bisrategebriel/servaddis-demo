@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { ApplyBar, type ApplyState } from "@/components/jobseeker/apply-bar";
 import { deadline, pick } from "@/components/jobseeker/job-text";
 import { formatDate, formatSalary } from "@/lib/format";
+import { shiftPatternIn } from "@/lib/shift-patterns";
 import { now } from "@/server/clock";
 import { getCurrentUser } from "@/server/current-user";
 import { db } from "@/server/db";
@@ -105,7 +106,7 @@ async function Detail({ params }: { params: Promise<{ id: string }> }) {
           )}
         </p>
         <p className="text-h3">
-          {formatSalary(job.salaryMin, job.salaryMax)} / {tp(`period.${job.salaryPeriod}`)}
+          {formatSalary(job.salaryMin, job.salaryMax, lang)} / {tp(`period.${job.salaryPeriod}`)}
         </p>
         <p className="text-small text-text-secondary">
           {[
@@ -128,7 +129,8 @@ async function Detail({ params }: { params: Promise<{ id: string }> }) {
         <p className="whitespace-pre-line">{description.text}</p>
         {job.shiftPattern && (
           <p className="text-small">
-            <span className="font-semibold">{t("shift")}:</span> {job.shiftPattern}
+            <span className="font-semibold">{t("shift")}:</span>{" "}
+            {shiftPatternIn(lang, job.shiftPattern)}
           </p>
         )}
       </section>

@@ -43,7 +43,7 @@ export function JobCard({ job, lang, now }: { job: FeedCard; lang: "am" | "en"; 
       </span>
       <span className="text-small">
         <span className="font-semibold">
-          {formatSalary(job.salaryMin, job.salaryMax)} / {tp(`period.${job.salaryPeriod}`)}
+          {formatSalary(job.salaryMin, job.salaryMax, lang)} / {tp(`period.${job.salaryPeriod}`)}
         </span>
         <span className="text-text-secondary">
           {" · "}

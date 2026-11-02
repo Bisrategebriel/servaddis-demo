@@ -244,7 +244,7 @@
       "salaryMin": "ዝቅተኛ ደመወዝ",
       "salaryMax": "ከፍተኛ ደመወዝ",
       "salaryPeriod": "የደመወዝ ጊዜ",
-      "typical": "ለዚህ ሥራ የተለመደ፦ ETB {min}–{max}። ግምት ነው፣ የገበያ መረጃ አይደለም።",
+      "typical": "ለዚህ ሥራ የተለመደ፦ {min}–{max} ብር። ግምት ነው፣ የገበያ መረጃ አይደለም።",
       "salaryUnusual": "ይህ ለዚህ ሥራ ያልተለመደ ይመስላል። ትክክል ነው?",
       "employment": "የቅጥር ዓይነት",
       "headcount": "ክፍት ቦታዎች",

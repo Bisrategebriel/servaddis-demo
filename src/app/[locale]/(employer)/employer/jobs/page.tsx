@@ -141,7 +141,7 @@ async function JobsList({ searchParams }: { searchParams: Promise<{ status?: str
                       {[
                         am ? job.subCity.nameAm : job.subCity.nameEn,
                         job.salaryMin > 0 &&
-                          `${formatSalary(job.salaryMin, job.salaryMax)} / ${tp(`period.${job.salaryPeriod}`)}`,
+                          `${formatSalary(job.salaryMin, job.salaryMax, locale)} / ${tp(`period.${job.salaryPeriod}`)}`,
                         t(key, { date: formatDate(at, locale) }),
                       ]
                         .filter(Boolean)

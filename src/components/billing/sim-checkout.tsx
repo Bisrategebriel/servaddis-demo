@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { formatMoney } from "@/lib/format";
 
 // SCR-E12: the presenter's three buttons (Pay / Fail / Cancel) plus the bank-transfer path.
 // Each goes to /api/billing/sim/:id, which runs the webhook's own processing (TRD §5.7).
@@ -24,7 +25,8 @@ type Payment = {
 export function SimCheckout({ payment }: { payment: Payment }) {
   const t = useTranslations("checkout");
   const tp = useTranslations("plans");
-  const am = useLocale() === "am";
+  const locale = useLocale();
+  const am = locale === "am";
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bank, setBank] = useState(payment.provider === "BANK_TRANSFER_SIM");
@@ -85,13 +87,13 @@ export function SimCheckout({ payment }: { payment: Payment }) {
             )}
           </dd>
           <dt className="text-gray-500">{t("amount")}</dt>
-          <dd className="text-right">ETB {money(payment.amountEtb)}</dd>
+          <dd className="text-right">{formatMoney(payment.amountEtb, locale)}</dd>
           <dt className="text-gray-500">{t("vat")}</dt>
-          <dd className="text-right">ETB {money(payment.vatEtb)}</dd>
+          <dd className="text-right">{formatMoney(payment.vatEtb, locale)}</dd>
           <div className="col-span-2 border-t border-gray-200" aria-hidden />
           <dt className="font-semibold">{t("total")}</dt>
           <dd className="text-right text-h3" data-testid="total">
-            ETB {money(total)}
+            {formatMoney(total, locale)}
           </dd>
         </dl>
 

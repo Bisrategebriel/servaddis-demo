@@ -47,7 +47,7 @@ export function caption(job: CaptionJob, lang: "am" | "en", channel: CaptionChan
     return [
       `📣 ሠራተኛ እንፈልጋለን፦ ${title}`,
       `🏨 ${venue} · ${job.subCityAm}`,
-      `💰 ${salary} ${PERIOD.am[job.salaryPeriod]} · ${TYPE.am[job.employmentType]}`,
+      `💰 ${money(job.salaryMin)}–${money(job.salaryMax)} ብር ${PERIOD.am[job.salaryPeriod]} · ${TYPE.am[job.employmentType]}`,
       ...(job.urgent ? ["⚡ አስቸኳይ ቅጥር"] : []),
       `✅ ${job.verified ? "የተረጋገጠ ድርጅት · " : ""}ማመልከት ነፃ ነው`,
       link ? "👉 በServaddis ይፈልጉና ያመልክቱ (ሊንኩ በገጻችን ላይ)" : `👉 በServaddis ያመልክቱ፦ ${job.url}`,

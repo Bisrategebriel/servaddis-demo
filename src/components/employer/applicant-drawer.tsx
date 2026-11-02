@@ -129,6 +129,7 @@ export function ApplicantDrawer({
     <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
       <SheetContent
         side="right"
+        closeLabel={t("close")}
         data-testid="drawer"
         className="gap-0 overflow-y-auto p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-md"
       >
