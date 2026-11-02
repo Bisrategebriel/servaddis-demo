@@ -164,3 +164,8 @@ export const inviteBody = memberBody.extend({
   name: z.string().trim().min(2).max(80),
   phone: phoneSchema,
 });
+
+export const cardQuery = z.object({
+  lang: z.enum(["am", "en"]).default("en"),
+  size: z.enum(["square", "story"]).default("square"),
+});

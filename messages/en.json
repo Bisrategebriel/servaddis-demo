@@ -692,5 +692,14 @@
       "SCREENER": "Screener reviews applicants but cannot post jobs or hire.",
       "VIEWER": "Viewer can see jobs and insights only."
     }
+  },
+  "card": {
+    "hiring": "We're hiring",
+    "verified": "Verified venue",
+    "openings": "{count, plural, one {# opening} other {# openings}}",
+    "apply": "Apply on Servaddis",
+    "noFee": "Free to apply. No fees, ever.",
+    "scan": "Scan to apply",
+    "urgent": "Urgent"
   }
 }
