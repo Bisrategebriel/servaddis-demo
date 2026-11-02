@@ -126,7 +126,7 @@ function Checklist({ data }: { data: VenueSummary }) {
         >
           {verification === "VERIFIED" && (
             <Button asChild className="h-10">
-              <Link href="/employer/jobs">{t("postFirstJob")}</Link>
+              <Link href="/employer/jobs/new">{t("postFirstJob")}</Link>
             </Button>
           )}
         </Step>

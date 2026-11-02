@@ -20,3 +20,30 @@ export type RoleFamily =
 export function parseRoleTemplateDefaults(json: string): RoleTemplateDefaults {
   return JSON.parse(json) as RoleTemplateDefaults;
 }
+
+/** A template's content as composer fields, in both languages (E-06). */
+export function prefillFromTemplate(t: {
+  slug: string;
+  nameEn: string;
+  nameAm: string;
+  defaults: string;
+}) {
+  const d = parseRoleTemplateDefaults(t.defaults);
+  return {
+    roleTemplateSlug: t.slug,
+    titleEn: t.nameEn,
+    titleAm: t.nameAm,
+    descriptionEn: d.descriptionEn,
+    descriptionAm: d.descriptionAm,
+    employmentType: d.employmentType,
+    shiftPattern: d.shiftPattern,
+    salaryMin: d.salaryHint.min,
+    salaryMax: d.salaryHint.max,
+    salaryPeriod: d.salaryHint.period,
+    requirementsEn: d.requirementsEn,
+    requirementsAm: d.requirementsAm,
+    benefitsEn: d.benefitsEn,
+    benefitsAm: d.benefitsAm,
+    skillSlugs: d.skillSlugs,
+  };
+}

@@ -6,3 +6,4 @@ next-env.d.ts
 docs/
 PLAN.md
 AGENTS.md
+.next-e2e/

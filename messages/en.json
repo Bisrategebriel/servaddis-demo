@@ -206,5 +206,17 @@
       "VERIFIED": "Verified venue",
       "REJECTED": "License not accepted"
     }
+  },
+  "jobs": {
+    "picker": {
+      "title": "Choose a role to start",
+      "search": "Search roles…",
+      "startBlank": "Start blank",
+      "noMatch": "No role matches that search.",
+      "popular": "Popular",
+      "typical": "{min}–{max}k ETB",
+      "unverified": "Your venue is awaiting verification: you can draft now, and submit after approval.",
+      "composeTitle": "Compose your job"
+    }
   }
 }

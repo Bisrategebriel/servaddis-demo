@@ -30,7 +30,7 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 | Field | Value |
 |---|---|
 | **Current milestone** | M2 Job posting loop |
-| **Next task** | T2.1 Template picker + 12 templates' content |
+| **Next task** | T2.2 Composer (4 steps, bilingual fields, live preview, draft save) |
 | **Last demoable build** | **Demo A**: register → license → admin verifies → badge + notification (script rows 1–4, EN + AM) |
 | **Hours spent / P0 budget** | 0 / 150 |
 | **Blockers** | None |
@@ -42,7 +42,7 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 |---|--:|--:|:-:|---|
 | M0 Foundations | 29 | 29 | `[x]` | Sign in as any persona; reset works; shells in EN/AM |
 | M1 Onboarding & verification | 22 | 22 | `[x]` | **Demo A**: register → upload license → admin verifies → notification |
-| M2 Job posting loop | 29 | 32 | `[ ]` | **Demo B**: template → composer → fee rule blocks → admin publishes |
+| M2 Job posting loop | 29 | 32 | `[~]` | **Demo B**: template → composer → fee rule blocks → admin publishes |
 | M3 Jobseeker & pipeline | 24 | 26 | `[ ]` | **Demo C**: apply → shortlist → reveal → hire (first full loop) |
 | M4 Team & RBAC | 8 | 8 | `[ ]` | Poster vs Screener differ in UI **and** API |
 | M5 Promote, plans & insights | 10 | 25 | `[ ]` | Card render + previews; checkout; insights |
@@ -144,7 +144,7 @@ Each task lists its priority, estimate, dependencies, spec refs and *Done when*.
 
 | ✓ | ID | Pri | Task | Est | Act | Deps | Refs | Done when |
 |:-:|---|:-:|---|--:|--:|---|---|---|
-| [ ] | T2.1 | P0 | Template picker + 12 templates' content | 4 | | T0.3, T1.5 | 03 SCR-E05, 05 §9.2 | Each template fills EN + AM |
+| [x] | T2.1 | P0 | Template picker + 12 templates' content | 4 | 0.5 | T0.3, T1.5 | 03 SCR-E05, 05 §9.2 | Each template fills EN + AM |
 | [ ] | T2.2 | P0 | Composer: 4 steps, `BilingualField`, `SalaryRange`, `UrgencySelect`, live preview, draft save | 10 | | T2.1 | 03 SCR-E06, 04 §7 | All E-07/E-08 criteria met |
 | [ ] | T2.3 | P0 | Rules engine, `/check`, `RuleFlagList`, unit tests incl. AM patterns | 5 | | T2.2 | 05 §7.1, 03 §4.4 | Fee request blocked; off-platform contact warns |
 | [ ] | T2.4 | P0 | Submit flow, entitlement resolver, status chips, jobs list + overview | 6 | | T2.3 | 03 §4.1–4.2, 05 §7.2 | Unverified venue locked; founding quota decrements on approval |
@@ -264,7 +264,8 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-29 | T0.1 | shadcn's default button is 32 px tall (`h-8`), below the 40/44 px touch targets (doc 04 §2.4). Fix the sizes when building the shells in T0.6 | Logged so it isn't missed | n/a |
 | 2026-10-29 | T0.2 | Prisma **6.19.3** (`prisma` + `@prisma/client`), staying on 6.x as doc 05 specifies (7 and 8-rc exist but change datasource config). pnpm 11 blocks install scripts, so `prisma`, `@prisma/client` and `@prisma/engines` are allowed in `pnpm-workspace.yaml` | Schema copies verbatim from doc 05 §4 | n/a |
 | 2026-10-29 | T0.2 | `DATABASE_URL="file:../data/servaddis.db"`: Prisma resolves SQLite paths relative to `prisma/`, and this keeps the db in root `data/` with uploads/cards | The TRD's `./data` would have created `prisma/data/` | Yes: TRD §10 |
-| 2026-11-02 | T1.5 | Bell polls every **4 s**, not the TRD's 10 s: script step 4 and T1.5 need the notification within 5 s. Dashboard data comes from `GET /api/venues/:id/summary`, polled at 4 s; the checklist is computed, not stored. Applicant names in activity need `applicant.view`, so a Poster sees counts only. The first-job button links to `/employer/jobs` until T2.1 adds the picker: **repoint it to `/employer/jobs/new`** | Spec conflict: the demo requirement wins | Yes: TRD §5.8, §7.2 |
+| 2026-11-03 | Testing | Test builds use `NEXT_DIST_DIR=.next-e2e` and each browser run gets a random port with a fail-fast start check, so stale servers can never answer a check and running servers are not disturbed. A second app on port 3000 was seen during T1.5 and may explain the intermittent failures (unconfirmed) | Isolation | n/a |
+| 2026-11-02 | T1.5 | Bell polls every **4 s**, not the TRD's 10 s: script step 4 and T1.5 need the notification within 5 s. Dashboard data comes from `GET /api/venues/:id/summary`, polled at 4 s; the checklist is computed, not stored. Applicant names in activity need `applicant.view`, so a Poster sees counts only. | Spec conflict: the demo requirement wins | Yes: TRD §5.8, §7.2 |
 | 2026-11-02 | T1.5 | **Bug fixed:** new accounts were always Amharic, so someone who switched to English and registered was flipped back. `verifyOtp` now takes the language from the `sv_locale` cookie for new accounts only; existing users keep their saved language | Found reviewing Demo A | n/a |
 | 2026-11-02 | Testing | **Open, watch this:** three browser runs failed without explanation and passed on rerun with no app change (moderation run on 2 Nov; English Demo A twice, stuck on Save). Five later runs right after clean and incremental builds all passed, so "first run after a build" is **not** confirmed. Rehearsals (T7.4) must include a run straight after a fresh `pnpm demo` | Unresolved | n/a |
 | 2026-11-02 | T1.4 | A license has two outcomes, approve or reject (with a required reason); `REQUEST_CHANGES` returns 409 for licenses and is kept for jobs (T2.5). Rejecting lets the owner re-upload. Decisions are one transaction: item, license, venue, notification, simulated SMS, audit. The queue polls every 4 s with SWR 2.5.1 and runs `sweep()` on load | Doc 05 §6.3 has only VERIFIED/REJECTED for venues | n/a |
@@ -339,6 +340,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-30 | T0.4 done: `POST /api/auth/otp/{request,verify}`, `POST /api/auth/logout`, `GET/PATCH /api/me`, `src/proxy.ts`, `session.ts` (jose 6.2), `rate-limit.ts`, `services/auth.ts`, SMS adapter seam, `src/lib/{phone,zod-schemas}.ts`. 83 tests green; live HTTP smoke test passed. TRD §5.1 annotated |
 | 2026-10-30 | T0.5 done: `src/lib/permissions.ts`, `src/server/policy/{authorize,with-auth}.ts`, `services/audit.ts`; `/api/me` returns permissions. 187 tests green, incl. the full doc 03 §6.1 matrix |
 | 2026-10-30 | T0.6 done: `app/[locale]` route tree (13 placeholder pages + landing), 3 shells, `LangToggle`, `POST /api/locale`, next-intl + `messages/{en,am}.json`, local Inter + Noto Sans Ethiopic, type scale with Amharic line heights, focus ring, reversed icon. 200 tests + 19 browser checks green; TRD §6 annotated |
+| 2026-11-03 | T2.1 done: template picker at `/employer/jobs/new` (search, Start blank, unverified banner), `GET /api/taxonomy`, `prefillFromTemplate()`, composer placeholder. All 12 templates tested to fill every field in EN + AM |
 | 2026-11-02 | T1.5 done, **M1 complete, Demo A works**: dashboard (checklist, verification chip, KPIs, activity), bell with list and read state, simulated SMS log in the dock, `GET /api/venues/:id/summary`, `GET /api/notifications`, `POST /api/notifications/read`, `GET /api/demo/sms`. 268 tests; Demo A passes 11/11 in Amharic and in English; dashboard fits 360/768/1280 |
 | 2026-11-02 | T1.4 done: `GET /api/admin/moderation`, `GET /api/admin/moderation/:id`, `POST …/:id/decision`, `services/moderation.ts`, queue + review screens, seeded Lideta item. 256 tests + 8 moderation browser checks green; earlier browser checks re-run green |
 | 2026-11-02 | T1.3 done: `POST /api/venues/:id/license`, `GET /api/files/:fileKey`, storage adapter, `services/licenses.ts`, license screen with all states, `public/samples/license-sample.pdf`. 249 tests + 16 browser checks green |
