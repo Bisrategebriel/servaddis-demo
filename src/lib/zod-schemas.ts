@@ -132,3 +132,13 @@ export const applicantsQuery = z.object({
   status: z.enum(["APPLIED", "VIEWED", "SHORTLISTED", "HIRED", "REJECTED"]).optional(),
   since: z.iso.datetime().optional(),
 });
+
+export const REJECT_REASONS = [
+  "NOT_ENOUGH_EXPERIENCE",
+  "SKILLS_MISMATCH",
+  "LANGUAGE_REQUIREMENT",
+  "AVAILABILITY_MISMATCH",
+  "POSITION_FILLED",
+  "OTHER",
+] as const;
+export const rejectBody = z.object({ reason: z.enum(REJECT_REASONS) });

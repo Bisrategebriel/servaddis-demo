@@ -511,5 +511,61 @@
   "toast": {
     "view": "View",
     "dismiss": "Dismiss"
+  },
+  "drawer": {
+    "title": "Applicant",
+    "close": "Close",
+    "loading": "Loading…",
+    "fayda": "Fayda verified",
+    "experience": "Experience",
+    "skills": "Skills",
+    "languages": "Languages",
+    "previous": "Previous work",
+    "availability": "Availability",
+    "note": "Note from the applicant",
+    "phone": "Phone",
+    "hiddenHint": "Contact is hidden until you shortlist this candidate.",
+    "revealedBy": "Revealed by {name}, {time}",
+    "timeline": "Timeline",
+    "shortlist": "Shortlist",
+    "reject": "Reject",
+    "rejectReason": "Reason",
+    "rejectConfirm": "Reject applicant",
+    "hire": "Mark hired",
+    "reveal": "Reveal contact",
+    "shortlistFirst": "Shortlist first",
+    "cancel": "Cancel",
+    "failed": "That didn't work. Try again.",
+    "levels": {
+      "native": "native",
+      "fluent": "fluent",
+      "good": "good",
+      "basic": "basic"
+    },
+    "langs": {
+      "am": "Amharic",
+      "en": "English",
+      "om": "Afaan Oromo",
+      "fr": "French"
+    },
+    "yearsAt": "{role} · {years, plural, one {# yr} other {# yrs}}",
+    "events": {
+      "APPLIED": "Applied",
+      "VIEWED": "Viewed",
+      "SHORTLISTED": "Shortlisted",
+      "REJECTED": "Rejected",
+      "HIRED": "Hired",
+      "CONTACT_REVEALED": "Contact revealed"
+    },
+    "by": "by {name}",
+    "reasons": {
+      "NOT_ENOUGH_EXPERIENCE": "Not enough experience",
+      "SKILLS_MISMATCH": "Skills don't match",
+      "LANGUAGE_REQUIREMENT": "Language requirement",
+      "AVAILABILITY_MISMATCH": "Availability doesn't match",
+      "POSITION_FILLED": "Position filled",
+      "OTHER": "Other"
+    },
+    "rejected": "Rejected: {reason}"
   }
 }

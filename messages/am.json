@@ -511,5 +511,61 @@
   "toast": {
     "view": "ይመልከቱ",
     "dismiss": "ዝጋ"
+  },
+  "drawer": {
+    "title": "አመልካች",
+    "close": "ዝጋ",
+    "loading": "በመጫን ላይ…",
+    "fayda": "በፋይዳ የተረጋገጠ",
+    "experience": "ልምድ",
+    "skills": "ክህሎቶች",
+    "languages": "ቋንቋዎች",
+    "previous": "ቀደም ሲል የሠሩበት",
+    "availability": "የሚገኙበት ጊዜ",
+    "note": "የአመልካቹ ማስታወሻ",
+    "phone": "ስልክ",
+    "hiddenHint": "ይህን አመልካች አጭር ዝርዝር ውስጥ እስኪያስገቡ ድረስ ስልክ ቁጥሩ ተደብቋል።",
+    "revealedBy": "የታየው በ{name}፣ {time}",
+    "timeline": "የጊዜ ሰሌዳ",
+    "shortlist": "ወደ አጭር ዝርዝር አስገባ",
+    "reject": "ውድቅ አድርግ",
+    "rejectReason": "ምክንያት",
+    "rejectConfirm": "አመልካቹን ውድቅ አድርግ",
+    "hire": "እንደተቀጠረ ምልክት አድርግ",
+    "reveal": "ስልክ ቁጥር አሳይ",
+    "shortlistFirst": "መጀመሪያ አጭር ዝርዝር ውስጥ ያስገቡ",
+    "cancel": "ተው",
+    "failed": "አልተሳካም። እንደገና ይሞክሩ።",
+    "levels": {
+      "native": "የአፍ መፍቻ",
+      "fluent": "አቀላጥፎ",
+      "good": "ጥሩ",
+      "basic": "መሠረታዊ"
+    },
+    "langs": {
+      "am": "አማርኛ",
+      "en": "እንግሊዝኛ",
+      "om": "አፋን ኦሮሞ",
+      "fr": "ፈረንሳይኛ"
+    },
+    "yearsAt": "{role} · {years} ዓመት",
+    "events": {
+      "APPLIED": "አመልክተዋል",
+      "VIEWED": "ታይቷል",
+      "SHORTLISTED": "አጭር ዝርዝር ውስጥ",
+      "REJECTED": "ውድቅ",
+      "HIRED": "ተቀጥረዋል",
+      "CONTACT_REVEALED": "ስልክ ቁጥሩ ታይቷል"
+    },
+    "by": "በ{name}",
+    "reasons": {
+      "NOT_ENOUGH_EXPERIENCE": "በቂ ልምድ የለም",
+      "SKILLS_MISMATCH": "ክህሎቶቹ አይስማሙም",
+      "LANGUAGE_REQUIREMENT": "የቋንቋ መስፈርት",
+      "AVAILABILITY_MISMATCH": "የሚገኙበት ጊዜ አይስማማም",
+      "POSITION_FILLED": "ቦታው ተይዟል",
+      "OTHER": "ሌላ"
+    },
+    "rejected": "ውድቅ፦ {reason}"
   }
 }

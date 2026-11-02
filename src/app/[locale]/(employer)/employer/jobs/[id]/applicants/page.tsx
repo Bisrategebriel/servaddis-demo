@@ -59,7 +59,11 @@ async function Applicants({ params }: { params: Promise<{ id: string }> }) {
         <h1 className="text-h1 wrap-break-word">{title}</h1>
         <JobStatusChip status={job.status} />
       </div>
-      <Pipeline jobId={job.id} initial={await listApplicants(job.id, { sort: "completeness" })} />
+      <Pipeline
+        jobId={job.id}
+        initial={await listApplicants(job.id, { sort: "completeness" })}
+        permissions={[...ctx.membership.permissions]}
+      />
     </div>
   );
 }

@@ -3,11 +3,12 @@
 import type { ApplicationStatus } from "@prisma/client";
 import { BadgeCheck } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { APPLICANT_SORTS, compareApplicants, type ApplicantSort } from "@/lib/applicant-sort";
 import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { PipelineItem } from "@/server/services/pipeline";
+import { ApplicantDrawer } from "./applicant-drawer";
 
 // SCR-E08 pipeline: board (one column per status) or list, verified first, then the chosen sort.
 // Polls every 3 s with the last cursor, so each poll returns only applications that changed
@@ -32,16 +33,26 @@ const noSubscribe = () => () => {};
 
 type Data = { items: PipelineItem[]; counts: Record<ApplicationStatus, number>; cursor: string };
 
-function ApplicantCard({ a, arrived }: { a: PipelineItem; arrived: boolean }) {
+function ApplicantCard({
+  a,
+  arrived,
+  onOpen,
+}: {
+  a: PipelineItem;
+  arrived: boolean;
+  onOpen: () => void;
+}) {
   const t = useTranslations("pipeline");
   const locale = useLocale();
   const am = locale === "am";
   return (
-    <div
+    <button
+      type="button"
+      onClick={onOpen}
       data-testid="applicant"
       data-status={a.status}
       className={cn(
-        "flex flex-col gap-1 rounded-md border border-border bg-card p-3 transition-shadow",
+        "flex w-full flex-col gap-1 rounded-md border border-border bg-card p-3 text-left transition-shadow hover:border-border-strong",
         arrived && "ring-2 ring-brand-accent",
       )}
     >
@@ -73,11 +84,19 @@ function ApplicantCard({ a, arrived }: { a: PipelineItem; arrived: boolean }) {
       <p className="text-caption text-text-secondary">
         {t("applied", { date: formatDateTime(a.appliedAt, locale) })}
       </p>
-    </div>
+    </button>
   );
 }
 
-export function Pipeline({ jobId, initial }: { jobId: string; initial: Data }) {
+export function Pipeline({
+  jobId,
+  initial,
+  permissions,
+}: {
+  jobId: string;
+  initial: Data;
+  permissions: string[];
+}) {
   const t = useTranslations("pipeline");
   const [items, setItems] = useState(() => new Map(initial.items.map((a) => [a.id, a])));
   const [counts, setCounts] = useState(initial.counts);
@@ -87,6 +106,18 @@ export function Pipeline({ jobId, initial }: { jobId: string; initial: Data }) {
   const view = chosen ?? saved ?? "board";
   const [arrived, setArrived] = useState<Set<string>>(new Set());
   const cursor = useRef(initial.cursor);
+  const [openId, setOpenId] = useState<string | null>(null);
+  // The drawer changed a status: move the card now instead of waiting for the next poll.
+  const onChanged = useCallback((id: string, status: ApplicationStatus) => {
+    setItems((prev) => {
+      const a = prev.get(id);
+      if (!a || a.status === status) return prev;
+      const next = new Map(prev);
+      next.set(id, { ...a, status, isNew: false });
+      setCounts((c) => ({ ...c, [a.status]: c[a.status] - 1, [status]: c[status] + 1 }));
+      return next;
+    });
+  }, []);
 
   const chooseView = (v: View) => {
     setChosen(v);
@@ -198,7 +229,12 @@ export function Pipeline({ jobId, initial }: { jobId: string; initial: Data }) {
                       <p className="p-2 text-caption text-text-secondary">{t("emptyColumn")}</p>
                     ) : (
                       column.map((a) => (
-                        <ApplicantCard key={a.id} a={a} arrived={arrived.has(a.id)} />
+                        <ApplicantCard
+                          key={a.id}
+                          a={a}
+                          arrived={arrived.has(a.id)}
+                          onOpen={() => setOpenId(a.id)}
+                        />
                       ))
                     )}
                   </div>
@@ -212,11 +248,18 @@ export function Pipeline({ jobId, initial }: { jobId: string; initial: Data }) {
           {sorted.map((a) => (
             <li key={a.id} className="flex flex-col gap-1">
               <span className="text-caption text-text-secondary">{t(`columns.${a.status}`)}</span>
-              <ApplicantCard a={a} arrived={arrived.has(a.id)} />
+              <ApplicantCard a={a} arrived={arrived.has(a.id)} onOpen={() => setOpenId(a.id)} />
             </li>
           ))}
         </ul>
       )}
+      <ApplicantDrawer
+        key={openId ?? "closed"} // fresh state for each applicant
+        applicationId={openId}
+        permissions={permissions}
+        onClose={() => setOpenId(null)}
+        onChanged={onChanged}
+      />
     </div>
   );
 }
