@@ -31,7 +31,12 @@ describe("messages", () => {
   });
 
   it("Amharic strings are actually in Ethiopic script (except names/codes)", () => {
-    const latinOnly = new Set(["common.appName", "lang.en", "dashboard.progress"]);
+    const latinOnly = new Set([
+      "common.appName",
+      "lang.en",
+      "dashboard.progress",
+      "profile.points", // "+15%"
+    ]);
     const get = (k: string) =>
       k.split(".").reduce<unknown>((o, p) => (o as never)[p], am) as string;
     const untranslated = keys(am).filter((k) => !latinOnly.has(k) && !/[ሀ-፿]/.test(get(k)));

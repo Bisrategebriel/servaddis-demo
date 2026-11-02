@@ -1,7 +1,21 @@
-import { getTranslations } from "next-intl/server";
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { ProfileView } from "@/components/jobseeker/profile-view";
+import { getCurrentUser } from "@/server/current-user";
+import { myProfile } from "@/server/services/profile";
 
-export default async function Page() {
-  const t = await getTranslations("pages");
-  return <PagePlaceholder title={t("profile")} />;
+// SCR-J04: the signed-in jobseeker's profile with its completeness meter (J-05).
+
+async function Profile() {
+  const user = await getCurrentUser();
+  if (user?.platformRole !== "JOBSEEKER") redirect("/login?next=/me/profile");
+  return <ProfileView initial={await myProfile(user.id)} />;
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-muted" aria-hidden />}>
+      <Profile />
+    </Suspense>
+  );
 }

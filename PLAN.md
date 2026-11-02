@@ -29,9 +29,9 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 
 | Field | Value |
 |---|---|
-| **Current milestone** | M3 Jobseeker & applicant pipeline |
-| **Next task** | T3.6 Jobseeker profile + completeness meter (P1; last task of M3) |
-| **Last demoable build** | **Demo B**: template → composer → fee rule blocks → submit → admin approves → Live → in the phone feed (script rows 5–7) |
+| **Current milestone** | M4 Team & RBAC |
+| **Next task** | T4.1 Team API: invite, role/grants, remove, last-owner guards |
+| **Last demoable build** | **Demo C**: post → fee rule → approve → feed → apply → toast → view → shortlist → reveal → hire → job closes with time-to-fill (script rows 5–9, EN + AM) |
 | **Hours spent / P0 budget** | 0 / 150 |
 | **Blockers** | None |
 | **Open decisions due soon** | D-5 wordmark (icon received). Defaults apply if unanswered (§8) |
@@ -43,7 +43,7 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 | M0 Foundations | 29 | 29 | `[x]` | Sign in as any persona; reset works; shells in EN/AM |
 | M1 Onboarding & verification | 22 | 22 | `[x]` | **Demo A**: register → upload license → admin verifies → notification |
 | M2 Job posting loop | 29 | 32 | `[x]` | **Demo B**: template → composer → fee rule blocks → admin publishes |
-| M3 Jobseeker & pipeline | 24 | 26 | `[ ]` | **Demo C**: apply → shortlist → reveal → hire (first full loop) |
+| M3 Jobseeker & pipeline | 24 | 26 | `[x]` | **Demo C**: apply → shortlist → reveal → hire (first full loop) |
 | M4 Team & RBAC | 8 | 8 | `[ ]` | Poster vs Screener differ in UI **and** API |
 | M5 Promote, plans & insights | 10 | 25 | `[ ]` | Card render + previews; checkout; insights |
 | M6 Bilingual, PWA & polish | 6 | 17 | `[ ]` | Full AM/EN; installable; polished |
@@ -163,7 +163,7 @@ Each task lists its priority, estimate, dependencies, spec refs and *Done when*.
 | [x] | T3.3 | P0 | Applicants API + pipeline (list/board), verified-first, polling, live toast | 6 | 2 | T3.2 | 03 SCR-E08, §5.1 | Toast ≤ 5 s |
 | [x] | T3.4 | P0 | Applicant drawer: view/shortlist/reject/hire/reveal; events; audit; masking | 6 | 2 | T3.3 | 03 SCR-E09, 05 §12 | Reveal gating and audit verified |
 | [x] | T3.5 | P0 | Hire → auto-close at headcount, time-to-fill, check-ins | 2 | 1 | T3.4 | 03 §5.1 | Job auto-closes; `filledAt` set |
-| [ ] | T3.6 | P1 | Jobseeker profile + completeness meter | 2 | | T3.2 | 03 SCR-J04, 05 §6.4 | SCR-J04 done |
+| [x] | T3.6 | P1 | Jobseeker profile + completeness meter | 2 | 1 | T3.2 | 03 SCR-J04, 05 §6.4 | SCR-J04 done |
 
 **M3 exit (Demo C):** script rows 8–9. Show this build to one friendly employer for feedback.
 
@@ -266,6 +266,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-29 | T0.2 | `DATABASE_URL="file:../data/servaddis.db"`: Prisma resolves SQLite paths relative to `prisma/`, and this keeps the db in root `data/` with uploads/cards | The TRD's `./data` would have created `prisma/data/` | Yes: TRD §10 |
 | 2026-11-03 | T2.2 | Composer state is plain React plus `src/lib/job-form.ts`, not React Hook Form: one form object spans four steps and a live preview, so the T1.2 decision stands. Drafts may be incomplete; `validateStep` gates Continue and stepper jumps, and submit (T2.4) must re-validate on the server. Preview labels for both languages come from the server because the client only holds the page language's messages |
 | 2026-11-03 | T2.2 | After the first save the URL changes with `window.history.replaceState`, not `router.replace`: a router navigation remounts the composer, which lost the step and the saved message (Next keeps the old page hidden). Use the same approach whenever a client form gains an id |
+| 2026-11-03 | T3.6 | The profile is read-mostly as J-05 says: skills, languages, past workplaces and preferred sub-cities show from the seed; only the basics (name, headline, years of experience, availability) are editable, via `PATCH /api/me/profile`, which upserts the profile and recomputes completeness (doc 05 §6.4). This also gives brand-new jobseekers a name, which employers otherwise saw as "New jobseeker". The meter lists each missing item with its weight (`completenessItems` in `src/lib/profile-completeness.ts`). Jobseeker routes signed in: /jobs 175 KB, /me/profile 176 KB, /me/applications 180 KB before load | PRD §5 keeps the profile builder out of scope | n/a |
 | 2026-11-03 | T3.5 | Every hire schedules the WEEK_2 (+14 d) and DAY_30 (+30 d) check-ins (the T0.7 sweep sends them). The hire that brings `hiredCount` to `headcount` fills the job **once** (`filledAt` not yet set): a LIVE job becomes CLOSED with `closedAt = filledAt` (a job already expired keeps its status and only gets `filledAt`); every Applied/Viewed/Shortlisted applicant becomes REJECTED / POSITION_FILLED with an automatic event (no actor) and a bell note "the position has been filled" (no SMS); creator + owners get JOB_FILLED with the time to fill. Time-to-fill shows in hours under a day, else days to 0.1, on the job page and in the dashboard average. The hire response says `jobFilled`, so the drawer shows a notice and refreshes the page | App Flow §5.1, doc 03 §10 | n/a |
 | 2026-11-03 | T3.4 | Applicant actions (`services/applicant-actions.ts`): opening the drawer calls `/view` (Applied → Viewed only; later stages untouched); shortlist from Applied also sets `viewedAt`; reject needs a `RejectReason`; hire only from Shortlisted and increments `hiredCount` (closing the job at headcount, time-to-fill and check-ins are T3.5). Jobseeker notifications per doc 03 §10: viewed/rejected app only, shortlisted/hired app + SMS. Terminal or wrong stage → 409 with the current status | App Flow §5.1 | n/a |
 | 2026-11-03 | T3.4 | Contact reveal: refused (409) before Shortlisted/Hired; the **first** reveal stores who/when and a CONTACT_REVEALED event; **every** reveal call writes `application.contact_reveal` to the audit log, since each one discloses the number. The drawer shows the full number only after a reveal *and* only to members holding `contact.reveal`, with "Revealed by Selam G., time". Denied reveals are audited as `authz.denied` (T0.5). Buttons a role never has are hidden (Screener: no Mark hired); stage-blocked ones are disabled with "Shortlist first" | E-14, doc 05 §12, doc 04 SCR-E09 | n/a |
@@ -361,6 +362,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-30 | T0.4 done: `POST /api/auth/otp/{request,verify}`, `POST /api/auth/logout`, `GET/PATCH /api/me`, `src/proxy.ts`, `session.ts` (jose 6.2), `rate-limit.ts`, `services/auth.ts`, SMS adapter seam, `src/lib/{phone,zod-schemas}.ts`. 83 tests green; live HTTP smoke test passed. TRD §5.1 annotated |
 | 2026-10-30 | T0.5 done: `src/lib/permissions.ts`, `src/server/policy/{authorize,with-auth}.ts`, `services/audit.ts`; `/api/me` returns permissions. 187 tests green, incl. the full doc 03 §6.1 matrix |
 | 2026-10-30 | T0.6 done: `app/[locale]` route tree (13 placeholder pages + landing), 3 shells, `LangToggle`, `POST /api/locale`, next-intl + `messages/{en,am}.json`, local Inter + Noto Sans Ethiopic, type scale with Amharic line heights, focus ring, reversed icon. 200 tests + 19 browser checks green; TRD §6 annotated |
+| 2026-11-03 | T3.6 done: `/me/profile` (photo/avatar, headline, Fayda badge, completeness meter with "to reach 100%" list, skills, languages, previous work, availability, preferred sub-cities), edit-basics form, `GET/PATCH /api/me/profile`, `services/profile.ts`. 422 tests + 10 browser checks. **M3 complete (Demo C)** |
 | 2026-11-03 | T3.5 done: hire schedules check-ins and fills the job at headcount (close, auto-reject POSITION_FILLED, JOB_FILLED notification), `timeToFill` in `src/lib/format.ts`, "Filled" + "Time to fill" on the job page, filled notice in the drawer. 418 tests + 10 browser checks; demo rows 8–9 now run end to end |
 | 2026-11-03 | T3.4 done: `GET /api/applications/:id` + `/view`, `/shortlist`, `/reject`, `/hire`, `/reveal-contact`; `ApplicantDrawer` (right sheet / full screen on phones: profile, languages, previous work, note, masked or revealed phone, timeline with actors, permission- and stage-aware actions, reject reasons); pipeline cards open it and move columns immediately. 412 tests + 21 browser checks (demo row 9 up to the hire) |
 | 2026-11-03 | T3.3 done: `GET /api/jobs/:id/applicants` (`services/pipeline.ts`; sort/status/since), `/employer/jobs/:id/applicants` with board and list views (choice remembered per browser), sort, 3 s incremental poll, new dots and arrival highlight, Poster explainer, shell-wide `LiveToast` from the bell, "Applicants (n) · k new" on the overview and "k new" on the jobs list. 402 tests + 19 browser checks |

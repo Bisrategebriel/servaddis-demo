@@ -38,3 +38,18 @@ export function profileCompleteness(p: CompletenessInput): number {
     (p.preferredSubCityCount > 0 ? w.preferredSubCity : 0);
   return Math.min(100, score);
 }
+
+/** Each weighted item and whether it counts, for the "what's missing" list on the profile. */
+export function completenessItems(p: CompletenessInput) {
+  const w = COMPLETENESS_WEIGHTS;
+  return [
+    { key: "photo", points: w.photo, done: filled(p.photoUrl) },
+    { key: "headline", points: w.headline, done: filled(p.headline) },
+    { key: "skills", points: w.skills, done: p.skillCount >= MIN_SKILLS },
+    { key: "experience", points: w.experience, done: p.experienceYears > 0 },
+    { key: "languages", points: w.languages, done: p.languageCount > 0 },
+    { key: "previousWorkplace", points: w.previousWorkplace, done: p.previousWorkplaceCount > 0 },
+    { key: "availability", points: w.availability, done: filled(p.availability) },
+    { key: "preferredSubCity", points: w.preferredSubCity, done: p.preferredSubCityCount > 0 },
+  ] as const;
+}

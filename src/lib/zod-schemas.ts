@@ -142,3 +142,11 @@ export const REJECT_REASONS = [
   "OTHER",
 ] as const;
 export const rejectBody = z.object({ reason: z.enum(REJECT_REASONS) });
+
+/** The basics a jobseeker edits on the read-mostly profile (J-05). */
+export const profileBody = z.object({
+  name: z.string().trim().min(2).max(80),
+  headline: optionalText(120),
+  experienceYears: z.coerce.number().int().min(0).max(50),
+  availability: optionalText(80),
+});
