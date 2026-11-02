@@ -6,6 +6,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import useSWR from "swr";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { VenueSummary } from "@/server/services/dashboard";
 
@@ -176,6 +177,26 @@ export function DashboardView({ venueId, name }: { venueId: string; name: string
       {data && (
         <>
           <Checklist data={data} />
+          {data.expiringSoon.length > 0 && (
+            <section
+              data-testid="expiring-banner"
+              className="flex flex-col gap-1 rounded-2xl bg-warning-bg px-4 py-3 text-warning-fg"
+            >
+              <h2 className="font-semibold">
+                {t("expiringSoon", { count: data.expiringSoon.length })}
+              </h2>
+              <ul className="flex flex-col gap-1">
+                {data.expiringSoon.map((j) => (
+                  <li key={j.id}>
+                    <Link href={`/employer/jobs/${j.id}`} className="underline underline-offset-4">
+                      {(am ? j.titleAm : j.titleEn) || j.titleEn || j.titleAm}
+                    </Link>{" "}
+                    · {formatDate(j.expiresAt, am ? "am" : "en")}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Kpi label={t("liveJobs")} value={data.kpis.liveJobs} />
             <Kpi label={t("newApplicants")} value={data.kpis.newApplicants} />

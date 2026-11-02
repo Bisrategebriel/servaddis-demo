@@ -29,9 +29,9 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 
 | Field | Value |
 |---|---|
-| **Current milestone** | M2 Job posting loop |
-| **Next task** | T2.6 Expiry banner (T-3 d), one-tap repost, manual close |
-| **Last demoable build** | **Demo A**: register → license → admin verifies → badge + notification (script rows 1–4, EN + AM) |
+| **Current milestone** | M3 Jobseeker & applicant pipeline |
+| **Next task** | T3.1 Public feed API, feed UI + filter sheet, job detail, feed seed |
+| **Last demoable build** | **Demo B**: template → composer → fee rule blocks → submit → admin approves → Live (script rows 5–7; the jobseeker feed in row 7 arrives with T3.1) |
 | **Hours spent / P0 budget** | 0 / 150 |
 | **Blockers** | None |
 | **Open decisions due soon** | D-5 wordmark (icon received). Defaults apply if unanswered (§8) |
@@ -42,7 +42,7 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done · `[-]` cu
 |---|--:|--:|:-:|---|
 | M0 Foundations | 29 | 29 | `[x]` | Sign in as any persona; reset works; shells in EN/AM |
 | M1 Onboarding & verification | 22 | 22 | `[x]` | **Demo A**: register → upload license → admin verifies → notification |
-| M2 Job posting loop | 29 | 32 | `[~]` | **Demo B**: template → composer → fee rule blocks → admin publishes |
+| M2 Job posting loop | 29 | 32 | `[x]` | **Demo B**: template → composer → fee rule blocks → admin publishes |
 | M3 Jobseeker & pipeline | 24 | 26 | `[ ]` | **Demo C**: apply → shortlist → reveal → hire (first full loop) |
 | M4 Team & RBAC | 8 | 8 | `[ ]` | Poster vs Screener differ in UI **and** API |
 | M5 Promote, plans & insights | 10 | 25 | `[ ]` | Card render + previews; checkout; insights |
@@ -149,7 +149,7 @@ Each task lists its priority, estimate, dependencies, spec refs and *Done when*.
 | [x] | T2.3 | P0 | Rules engine, `/check`, `RuleFlagList`, unit tests incl. AM patterns | 5 | 2 | T2.2 | 05 §7.1, 03 §4.4 | Fee request blocked; off-platform contact warns |
 | [x] | T2.4 | P0 | Submit flow, entitlement resolver, status chips, jobs list + overview | 6 | 2.5 | T2.3 | 03 §4.1–4.2, 05 §7.2 | Unverified venue locked; founding quota decrements on approval |
 | [x] | T2.5 | P0 | Admin job review, fast-approve tag, publish + expiry | 4 | 1.5 | T2.4, T1.4 | 05 §6.1, §6.4 | Approve → LIVE with correct `expiresAt` (EAT) |
-| [ ] | T2.6 | P1 | Expiry banner (T-3 d), one-tap repost, manual close | 3 | | T2.5 | PRD E-11 | Repost is fast-approve if unchanged |
+| [x] | T2.6 | P1 | Expiry banner (T-3 d), one-tap repost, manual close | 3 | 1.5 | T2.5 | PRD E-11 | Repost is fast-approve if unchanged |
 
 **Build T2.2 first and timebox it.** Fallback if it overruns: single-page composer (risk P-2).
 **M2 exit (Demo B):** script rows 5–7.
@@ -266,6 +266,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-29 | T0.2 | `DATABASE_URL="file:../data/servaddis.db"`: Prisma resolves SQLite paths relative to `prisma/`, and this keeps the db in root `data/` with uploads/cards | The TRD's `./data` would have created `prisma/data/` | Yes: TRD §10 |
 | 2026-11-03 | T2.2 | Composer state is plain React plus `src/lib/job-form.ts`, not React Hook Form: one form object spans four steps and a live preview, so the T1.2 decision stands. Drafts may be incomplete; `validateStep` gates Continue and stepper jumps, and submit (T2.4) must re-validate on the server. Preview labels for both languages come from the server because the client only holds the page language's messages |
 | 2026-11-03 | T2.2 | After the first save the URL changes with `window.history.replaceState`, not `router.replace`: a router navigation remounts the composer, which lost the step and the saved message (Next keeps the old page hidden). Use the same approach whenever a client form gains an id |
+| 2026-11-03 | T2.6 | Repost follows doc 05 §6.1 strictly: only EXPIRED or CLOSED jobs, cloned into a **new** row straight to PENDING_REVIEW (`isRepost`, `repostOfId`, skills copied, creator = whoever reposts). It is a new post, so it passes the same checks as submit (verified venue, fields, rules) and needs an entitlement; `isFastApprove` = the clone's hash equals the original's stored `contentHash`. Since a live job can't be edited yet, a one-tap repost is always fast-approve today. The T-3 d banner (overview + dashboard) covers NORMAL posts only, matching the sweep's `JOB_EXPIRING`; it says the job can be reposted once it expires rather than offering repost while live. Close needs a confirm step; applicants keep their status | Matches the state machine; one rule for every new post | n/a |
 | 2026-11-03 | T2.5 | Expiry lives in pure `src/lib/expiry.ts`: EAT is UTC+3 with no daylight saving, so "end of day" is plain arithmetic (23:59:59.999 EAT); no time-zone library. Approve sets `publishedAt`, `expiresAt`, and `needByAt = expiresAt` for urgent jobs, and decrements `foundingPostsLeft` for `FOUNDING_FREE` (never below 0), which completes T2.4's "founding quota decrements on approval". Notifications follow doc 03 §10: approved → creator + owners, app only; changes requested → creator, app + SMS, link to edit; rejected → creator + owners, app + SMS. Request changes and reject both need a reason | Doc 05 §6.1/§6.4 | n/a |
 | 2026-11-03 | T2.5 | After Submit the composer does a full page load to the overview (`window.location.assign`), not `router.push`: after a resubmit the client router cache still held the overview as "Changes requested" and showed it until a refresh landed. `router.refresh()` only clears the *current* route. Lint rule disabled on that line with the reason | Found in the T2.5 browser check | n/a |
 | 2026-11-03 | T2.4 | Submit order is TRD §5.3: status → venue VERIFIED (409 `VENUE_UNVERIFIED`) → required fields (400 with the composer `step`) → rules (422 `RULE_BLOCKED` + flags) → entitlement (409 `NO_ENTITLEMENT`, `requiresPayment`), then job + `ModerationItem(JOB)` + audit in one transaction. The founding counter is only *held* at submit (pending founding jobs count against it); **the decrement itself happens on approval, in T2.5**, so that part of T2.4's "done when" moves there. A resubmit after requested changes keeps its `postingSource` and never uses a second post. No entitlement means Submit is disabled with a link to Plans; the urgent-post checkout that would unlock it is T5.4 | Matches doc 05 §6.1; avoids double-charging on resubmit | n/a |
@@ -350,6 +351,7 @@ If a decision isn't made by its deadline, build with the default and mark it *de
 | 2026-10-30 | T0.4 done: `POST /api/auth/otp/{request,verify}`, `POST /api/auth/logout`, `GET/PATCH /api/me`, `src/proxy.ts`, `session.ts` (jose 6.2), `rate-limit.ts`, `services/auth.ts`, SMS adapter seam, `src/lib/{phone,zod-schemas}.ts`. 83 tests green; live HTTP smoke test passed. TRD §5.1 annotated |
 | 2026-10-30 | T0.5 done: `src/lib/permissions.ts`, `src/server/policy/{authorize,with-auth}.ts`, `services/audit.ts`; `/api/me` returns permissions. 187 tests green, incl. the full doc 03 §6.1 matrix |
 | 2026-10-30 | T0.6 done: `app/[locale]` route tree (13 placeholder pages + landing), 3 shells, `LangToggle`, `POST /api/locale`, next-intl + `messages/{en,am}.json`, local Inter + Noto Sans Ethiopic, type scale with Amharic line heights, focus ring, reversed icon. 200 tests + 19 browser checks green; TRD §6 annotated |
+| 2026-11-03 | T2.6 done: `POST /api/jobs/:id/close` and `/repost` (`closeJob`, `repostJob`; submit checks shared via `submissionChecks`/`requirePost`), `JobActions` (close with confirm, one-tap repost), expiry banner on the overview and an expiring-soon list on the dashboard, "repost of" link. 368 tests + 11 browser checks. **M2 complete** |
 | 2026-11-03 | T2.5 done: job decisions in `services/moderation.ts` (approve → LIVE with EAT expiry and founding decrement, request changes, reject; notifications + SMS + audit), `src/lib/expiry.ts` (unit-tested incl. midnight edges), job review screen (rule notes with matches, enhanced-scrutiny and fast-approve tags, bilingual preview), shared `DecisionPanel` with Request changes, `employerRecipients` moved to `services/notifications.ts`. 360 tests + 12 browser checks (full submit → review → live / changes → resubmit loop). Demo row 7's "appears on phone feed" waits for the feed (T3.1) |
 | 2026-11-03 | T2.4 done: `POST /api/jobs/:id/submit` (`submitJob`, `contentHash`, `venueEntitlement`), pure `resolveEntitlement` (`src/lib/entitlement.ts`, truth-table tests), Submit on composer step 4 (posting note, unverified/no-permission/no-posts explainers), `JobStatusChip`, jobs list with status filters, job overview (status note, moderator reason, warnings, timeline, preview), job titles in the admin queue, `src/lib/format.ts`. 344 tests + 18 browser checks green |
 | 2026-11-03 | T2.3 done: rules engine (`src/server/rules/{engine.ts,rules.json,blocked-keywords.ts}`: no-fee, blocked keywords, salary required, off-platform contact, salary outlier, sensitive family), `POST /api/jobs/check`, `services/rules-check.ts`, `RuleFlagList` on composer step 4 (live, debounced; "Fix this" opens the field in the flagged language). 325 tests + 9 browser checks green |

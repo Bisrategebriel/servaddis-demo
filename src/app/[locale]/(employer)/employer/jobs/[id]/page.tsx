@@ -1,19 +1,22 @@
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Clock, Pencil } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { previewContext } from "@/components/employer/composer/composer-data";
 import { JobPreview } from "@/components/employer/composer/job-preview";
+import { JobActions } from "@/components/employer/job-actions";
 import { JobStatusChip } from "@/components/employer/job-status-chip";
-import { formatDateTime } from "@/lib/format";
+import { formatDate, formatDateTime } from "@/lib/format";
 import { formFromJob } from "@/lib/job-form";
+import { DAY_MS, now } from "@/server/clock";
 import { getEmployerContext } from "@/server/current-user";
 import { db } from "@/server/db";
 import type { Flag } from "@/server/rules/engine";
+import { EXPIRY_WARNING_MS } from "@/server/sweep";
 
-// SCR-E07 job overview: status, moderation feedback, timeline and the bilingual preview.
-// Close, repost (T2.6), applicants (T3.3) and promote (T5.2) join the actions later.
+// SCR-E07 job overview: status, moderation feedback, expiry banner, timeline, close / repost and
+// the bilingual preview. Applicants (T3.3) and promote (T5.2) join the actions later.
 
 const NOTE_TONE = {
   DRAFT: "bg-gray-100 text-gray-700",
@@ -41,6 +44,7 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
       subCity: true,
       roleTemplate: true,
       moderation: { where: { type: "JOB" }, orderBy: { createdAt: "desc" }, take: 1 },
+      repostOf: { select: { id: true } },
     },
   });
   // Another venue's job looks exactly like a missing one (doc 05 §5.3).
@@ -59,6 +63,11 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
       : [];
   const editable = job.status === "DRAFT" || job.status === "CHANGES_REQUESTED";
   const title = (am ? job.titleAm || job.titleEn : job.titleEn || job.titleAm) || "—";
+
+  // E-11: warn three days ahead, like the sweep's JOB_EXPIRING notification (normal posts only).
+  const msLeft = job.expiresAt ? job.expiresAt.getTime() - now().getTime() : Infinity;
+  const expiringSoon =
+    job.status === "LIVE" && job.urgency === "NORMAL" && msLeft > 0 && msLeft <= EXPIRY_WARNING_MS;
 
   const timeline = [
     { label: t("created"), at: job.createdAt },
@@ -85,7 +94,18 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
         <div className="flex min-w-0 flex-col gap-2">
           <h1 className="text-h1 wrap-break-word">{title}</h1>
           <JobStatusChip status={job.status} />
+          {job.repostOf && (
+            <Link
+              href={`/employer/jobs/${job.repostOf.id}`}
+              className="w-fit text-small text-navy-700 underline underline-offset-4"
+            >
+              {t("repostOf")}
+            </Link>
+          )}
         </div>
+        {ctx.membership.permissions.has("job.close") && (
+          <JobActions jobId={job.id} status={job.status} />
+        )}
         {editable && ctx.membership.permissions.has("job.edit") && (
           <Link
             href={`/employer/jobs/${job.id}/edit`}
@@ -96,6 +116,19 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
           </Link>
         )}
       </div>
+
+      {expiringSoon && (
+        <p
+          data-testid="expiry-banner"
+          className="flex items-start gap-2 rounded-md bg-warning-bg px-4 py-3 text-warning-fg"
+        >
+          <Clock className="mt-1 size-4 shrink-0" aria-hidden />
+          {t("expiringSoon", {
+            days: Math.max(1, Math.ceil(msLeft / DAY_MS)),
+            date: formatDate(job.expiresAt!, locale),
+          })}
+        </p>
+      )}
 
       <div className={`flex flex-col gap-2 rounded-md px-4 py-3 ${NOTE_TONE[job.status]}`}>
         <p data-testid="status-note">{t(`notes.${job.status}`)}</p>

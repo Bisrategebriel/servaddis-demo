@@ -210,7 +210,8 @@
       "PENDING": "Pending verification",
       "VERIFIED": "Verified venue",
       "REJECTED": "License not accepted"
-    }
+    },
+    "expiringSoon": "{count, plural, one {A job expires in the next 3 days} other {# jobs expire in the next 3 days}}"
   },
   "jobs": {
     "picker": {
@@ -379,13 +380,21 @@
         "PENDING_REVIEW": "A moderator is reviewing this job. You'll get a notification when it's decided.",
         "CHANGES_REQUESTED": "The moderator asked for changes. Edit the job and submit it again.",
         "LIVE": "This job is live in the jobseeker feed.",
-        "EXPIRED": "This job has expired and no longer takes applications.",
-        "CLOSED": "This job is closed.",
+        "EXPIRED": "This job has expired and no longer takes applications. Repost it to keep hiring.",
+        "CLOSED": "This job is closed. Repost it if you need more people.",
         "REJECTED": "This job was not accepted and can't be published."
       },
       "reason": "Moderator's note",
       "warnings": "Submitted with these notes for the moderator",
-      "preview": "Preview"
+      "preview": "Preview",
+      "closeJob": "Close job",
+      "closeConfirm": "Close this job? It stops taking applications. Applicants keep their status.",
+      "cancel": "Cancel",
+      "repost": "Repost",
+      "reposting": "Reposting…",
+      "repostOf": "Repost of an earlier job",
+      "actionFailed": "That didn't work. Try again.",
+      "expiringSoon": "{days, plural, one {This job expires tomorrow} other {This job expires in # days}} ({date}). Once it expires you can repost it in one tap."
     }
   }
 }

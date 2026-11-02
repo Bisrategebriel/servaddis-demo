@@ -2,6 +2,7 @@ import "server-only";
 import type { VenuePermission } from "@/lib/permissions";
 import { now } from "../clock";
 import { db } from "../db";
+import { EXPIRY_WARNING_MS } from "../sweep";
 
 // SCR-E03 data: everything the dashboard polls. The checklist follows App Flow §3.
 
@@ -14,7 +15,8 @@ const shortName = (name: string) => {
 };
 
 export async function venueSummary(venueId: string, permissions: Set<VenuePermission>) {
-  const [venue, latestLicense, everLive, liveJobs, newApplicants, filled, subscription] =
+  const at = now();
+  const [venue, latestLicense, everLive, liveJobs, newApplicants, filled, subscription, expiring] =
     await Promise.all([
       db.venue.findUniqueOrThrow({ where: { id: venueId } }),
       db.licenseDocument.findFirst({ where: { venueId }, orderBy: { uploadedAt: "desc" } }),
@@ -26,8 +28,19 @@ export async function venueSummary(venueId: string, permissions: Set<VenuePermis
         select: { filledAt: true, publishedAt: true },
       }),
       db.subscription.findFirst({
-        where: { venueId, status: "ACTIVE", currentPeriodEnd: { gt: now() } },
+        where: { venueId, status: "ACTIVE", currentPeriodEnd: { gt: at } },
         include: { plan: true },
+      }),
+      // E-11 banner: normal posts in their last three days, like the JOB_EXPIRING notification.
+      db.job.findMany({
+        where: {
+          venueId,
+          status: "LIVE",
+          urgency: "NORMAL",
+          expiresAt: { gt: at, lte: new Date(at.getTime() + EXPIRY_WARNING_MS) },
+        },
+        orderBy: { expiresAt: "asc" },
+        select: { id: true, titleEn: true, titleAm: true, expiresAt: true },
       }),
     ]);
 
@@ -58,7 +71,7 @@ export async function venueSummary(venueId: string, permissions: Set<VenuePermis
     : [];
 
   return {
-    now: now().toISOString(),
+    now: at.toISOString(),
     venue: { nameEn: venue.nameEn, nameAm: venue.nameAm, verification: venue.verification },
     checklist: {
       rejectionReason:
@@ -75,6 +88,12 @@ export async function venueSummary(venueId: string, permissions: Set<VenuePermis
         : null,
       foundingPostsLeft: venue.foundingPostsLeft,
     },
+    expiringSoon: expiring.map((j) => ({
+      id: j.id,
+      titleEn: j.titleEn,
+      titleAm: j.titleAm,
+      expiresAt: j.expiresAt!.toISOString(),
+    })),
     activity: events.map((e) => ({
       id: e.id,
       at: e.at.toISOString(),

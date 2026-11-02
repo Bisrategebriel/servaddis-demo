@@ -120,21 +120,13 @@ export function contentHash(job: Pick<Job, (typeof MATERIAL_FIELDS)[number]>) {
 }
 
 const SUBMITTABLE: Job["status"][] = ["DRAFT", "CHANGES_REQUESTED"];
+const REPOSTABLE: Job["status"][] = ["EXPIRED", "CLOSED"];
 
-/**
- * DRAFT or CHANGES_REQUESTED → PENDING_REVIEW (TRD §5.3), checked in this order: venue VERIFIED
- * → required fields → rules → entitlement. A resubmit after requested changes keeps the job's
- * posting source, so it never uses a second post.
- */
-export async function submitJob(user: User, job: Job) {
-  if (!SUBMITTABLE.includes(job.status)) {
-    throw conflict("This job has already been submitted.", "ይህ ሥራ አስቀድሞ ገብቷል።", {
-      status: job.status,
-    });
-  }
+/** Venue VERIFIED → required fields → rules, on the stored job (TRD §5.3). Returns the flags. */
+async function submissionChecks(jobId: string) {
   const full = await db.job.findUniqueOrThrow({
-    where: { id: job.id },
-    include: { venue: true, subCity: true, roleTemplate: true },
+    where: { id: jobId },
+    include: { venue: true, subCity: true, roleTemplate: true, skills: true },
   });
   if (full.venue.verification !== "VERIFIED") {
     throw conflict(
@@ -154,21 +146,38 @@ export async function submitJob(user: User, job: Job) {
   }
   const flags = await checkDraft(jobDraftBody.parse(toJobPayload(form)));
   if (hasBlock(flags)) throw new AppError("RULE_BLOCKED", { details: { flags } });
+  return { full, flags };
+}
+
+/** The post a new submission uses, or 409 when the venue has none left (doc 03 §4.2). */
+async function requirePost(tx: Tx, venueId: string) {
+  const entitlement = await venueEntitlement(tx, venueId);
+  if (entitlement.requiresPayment) {
+    throw conflict(
+      "You have no posts left. Buy a one-time urgent post to submit this job.",
+      "የቀረዎት የማስታወቂያ ዕድል የለም። ይህን ሥራ ለማስገባት የአንድ ጊዜ አስቸኳይ ማስታወቂያ ይግዙ።",
+      { reason: "NO_ENTITLEMENT", requiresPayment: true },
+    );
+  }
+  return entitlement.source;
+}
+
+/**
+ * DRAFT or CHANGES_REQUESTED → PENDING_REVIEW, after `submissionChecks` and the entitlement.
+ * A resubmit after requested changes keeps the job's posting source, so it never uses a
+ * second post.
+ */
+export async function submitJob(user: User, job: Job) {
+  if (!SUBMITTABLE.includes(job.status)) {
+    throw conflict("This job has already been submitted.", "ይህ ሥራ አስቀድሞ ገብቷል።", {
+      status: job.status,
+    });
+  }
+  const { full, flags } = await submissionChecks(job.id);
 
   const at = now();
   return db.$transaction(async (tx) => {
-    let source = job.postingSource;
-    if (!source) {
-      const entitlement = await venueEntitlement(tx, job.venueId);
-      if (entitlement.requiresPayment) {
-        throw conflict(
-          "You have no posts left. Buy a one-time urgent post to submit this job.",
-          "የቀረዎት የማስታወቂያ ዕድል የለም። ይህን ሥራ ለማስገባት የአንድ ጊዜ አስቸኳይ ማስታወቂያ ይግዙ።",
-          { reason: "NO_ENTITLEMENT", requiresPayment: true },
-        );
-      }
-      source = entitlement.source;
-    }
+    const source = job.postingSource ?? (await requirePost(tx, job.venueId));
     const updated = await tx.job.update({
       where: { id: job.id },
       data: {
@@ -189,6 +198,100 @@ export async function submitJob(user: User, job: Job) {
       meta: { postingSource: source, flags: flags.map((f) => f.ruleId) },
     });
     return updated;
+  });
+}
+
+/**
+ * One-tap repost (E-11, doc 05 §6.1): an EXPIRED or CLOSED job is cloned into a new row that
+ * goes straight to review. The original keeps its history and applicants. A repost is a new
+ * post, so it passes the same checks and needs an entitlement; the moderator sees
+ * "fast approve" when the content is unchanged.
+ */
+export async function repostJob(user: User, job: Job) {
+  if (!REPOSTABLE.includes(job.status)) {
+    throw conflict(
+      "Only an expired or closed job can be reposted.",
+      "እንደገና መለጠፍ የሚቻለው ጊዜው ያለፈ ወይም የተዘጋ ሥራ ብቻ ነው።",
+      { status: job.status },
+    );
+  }
+  const { full, flags } = await submissionChecks(job.id);
+  const hash = contentHash(full);
+  const fastApprove = (full.contentHash ?? hash) === hash;
+
+  const at = now();
+  return db.$transaction(async (tx) => {
+    const source = await requirePost(tx, job.venueId);
+    const repost = await tx.job.create({
+      data: {
+        venueId: full.venueId,
+        createdById: user.id,
+        roleTemplateId: full.roleTemplateId,
+        titleEn: full.titleEn,
+        titleAm: full.titleAm,
+        descriptionEn: full.descriptionEn,
+        descriptionAm: full.descriptionAm,
+        headcount: full.headcount,
+        employmentType: full.employmentType,
+        shiftPattern: full.shiftPattern,
+        salaryMin: full.salaryMin,
+        salaryMax: full.salaryMax,
+        salaryPeriod: full.salaryPeriod,
+        requirementsEn: full.requirementsEn,
+        requirementsAm: full.requirementsAm,
+        benefitsEn: full.benefitsEn,
+        benefitsAm: full.benefitsAm,
+        languagesNeeded: full.languagesNeeded,
+        cityId: full.cityId,
+        subCityId: full.subCityId,
+        urgency: full.urgency,
+        status: "PENDING_REVIEW",
+        postingSource: source,
+        isRepost: true,
+        repostOfId: full.id,
+        contentHash: hash,
+        submittedAt: at,
+        createdAt: at,
+      },
+    });
+    await tx.jobSkill.createMany({
+      data: full.skills.map((s) => ({ jobId: repost.id, skillId: s.skillId })),
+    });
+    await tx.moderationItem.create({
+      data: {
+        type: "JOB",
+        jobId: repost.id,
+        flags: JSON.stringify(flags),
+        isFastApprove: fastApprove,
+        createdAt: at,
+      },
+    });
+    await audit(tx, {
+      actorId: user.id,
+      action: "job.repost",
+      entity: "Job",
+      entityId: repost.id,
+      meta: { repostOfId: full.id, postingSource: source, fastApprove },
+    });
+    return repost;
+  });
+}
+
+/** LIVE → CLOSED by hand (doc 05 §6.1). Applicants keep their status. */
+export async function closeJob(user: User, job: Job) {
+  if (job.status !== "LIVE") {
+    throw conflict("Only a live job can be closed.", "መዝጋት የሚቻለው ክፍት ሥራ ብቻ ነው።", {
+      status: job.status,
+    });
+  }
+  const at = now();
+  return db.$transaction(async (tx) => {
+    const closed = await tx.job.update({
+      where: { id: job.id },
+      data: { status: "CLOSED", closedAt: at },
+    });
+    await audit(tx, { actorId: user.id, action: "job.close", entity: "Job", entityId: job.id });
+    return closed;
   });
 }
 
