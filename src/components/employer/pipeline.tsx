@@ -224,7 +224,8 @@ export function Pipeline({
         />
       ) : view === "board" ? (
         <div className="-mx-4 overflow-x-auto px-4 pb-2" data-testid="board">
-          <div className="grid min-w-[56rem] grid-cols-5 gap-3">
+          {/* px, not rem: five columns must fit a 1280 px window in presenter mode too (18 px root) */}
+          <div className="grid min-w-[900px] grid-cols-5 gap-3">
             {COLUMNS.map((status) => {
               const column = sorted.filter((a) => a.status === status);
               return (

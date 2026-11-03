@@ -7,6 +7,7 @@ import { Popover } from "radix-ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { EmptyState } from "@/components/empty-state";
+import { usePresenter } from "@/lib/presenter";
 import { cn } from "@/lib/utils";
 import { LiveToasts, type Toast } from "./live-toast";
 
@@ -59,6 +60,7 @@ export function NotificationBell({
   });
   const count = data?.unreadCount ?? initialCount;
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const presenter = usePresenter();
   const seen = useRef<Set<string> | null>(null);
 
   // The first response is history, not news: only notifications that arrive later pop up.
@@ -73,16 +75,15 @@ export function NotificationBell({
     );
     for (const i of data.items) seen.current.add(i.id);
     if (fresh.length) {
-      setToasts((ts) => [
-        ...ts,
-        ...fresh.map((i) => ({
-          id: i.id,
-          text: `${am ? i.titleAm : i.titleEn}: ${(am ? i.bodyAm : i.bodyEn) ?? ""}`,
-          href: i.href,
-        })),
-      ]);
+      const next = fresh.map((i) => ({
+        id: i.id,
+        text: `${am ? i.titleAm : i.titleEn}: ${(am ? i.bodyAm : i.bodyEn) ?? ""}`,
+        href: i.href,
+      }));
+      // Presenter mode keeps one toast on screen (doc 04 §8): the newest; the rest stay in the bell.
+      setToasts((ts) => (presenter ? next.slice(0, 1) : [...ts, ...next]));
     }
-  }, [data, am]);
+  }, [data, am, presenter]);
   const closeToast = useCallback(
     (id: string) => setToasts((ts) => ts.filter((x) => x.id !== id)),
     [],

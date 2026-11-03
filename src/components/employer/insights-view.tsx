@@ -153,7 +153,7 @@ function TrendChart({ data }: { data: VenueInsights["trend"] }) {
                 x={pad.l - 8}
                 y={y(v) + 4}
                 textAnchor="end"
-                className="fill-text-secondary text-[11px]"
+                className="fill-text-secondary text-[0.6875rem]"
               >
                 {v}
               </text>
@@ -165,7 +165,7 @@ function TrendChart({ data }: { data: VenueInsights["trend"] }) {
               x={x(i)}
               y={H - 8}
               textAnchor="middle"
-              className="fill-text-secondary text-[11px]"
+              className="fill-text-secondary text-[0.6875rem]"
             >
               {monthLabel(d.month, locale)}
             </text>
@@ -207,7 +207,7 @@ function TrendChart({ data }: { data: VenueInsights["trend"] }) {
             <text
               x={points[lastIdx]![0] + 10}
               y={points[lastIdx]![1] + 4}
-              className="fill-foreground text-[12px] font-semibold"
+              className="fill-foreground text-[0.75rem] font-semibold"
             >
               {data[lastIdx].daysToFill}
             </text>
@@ -338,7 +338,7 @@ function MonthColumns({
                 x={pad.l - 6}
                 y={y(v) + 4}
                 textAnchor="end"
-                className="fill-text-secondary text-[11px]"
+                className="fill-text-secondary text-[0.6875rem]"
               >
                 {v}
               </text>
@@ -363,7 +363,7 @@ function MonthColumns({
                   x={cx}
                   y={H - 8}
                   textAnchor="middle"
-                  className="fill-text-secondary text-[11px]"
+                  className="fill-text-secondary text-[0.6875rem]"
                 >
                   {monthLabel(d.month, locale)}
                 </text>
@@ -372,7 +372,7 @@ function MonthColumns({
                     x={cx}
                     y={top - 5}
                     textAnchor="middle"
-                    className="fill-foreground text-[11px] font-semibold"
+                    className="fill-foreground text-[0.6875rem] font-semibold"
                   >
                     {d.value}%
                   </text>

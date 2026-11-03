@@ -1,11 +1,12 @@
 "use client";
 
-import { RotateCcw, Wrench, X } from "lucide-react";
+import { Presentation, RotateCcw, Wrench, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { SimulatedTag } from "@/components/simulated-tag";
 import { Button } from "@/components/ui/button";
 import { PERSONAS, type DemoStatus, type PersonaKey } from "@/lib/demo";
+import { setPresenter, usePresenter } from "@/lib/presenter";
 
 const post = (path: string, body?: unknown) =>
   fetch(path, {
@@ -18,6 +19,36 @@ const post = (path: string, body?: unknown) =>
 const goTo = (path: string) => window.location.replace(new URL(path, window.location.origin).href);
 
 type Sms = { id: string; toPhone: string; body: string };
+
+/** doc 04 §8: the presenter-mode switch, first in the panel. */
+function PresenterSwitch() {
+  const t = useTranslations("demo");
+  const on = usePresenter();
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      data-testid="presenter-switch"
+      onClick={() => setPresenter(!on)}
+      className="flex min-h-11 items-center gap-3 rounded-lg px-1 text-left hover:bg-accent"
+    >
+      <Presentation className="size-5 shrink-0 text-text-secondary" aria-hidden />
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="text-small font-medium">{t("presenter")}</span>
+        <span className="text-caption text-text-secondary">{t("presenterHint")}</span>
+      </span>
+      <span
+        aria-hidden
+        className={`relative h-6 w-10 shrink-0 rounded-full transition-colors ${on ? "bg-primary" : "bg-gray-300"}`}
+      >
+        <span
+          className={`absolute top-0.5 size-5 rounded-full bg-white shadow-card transition-[left] duration-150 ease-out ${on ? "left-4.5" : "left-0.5"}`}
+        />
+      </span>
+    </button>
+  );
+}
 
 /** The simulated SMS gateway's outbox, loaded when opened (doc 03 §10). */
 function SmsLog() {
@@ -58,6 +89,7 @@ export default function DemoPanel({ status }: { status: DemoStatus }) {
   const [failed, setFailed] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [passcode, setPasscode] = useState("");
+  const presenter = usePresenter();
 
   async function run(action: () => Promise<Response>, then: (res: Response) => Promise<void>) {
     setBusy(true);
@@ -85,6 +117,31 @@ export default function DemoPanel({ status }: { status: DemoStatus }) {
   // edge, so neither covers header actions, the bottom nav or a sticky Apply bar (doc 04 §4).
   // Desktop: bottom-right; the shells leave room below the content for it.
   const position = "fixed top-16 right-2 z-40 md:top-auto md:right-4 md:bottom-4";
+
+  const secondary = (
+    <>
+      <SmsLog />
+      <div className="flex flex-col gap-1 border-t border-border pt-3">
+        <Button
+          variant={confirming ? "destructive" : "outline"}
+          disabled={busy}
+          className="h-10"
+          onClick={() => (confirming ? reset() : setConfirming(true))}
+        >
+          <RotateCcw aria-hidden />
+          {busy && confirming ? t("resetting") : confirming ? t("resetConfirm") : t("reset")}
+        </Button>
+        <p className="text-caption text-text-secondary">
+          {t("seedVersion", { version: status.seedVersion })}
+        </p>
+        {status.resetNeeded && (
+          <p role="status" className="text-caption text-warning-fg">
+            {t("resetNeeded")}
+          </p>
+        )}
+      </div>
+    </>
+  );
 
   if (!open) {
     return (
@@ -135,7 +192,8 @@ export default function DemoPanel({ status }: { status: DemoStatus }) {
         </form>
       ) : (
         <>
-          <div className="flex flex-col gap-1">
+          <PresenterSwitch />
+          <div className="flex flex-col gap-1 border-t border-border pt-3">
             <p className="text-caption text-text-secondary">{t("personas")}</p>
             {PERSONAS.map((p) => (
               <button
@@ -149,26 +207,17 @@ export default function DemoPanel({ status }: { status: DemoStatus }) {
               </button>
             ))}
           </div>
-          <SmsLog />
-          <div className="flex flex-col gap-1 border-t border-border pt-3">
-            <Button
-              variant={confirming ? "destructive" : "outline"}
-              disabled={busy}
-              className="h-10"
-              onClick={() => (confirming ? reset() : setConfirming(true))}
-            >
-              <RotateCcw aria-hidden />
-              {busy && confirming ? t("resetting") : confirming ? t("resetConfirm") : t("reset")}
-            </Button>
-            <p className="text-caption text-text-secondary">
-              {t("seedVersion", { version: status.seedVersion })}
-            </p>
-            {status.resetNeeded && (
-              <p role="status" className="text-caption text-warning-fg">
-                {t("resetNeeded")}
-              </p>
-            )}
-          </div>
+          {presenter ? (
+            // Presenter mode hides the secondary tools until opened (doc 04 §8).
+            <details className="border-t border-border pt-3" data-testid="more-tools">
+              <summary className="flex min-h-10 cursor-pointer items-center text-small font-medium">
+                {t("moreTools")}
+              </summary>
+              <div className="flex flex-col gap-3 pt-2">{secondary}</div>
+            </details>
+          ) : (
+            secondary
+          )}
         </>
       )}
       {failed && (

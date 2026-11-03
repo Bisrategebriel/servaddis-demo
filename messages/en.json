@@ -94,7 +94,10 @@
       "moderator": "Moderator"
     },
     "smsLog": "SMS log",
-    "smsEmpty": "No messages yet."
+    "smsEmpty": "No messages yet.",
+    "presenter": "Presenter mode",
+    "presenterHint": "Larger text and stronger contrast for a projector.",
+    "moreTools": "More tools"
   },
   "login": {
     "phoneLabel": "Enter your phone number",

@@ -193,6 +193,20 @@
  * Amharic needs ~1.2× the Latin line height (doc 04 §2.3: taller Ethiopic glyphs).
  * The root layout sets <html lang="am">, so every text-* utility picks these up.
  */
+/*
+ * Presenter mode (doc 04 §8, toggled in the demo toolkit; src/lib/presenter.ts). Root font +12 %
+ * (16 → 18 px): type, spacing, control heights and row heights are all rem, so the whole UI
+ * grows together. For a projector: darker secondary text and borders, so nothing relies on a
+ * light-grey hairline or muted text on grey.
+ */
+:root[data-presenter] {
+  font-size: 112.5%;
+  --border: var(--gray-300);
+  --text-secondary: var(--gray-700);
+  --muted-foreground: var(--gray-700);
+  --text-muted: var(--gray-600);
+}
+
 :root:lang(am) {
   --text-display--line-height: 3rem;
   --text-h1--line-height: 2.25rem;
@@ -220,6 +234,11 @@
   }
   .surface-navy :focus-visible {
     outline-color: var(--amber-500);
+  }
+  /* Presenter mode: thicker focus ring, visible from the back of a room */
+  :root[data-presenter] :focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
   }
   /* doc 04 §2.4 motion: 150 ms ease-out for hover and press on every control. Utilities win
      over this base rule, so a component with its own transition keeps it. */

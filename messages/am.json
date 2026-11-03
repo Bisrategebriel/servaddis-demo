@@ -94,7 +94,10 @@
       "moderator": "አወያይ"
     },
     "smsLog": "የኤስኤምኤስ መዝገብ",
-    "smsEmpty": "ገና መልዕክት የለም።"
+    "smsEmpty": "ገና መልዕክት የለም።",
+    "presenter": "የአቀራረብ ሁኔታ",
+    "presenterHint": "ለፕሮጀክተር ትልቅ ጽሑፍና ጠንካራ ንፅፅር።",
+    "moreTools": "ተጨማሪ መሣሪያዎች"
   },
   "login": {
     "phoneLabel": "ስልክ ቁጥርዎን ያስገቡ",

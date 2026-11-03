@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { DemoDock } from "@/components/demo/demo-dock";
 import { ServiceWorkerRegister } from "@/components/sw-register";
 import { LOCALES, isLocale } from "@/i18n/locales";
+import { presenterScript } from "@/lib/presenter-script";
 import { inter, notoEthiopic } from "../fonts";
 import "../globals.css";
 
@@ -32,8 +33,15 @@ export default async function RootLayout({ children }: LayoutProps<"/[locale]">)
   const locale = await rootLocale();
   if (!isLocale(locale)) notFound();
   return (
-    <html lang={locale} className={`${inter.variable} ${notoEthiopic.variable} h-full antialiased`}>
+    // suppressHydrationWarning: the presenter script may add data-presenter before React loads.
+    <html
+      lang={locale}
+      className={`${inter.variable} ${notoEthiopic.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="flex min-h-full flex-col">
+        {/* Presenter mode before first paint (doc 04 §8); see src/lib/presenter-script.ts */}
+        <script dangerouslySetInnerHTML={{ __html: presenterScript }} />
         <NextIntlClientProvider>
           {children}
           <ServiceWorkerRegister />
