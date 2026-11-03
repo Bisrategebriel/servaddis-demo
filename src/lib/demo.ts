@@ -16,4 +16,11 @@ export type DemoStatus = {
   locked: boolean;
   seedVersion: string;
   resetNeeded: boolean;
+  /** The demo clock (ISO) and how far it is ahead of real time, for the time-skip section. */
+  now: string;
+  offsetDays: number;
 };
+
+export const SKIP_DAYS = [1, 3, 14, 30] as const;
+export const SCENARIOS = ["venue-verified", "job-live", "applicants-present", "job-hired"] as const;
+export type Scenario = (typeof SCENARIOS)[number];

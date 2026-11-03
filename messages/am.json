@@ -7,7 +7,8 @@
     "signIn": "ይግቡ",
     "signOut": "ይውጡ",
     "loading": "በመጫን ላይ…",
-    "simulated": "ማስመሰያ"
+    "simulated": "ማስመሰያ",
+    "demoRibbon": "የማሳያ አካባቢ · ሰዎቹ፣ ድርጅቶቹና ክፍያዎቹ ልብ ወለድ ናቸው"
   },
   "routeError": {
     "title": "በዚህ ገጽ ላይ ችግር ተፈጥሯል።",
@@ -93,11 +94,42 @@
       "dawit": "ዳዊት፦ አስተናጋጅ",
       "moderator": "አወያይ"
     },
-    "smsLog": "የኤስኤምኤስ መዝገብ",
     "smsEmpty": "ገና መልዕክት የለም።",
     "presenter": "የአቀራረብ ሁኔታ",
     "presenterHint": "ለፕሮጀክተር ትልቅ ጽሑፍና ጠንካራ ንፅፅር።",
-    "moreTools": "ተጨማሪ መሣሪያዎች"
+    "moreTools": "ተጨማሪ መሣሪያዎች",
+    "fallbacks": "ተጠባባቂ እርምጃዎች",
+    "simulateApplicant": "አመልካች አስመስል",
+    "simulatedApplicant": "{name} ለ{job} አመልክተዋል።",
+    "approveAll": "በመጠባበቅ ላይ ያሉትን ሁሉ አጽድቅ",
+    "approved": "{licenses, plural, =0 {ምንም ፈቃድ} other {# ፈቃድ}} እና {jobs, plural, =0 {ምንም ሥራ} other {# ሥራ}} ጸድቀዋል።",
+    "scenario": "ወደ ደረጃ ዝለል",
+    "scenarioGo": "ሂድ",
+    "scenarios": {
+      "venue-verified": "ድርጅቱ ተረጋግጧል",
+      "job-live": "ሥራው ክፍት ነው",
+      "applicants-present": "አመልካቾች አሉ",
+      "job-hired": "ተቀጥሯል"
+    },
+    "time": "የማሳያ ሰዓት",
+    "demoDate": "የማሳያ ቀን፦ {date}",
+    "ahead": "ከእውነተኛው ጊዜ {days} ቀን ቀድሟል",
+    "skip": "+{days} ቀን",
+    "skipLabel": "{days} ቀን ወደፊት ዝለል",
+    "skipped": "አሁን {date}። {expired, plural, =0 {ጊዜው ያለፈ ሥራ የለም} other {# ሥራ ጊዜው አልፏል}}፣ {checkins, plural, =0 {የደረሰ ክትትል የለም} other {# ክትትል ተልኳል}}።",
+    "phone": "ስልክ (SMS)",
+    "phoneTitle": "የማስመሰያ ስልክ",
+    "phoneHint": "የSMS መግቢያው ይልካቸው የነበሩ መልዕክቶች። ከዚህ ኮምፒውተር ምንም አይወጣም።",
+    "showTags": "የ«ማስመሰያ» መለያዎችን አሳይ",
+    "showTagsHint": "እውነተኛ ባልሆነ ነገር ሁሉ ላይ ግራጫ መለያ።",
+    "closePhone": "ስልኩን ዝጋ",
+    "unknownRecipient": "ያልታወቀ ቁጥር",
+    "smsKind": {
+      "OTP": "የመግቢያ ኮድ",
+      "ALERT": "ማሳሰቢያ",
+      "CHECKIN": "ክትትል",
+      "INVITE": "ግብዣ"
+    }
   },
   "login": {
     "phoneLabel": "ስልክ ቁጥርዎን ያስገቡ",

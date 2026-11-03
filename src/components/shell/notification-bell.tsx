@@ -7,7 +7,7 @@ import { Popover } from "radix-ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { EmptyState } from "@/components/empty-state";
-import { usePresenter } from "@/lib/presenter";
+import { usePresenter } from "@/lib/display-prefs-client";
 import { cn } from "@/lib/utils";
 import { LiveToasts, type Toast } from "./live-toast";
 

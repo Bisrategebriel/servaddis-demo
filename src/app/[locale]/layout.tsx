@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { DemoDock } from "@/components/demo/demo-dock";
 import { ServiceWorkerRegister } from "@/components/sw-register";
 import { LOCALES, isLocale } from "@/i18n/locales";
-import { presenterScript } from "@/lib/presenter-script";
+import { displayPrefsScript } from "@/lib/display-prefs";
 import { inter, notoEthiopic } from "../fonts";
 import "../globals.css";
 
@@ -29,20 +29,38 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = { themeColor: "#16243f" };
 
+/**
+ * doc 04 §4: a "Demo environment" ribbon above the top bar whenever demo mode is on (the local
+ * and tunnelled copies both are). Read at build time for static pages: build and start with the
+ * same .env, as `pnpm demo` does.
+ */
+async function DemoRibbon() {
+  const t = await getTranslations("common");
+  return (
+    <p
+      data-testid="demo-ribbon"
+      className="bg-amber-100 px-4 py-0.5 text-center text-caption text-amber-800 print:hidden"
+    >
+      {t("demoRibbon")}
+    </p>
+  );
+}
+
 export default async function RootLayout({ children }: LayoutProps<"/[locale]">) {
   const locale = await rootLocale();
   if (!isLocale(locale)) notFound();
   return (
-    // suppressHydrationWarning: the presenter script may add data-presenter before React loads.
+    // suppressHydrationWarning: the display-prefs script may add attributes before React loads.
     <html
       lang={locale}
       className={`${inter.variable} ${notoEthiopic.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">
-        {/* Presenter mode before first paint (doc 04 §8); see src/lib/presenter-script.ts */}
-        <script dangerouslySetInnerHTML={{ __html: presenterScript }} />
+        {/* Toolkit display settings before first paint; see src/lib/display-prefs.ts */}
+        <script dangerouslySetInnerHTML={{ __html: displayPrefsScript }} />
         <NextIntlClientProvider>
+          {process.env.DEMO_MODE === "1" && <DemoRibbon />}
           {children}
           <ServiceWorkerRegister />
           <div className="print:hidden">

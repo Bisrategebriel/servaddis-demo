@@ -193,6 +193,11 @@
  * Amharic needs ~1.2× the Latin line height (doc 04 §2.3: taller Ethiopic glyphs).
  * The root layout sets <html lang="am">, so every text-* utility picks these up.
  */
+/* Toolkit "Show Simulated tags" off (TRD §5.10) */
+:root[data-hide-simulated] [data-simulated] {
+  display: none !important;
+}
+
 /*
  * Presenter mode (doc 04 §8, toggled in the demo toolkit; src/lib/presenter.ts). Root font +12 %
  * (16 → 18 px): type, spacing, control heights and row heights are all rem, so the whole UI

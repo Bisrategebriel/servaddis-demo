@@ -7,7 +7,8 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "loading": "Loading…",
-    "simulated": "Simulated"
+    "simulated": "Simulated",
+    "demoRibbon": "Demo environment · fictional people, venues and payments"
   },
   "routeError": {
     "title": "Something went wrong on this page.",
@@ -93,11 +94,42 @@
       "dawit": "Dawit: Waiter",
       "moderator": "Moderator"
     },
-    "smsLog": "SMS log",
     "smsEmpty": "No messages yet.",
     "presenter": "Presenter mode",
     "presenterHint": "Larger text and stronger contrast for a projector.",
-    "moreTools": "More tools"
+    "moreTools": "More tools",
+    "fallbacks": "Fallbacks",
+    "simulateApplicant": "Simulate applicant",
+    "simulatedApplicant": "{name} applied to {job}.",
+    "approveAll": "Approve all pending",
+    "approved": "Approved {licenses, plural, =0 {no licenses} one {# license} other {# licenses}} and {jobs, plural, =0 {no jobs} one {# job} other {# jobs}}.",
+    "scenario": "Skip to state",
+    "scenarioGo": "Go",
+    "scenarios": {
+      "venue-verified": "Venue verified",
+      "job-live": "Job live",
+      "applicants-present": "Applicants present",
+      "job-hired": "Job hired"
+    },
+    "time": "Demo clock",
+    "demoDate": "Demo date: {date}",
+    "ahead": "{days} days ahead of real time",
+    "skip": "+{days} d",
+    "skipLabel": "Skip ahead {days, plural, one {# day} other {# days}}",
+    "skipped": "Now {date}. {expired, plural, =0 {No jobs expired} one {# job expired} other {# jobs expired}}, {checkins, plural, =0 {no check-ins due} one {# check-in sent} other {# check-ins sent}}.",
+    "phone": "Phone (SMS)",
+    "phoneTitle": "Simulated phone",
+    "phoneHint": "Texts the SMS gateway would have sent. Nothing leaves this laptop.",
+    "showTags": "Show Simulated tags",
+    "showTagsHint": "Gray tags on anything not real.",
+    "closePhone": "Close phone",
+    "unknownRecipient": "Unknown number",
+    "smsKind": {
+      "OTP": "Sign-in code",
+      "ALERT": "Alert",
+      "CHECKIN": "Check-in",
+      "INVITE": "Invite"
+    }
   },
   "login": {
     "phoneLabel": "Enter your phone number",
