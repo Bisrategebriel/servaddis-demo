@@ -24,7 +24,8 @@ const CHIP: Record<JobStatus, { icon: LucideIcon; tone: string }> = {
   REJECTED: { icon: CircleX, tone: "bg-danger-bg text-danger-fg" },
 };
 
-export function JobStatusChip({ status }: { status: JobStatus }) {
+/** `highlight`: a brief pulse for an important success, e.g. a job that has just gone live. */
+export function JobStatusChip({ status, highlight }: { status: JobStatus; highlight?: boolean }) {
   const t = useTranslations("jobs.status");
   const { icon: Icon, tone } = CHIP[status];
   return (
@@ -34,6 +35,7 @@ export function JobStatusChip({ status }: { status: JobStatus }) {
       className={cn(
         "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-sm px-2 py-1 text-caption",
         tone,
+        highlight && "chip-highlight",
       )}
     >
       <Icon className="size-3.5" aria-hidden />

@@ -47,7 +47,7 @@ export function FilterSheet({
         aria-labelledby="filters-title"
         // Closes on a tap outside the sheet (the backdrop is the dialog element itself).
         onClick={(e) => e.target === dialog.current && dialog.current.close()}
-        className="m-0 mt-auto max-h-[85vh] w-full max-w-none rounded-t-2xl bg-card p-0 text-foreground backdrop:bg-navy-950/50 sm:m-auto sm:max-w-md sm:rounded-2xl"
+        className="sheet-up m-0 mt-auto max-h-[85vh] w-full max-w-none rounded-t-2xl bg-card p-0 text-foreground backdrop:bg-navy-950/50 sm:m-auto sm:max-w-md sm:rounded-2xl"
       >
         <form method="get" action="/jobs" className="flex flex-col gap-4 p-4">
           <div className="flex items-center justify-between">

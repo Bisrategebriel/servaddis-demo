@@ -77,7 +77,7 @@ export function TemplatePicker({ templates }: { templates: TemplateTile[] }) {
         </div>
         <Link
           href="/employer/jobs/new/compose"
-          className="text-small text-navy-700 underline underline-offset-4"
+          className="inline-flex min-h-10 items-center text-small text-navy-700 underline underline-offset-4"
         >
           {t("startBlank")}
         </Link>
@@ -92,7 +92,7 @@ export function TemplatePicker({ templates }: { templates: TemplateTile[] }) {
             <li key={x.slug}>
               <Link
                 href={`/employer/jobs/new/compose?template=${x.slug}`}
-                className="flex h-full min-h-32 flex-col gap-1 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-primary"
+                className="flex h-full min-h-32 flex-col gap-1 rounded-2xl border border-border bg-card p-4 transition-[border-color,box-shadow] hover:border-primary hover:shadow-card"
               >
                 <span className="flex items-start justify-between gap-2">
                   <Icon className="size-6 text-navy-600" aria-hidden />

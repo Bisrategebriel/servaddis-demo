@@ -40,7 +40,7 @@ function ToastItem({
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
-      className="flex w-full items-center gap-3 rounded-2xl bg-navy-900 px-4 py-3 text-white shadow-overlay"
+      className="flex w-full animate-in items-center gap-3 rounded-2xl bg-navy-900 px-4 py-3 text-white shadow-overlay duration-200 ease-out fade-in-0 slide-in-from-bottom-4 md:slide-in-from-top-4"
     >
       <UserPlus className="size-5 shrink-0 text-amber-400" aria-hidden />
       <p className="min-w-0 flex-1 text-small">{toast.text}</p>

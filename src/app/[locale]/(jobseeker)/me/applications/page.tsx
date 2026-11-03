@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { CardListSkeleton } from "@/components/skeletons";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ApplicationTracker } from "@/components/jobseeker/application-tracker";
@@ -14,11 +15,11 @@ async function Applications() {
 }
 
 export default async function MyApplicationsPage() {
-  const t = await getTranslations("tracker");
+  const [t, common] = await Promise.all([getTranslations("tracker"), getTranslations("common")]);
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-h1">{t("title")}</h1>
-      <Suspense fallback={<div className="h-40 animate-pulse rounded-md bg-muted" aria-hidden />}>
+      <Suspense fallback={<CardListSkeleton label={common("loading")} count={3} />}>
         <Applications />
       </Suspense>
     </div>

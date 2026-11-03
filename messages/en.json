@@ -9,6 +9,12 @@
     "loading": "Loading…",
     "simulated": "Simulated"
   },
+  "routeError": {
+    "title": "Something went wrong on this page.",
+    "body": "Try again. If it keeps happening, reset the demo from the demo toolkit.",
+    "retry": "Try again",
+    "home": "Go to the start"
+  },
   "lang": {
     "label": "Language",
     "am": "አማ",

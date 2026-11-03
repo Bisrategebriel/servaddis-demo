@@ -2,8 +2,10 @@
 
 import type { ApplicationStatus } from "@prisma/client";
 import { BadgeCheck } from "lucide-react";
+import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { EmptyState, emptyActionClass } from "@/components/empty-state";
 import { APPLICANT_SORTS, compareApplicants, type ApplicantSort } from "@/lib/applicant-sort";
 import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -52,7 +54,7 @@ function ApplicantCard({
       data-testid="applicant"
       data-status={a.status}
       className={cn(
-        "flex w-full flex-col gap-1 rounded-md border border-border bg-card p-3 text-left transition-shadow hover:border-border-strong",
+        "flex w-full flex-col gap-1 rounded-md border border-border bg-card p-3 text-left transition-shadow hover:border-border-strong hover:shadow-card",
         arrived && "ring-2 ring-brand-accent",
       )}
     >
@@ -98,6 +100,7 @@ export function Pipeline({
   permissions: string[];
 }) {
   const t = useTranslations("pipeline");
+  const tp = useTranslations("promote");
   const [items, setItems] = useState(() => new Map(initial.items.map((a) => [a.id, a])));
   const [counts, setCounts] = useState(initial.counts);
   const [sort, setSort] = useState<ApplicantSort>("completeness");
@@ -207,9 +210,18 @@ export function Pipeline({
       </div>
 
       {sorted.length === 0 ? (
-        <p className="rounded-md border border-dashed border-border-strong bg-card p-6 text-text-secondary">
-          {t("empty")}
-        </p>
+        <EmptyState
+          illustration="applicants"
+          testId="pipeline-empty"
+          title={t("empty")}
+          action={
+            permissions.includes("social.promote") && (
+              <Link href={`/employer/jobs/${jobId}/promote`} className={emptyActionClass}>
+                {tp("title")}
+              </Link>
+            )
+          }
+        />
       ) : view === "board" ? (
         <div className="-mx-4 overflow-x-auto px-4 pb-2" data-testid="board">
           <div className="grid min-w-[56rem] grid-cols-5 gap-3">

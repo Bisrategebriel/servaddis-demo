@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { DashboardSkeleton } from "@/components/skeletons";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { DashboardView } from "@/components/employer/dashboard-view";
@@ -23,7 +24,7 @@ async function Dashboard() {
 export default async function DashboardPage() {
   const t = await getTranslations("common");
   return (
-    <Suspense fallback={<p className="text-text-secondary">{t("loading")}</p>}>
+    <Suspense fallback={<DashboardSkeleton label={t("loading")} />}>
       <Dashboard />
     </Suspense>
   );

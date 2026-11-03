@@ -1,4 +1,5 @@
 import { ArrowLeft } from "lucide-react";
+import { PipelineSkeleton } from "@/components/skeletons";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -62,7 +63,7 @@ export default async function ApplicantsPage({
 }: PageProps<"/[locale]/employer/jobs/[id]/applicants">) {
   const t = await getTranslations("common");
   return (
-    <Suspense fallback={<p className="text-text-secondary">{t("loading")}</p>}>
+    <Suspense fallback={<PipelineSkeleton label={t("loading")} />}>
       <Applicants params={params} />
     </Suspense>
   );

@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { TableSkeleton } from "@/components/skeletons";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { Forbidden } from "@/components/employer/forbidden";
 import { TeamManager } from "@/components/employer/team-manager";
@@ -22,9 +24,10 @@ async function Team() {
   );
 }
 
-export default function TeamPage() {
+export default async function TeamPage() {
+  const t = await getTranslations("common");
   return (
-    <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-muted" aria-hidden />}>
+    <Suspense fallback={<TableSkeleton label={t("loading")} rows={4} />}>
       <Team />
     </Suspense>
   );

@@ -6,6 +6,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { Popover } from "radix-ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useSWR from "swr";
+import { EmptyState } from "@/components/empty-state";
 import { cn } from "@/lib/utils";
 import { LiveToasts, type Toast } from "./live-toast";
 
@@ -116,7 +117,9 @@ export function NotificationBell({
         <Popover.Trigger
           aria-label={`${t("notifications")}: ${t("unread", { count })}`}
           className={cn(
-            "relative inline-flex size-10 items-center justify-center rounded-lg",
+            // 44 px on jobseeker routes (navy bar), 40 px on employer desktop (doc 04 §2.4)
+            "relative inline-flex items-center justify-center rounded-lg",
+            surface === "navy" ? "size-11" : "size-10",
             surface === "navy"
               ? "text-gray-300 hover:bg-navy-800 hover:text-white"
               : "text-text-secondary hover:bg-muted hover:text-foreground",
@@ -137,7 +140,7 @@ export function NotificationBell({
             align="end"
             sideOffset={8}
             collisionPadding={8}
-            className="z-50 flex max-h-[70vh] w-80 max-w-[calc(100vw-1rem)] flex-col rounded-2xl border border-border bg-popover text-popover-foreground shadow-overlay"
+            className="z-50 flex max-h-[70vh] w-80 max-w-[calc(100vw-1rem)] origin-(--radix-popover-content-transform-origin) flex-col rounded-2xl border border-border bg-popover text-popover-foreground shadow-overlay duration-150 ease-out data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
           >
             <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2">
               <h2 className="text-h3">{t("notifications")}</h2>
@@ -179,7 +182,7 @@ export function NotificationBell({
                 ))}
               </ul>
             ) : (
-              <p className="px-4 py-6 text-small text-text-secondary">{t("noNotifications")}</p>
+              <EmptyState illustration="notifications" compact title={t("noNotifications")} />
             )}
           </Popover.Content>
         </Popover.Portal>

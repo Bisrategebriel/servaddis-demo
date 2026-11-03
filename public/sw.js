@@ -1,7 +1,7 @@
 // Servaddis service worker (TRD §3 PWA, risk TR5). Deliberately small: it caches only build
 // assets and the offline page, never pages or API data, so a demo never shows stale jobs or
 // applicant state. Navigations go to the network and fall back to /offline.html when it fails.
-const VERSION = "sv-v1";
+const VERSION = "sv-v2";
 const SHELL = ["/offline.html", "/icons/icon-192.png", "/icons/servaddis-icon.svg"];
 
 self.addEventListener("install", (event) => {

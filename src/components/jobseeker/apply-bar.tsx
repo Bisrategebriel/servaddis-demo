@@ -80,7 +80,7 @@ export function ApplyBar({ jobId, initial }: { jobId: string; initial: ApplyStat
               <button
                 type="button"
                 onClick={() => setNoteOpen(true)}
-                className="w-fit text-small text-navy-700 underline underline-offset-4"
+                className="inline-flex min-h-11 w-fit items-center text-small text-navy-700 underline underline-offset-4"
               >
                 {t("addNote")}
               </button>

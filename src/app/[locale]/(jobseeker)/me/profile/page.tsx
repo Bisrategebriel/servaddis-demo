@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { FormSkeleton } from "@/components/skeletons";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ProfileView } from "@/components/jobseeker/profile-view";
 import { getCurrentUser } from "@/server/current-user";
@@ -12,9 +14,10 @@ async function Profile() {
   return <ProfileView initial={await myProfile(user.id)} />;
 }
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const t = await getTranslations("common");
   return (
-    <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-muted" aria-hidden />}>
+    <Suspense fallback={<FormSkeleton label={t("loading")} />}>
       <Profile />
     </Suspense>
   );

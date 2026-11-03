@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DetailSkeleton } from "@/components/skeletons";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
@@ -102,9 +103,12 @@ async function Receipt({ params }: { params: Promise<{ id: string }> }) {
   );
 }
 
-export default function ReceiptPage({ params }: PageProps<"/[locale]/employer/payments/[id]">) {
+export default async function ReceiptPage({
+  params,
+}: PageProps<"/[locale]/employer/payments/[id]">) {
+  const t = await getTranslations("common");
   return (
-    <Suspense fallback={<div className="h-80 animate-pulse rounded-md bg-muted" aria-hidden />}>
+    <Suspense fallback={<DetailSkeleton label={t("loading")} />}>
       <Receipt params={params} />
     </Suspense>
   );

@@ -4,6 +4,7 @@ import { Check, X } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import useSWR from "swr";
+import { EmptyState, emptyActionClass } from "@/components/empty-state";
 import { cx } from "@/lib/cx";
 import { formatDateTime } from "@/lib/format";
 import type { MyApplication } from "@/server/services/applications";
@@ -109,15 +110,15 @@ export function ApplicationTracker({ initial }: { initial: MyApplication[] }) {
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-start gap-3 rounded-md border border-dashed border-border-strong bg-card p-6">
-        <p className="text-text-secondary">{t("empty")}</p>
-        <Link
-          href="/jobs"
-          className="inline-flex h-11 items-center rounded-sm bg-primary px-4 font-medium text-primary-foreground"
-        >
-          {t("browse")}
-        </Link>
-      </div>
+      <EmptyState
+        illustration="jobs"
+        title={t("empty")}
+        action={
+          <Link href="/jobs" className={emptyActionClass}>
+            {t("browse")}
+          </Link>
+        }
+      />
     );
   }
 

@@ -1,8 +1,10 @@
 import { Search } from "lucide-react";
+import { CardListSkeleton } from "@/components/skeletons";
 import Link from "next/link";
 import { connection } from "next/server";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { EmptyState, emptyActionClass } from "@/components/empty-state";
 import { FilterSheet } from "@/components/jobseeker/filter-sheet";
 import { JobCard } from "@/components/jobseeker/job-card";
 import { feedQuery } from "@/lib/zod-schemas";
@@ -29,16 +31,6 @@ function readFilters(params: Params): FeedQuery {
     ),
   );
   return feedQuery.parse(ok);
-}
-
-function Skeleton() {
-  return (
-    <ul className="flex flex-col gap-3" aria-hidden>
-      {Array.from({ length: 4 }, (_, i) => (
-        <li key={i} className="h-28 animate-pulse rounded-md bg-muted" />
-      ))}
-    </ul>
-  );
 }
 
 async function Feed({ searchParams }: { searchParams: Promise<Params> }) {
@@ -106,16 +98,28 @@ async function Feed({ searchParams }: { searchParams: Promise<Params> }) {
           {t("count", { count: total })}
         </h1>
         {filtered && (
-          <Link href="/jobs" className="text-small text-navy-700 underline underline-offset-4">
+          <Link
+            href="/jobs"
+            className="inline-flex min-h-11 items-center text-small text-navy-700 underline underline-offset-4"
+          >
             {t("clear")}
           </Link>
         )}
       </div>
 
       {items.length === 0 ? (
-        <p className="rounded-md border border-dashed border-border-strong bg-card p-6 text-text-secondary">
-          {filtered ? t("empty") : t("emptyAll")}
-        </p>
+        <EmptyState
+          illustration="jobs"
+          testId="feed-empty"
+          title={filtered ? t("empty") : t("emptyAll")}
+          action={
+            filtered && (
+              <Link href="/jobs" className={emptyActionClass}>
+                {t("clear")}
+              </Link>
+            )
+          }
+        />
       ) : (
         <ul className="flex flex-col gap-3" data-testid="feed">
           {items.map((job) => (
@@ -137,9 +141,10 @@ async function Feed({ searchParams }: { searchParams: Promise<Params> }) {
   );
 }
 
-export default function JobsPage({ searchParams }: PageProps<"/[locale]/jobs">) {
+export default async function JobsPage({ searchParams }: PageProps<"/[locale]/jobs">) {
+  const t = await getTranslations("common");
   return (
-    <Suspense fallback={<Skeleton />}>
+    <Suspense fallback={<CardListSkeleton label={t("loading")} />}>
       <Feed searchParams={searchParams as Promise<Params>} />
     </Suspense>
   );

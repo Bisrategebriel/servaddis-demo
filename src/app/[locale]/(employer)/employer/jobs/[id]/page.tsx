@@ -1,4 +1,5 @@
 import { ArrowLeft, Clock, Megaphone, Pencil } from "lucide-react";
+import { DetailSkeleton } from "@/components/skeletons";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -28,6 +29,9 @@ const NOTE_TONE = {
   CLOSED: "bg-navy-50 text-navy-800",
   REJECTED: "bg-danger-bg text-danger-fg",
 } as const;
+
+/** A job published this recently gets a brief pulse on its Live chip (doc 04 §6.1). */
+const JUST_LIVE_MS = 10 * 60_000;
 
 async function Overview({ params }: { params: Promise<{ id: string }> }) {
   const [ctx, { id }, locale, t] = await Promise.all([
@@ -99,11 +103,18 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-2">
           <h1 className="text-h1 wrap-break-word">{title}</h1>
-          <JobStatusChip status={job.status} />
+          <JobStatusChip
+            status={job.status}
+            highlight={
+              job.status === "LIVE" &&
+              !!job.publishedAt &&
+              now().getTime() - job.publishedAt.getTime() < JUST_LIVE_MS
+            }
+          />
           {ctx.membership.permissions.has("applicant.view") && job.publishedAt && (
             <Link
               href={`/employer/jobs/${job.id}/applicants`}
-              className="inline-flex w-fit items-center gap-2 font-medium text-navy-700 underline underline-offset-4"
+              className="inline-flex min-h-10 w-fit items-center gap-2 font-medium text-navy-700 underline underline-offset-4"
             >
               {t("applicantsLink", { count: job._count.applications })}
               {job.applications.length > 0 && (
@@ -163,7 +174,10 @@ async function Overview({ params }: { params: Promise<{ id: string }> }) {
       <div className={`flex flex-col gap-2 rounded-md px-4 py-3 ${NOTE_TONE[job.status]}`}>
         <p data-testid="status-note">{job.filledAt ? t("filledNote") : t(`notes.${job.status}`)}</p>
         {job.status === "LIVE" && (
-          <Link href={`/jobs/${job.id}`} className="w-fit text-small underline underline-offset-4">
+          <Link
+            href={`/jobs/${job.id}`}
+            className="inline-flex min-h-10 w-fit items-center text-small underline underline-offset-4"
+          >
             {t("viewInFeed")}
           </Link>
         )}
@@ -234,7 +248,7 @@ export default async function JobOverviewPage({
 }: PageProps<"/[locale]/employer/jobs/[id]">) {
   const t = await getTranslations("common");
   return (
-    <Suspense fallback={<p className="text-text-secondary">{t("loading")}</p>}>
+    <Suspense fallback={<DetailSkeleton label={t("loading")} />}>
       <Overview params={params} />
     </Suspense>
   );

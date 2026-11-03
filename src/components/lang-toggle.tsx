@@ -53,7 +53,9 @@ export function LangToggle({ surface = "light" }: { surface?: "light" | "navy" }
             disabled={pending !== null}
             onClick={() => choose(o.locale)}
             className={cx(
-              "min-h-9 min-w-11 rounded-sm px-2.5 text-small font-semibold transition-colors",
+              // 44 px targets on the jobseeker (navy) bar, 40 px on employer and admin desktop bars
+              "min-w-11 rounded-sm px-2.5 text-small font-semibold transition-colors",
+              surface === "navy" ? "min-h-11" : "min-h-10",
               surface === "navy"
                 ? active
                   ? "bg-amber-500 text-navy-900"

@@ -1,9 +1,11 @@
 import type { Job, JobStatus } from "@prisma/client";
+import { CardListSkeleton } from "@/components/skeletons";
 import { Clock, Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { EmptyState, emptyActionClass } from "@/components/empty-state";
 import { JobStatusChip } from "@/components/employer/job-status-chip";
 import { formatDate, formatSalary } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -112,9 +114,25 @@ async function JobsList({ searchParams }: { searchParams: Promise<{ status?: str
       )}
 
       {jobs.length === 0 ? (
-        <p className="rounded-md border border-dashed border-border-strong bg-card p-6 text-text-secondary">
-          {all.length === 0 ? t("empty") : t("emptyFiltered")}
-        </p>
+        <EmptyState
+          illustration="jobs"
+          testId="jobs-empty"
+          title={all.length === 0 ? t("empty") : t("emptyFiltered")}
+          action={
+            all.length === 0 ? (
+              ctx.membership.permissions.has("job.create") && (
+                <Link href="/employer/jobs/new" className={emptyActionClass}>
+                  <Plus className="size-4" aria-hidden />
+                  {t("post")}
+                </Link>
+              )
+            ) : (
+              <Link href="/employer/jobs" className={emptyActionClass}>
+                {t("all")}
+              </Link>
+            )
+          }
+        />
       ) : (
         <ul className="flex flex-col gap-3" data-testid="jobs-list">
           {jobs.map((job) => {
@@ -125,7 +143,7 @@ async function JobsList({ searchParams }: { searchParams: Promise<{ status?: str
               <li key={job.id}>
                 <Link
                   href={`/employer/jobs/${job.id}`}
-                  className="flex flex-col gap-2 rounded-md border border-border bg-card p-4 hover:border-border-strong sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-2 rounded-md border border-border bg-card p-4 hover:border-border-strong hover:shadow-card sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex min-w-0 flex-col gap-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -175,7 +193,7 @@ async function JobsList({ searchParams }: { searchParams: Promise<{ status?: str
 export default async function JobsPage({ searchParams }: PageProps<"/[locale]/employer/jobs">) {
   const t = await getTranslations("common");
   return (
-    <Suspense fallback={<p className="text-text-secondary">{t("loading")}</p>}>
+    <Suspense fallback={<CardListSkeleton label={t("loading")} />}>
       <JobsList searchParams={searchParams as Promise<{ status?: string }>} />
     </Suspense>
   );

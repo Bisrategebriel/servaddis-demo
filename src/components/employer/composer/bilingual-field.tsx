@@ -65,7 +65,7 @@ export function BilingualField({
               aria-label={`${l === "am" ? "አማርኛ" : "English"}: ${filled[l] ? t("filled") : t("empty")}`}
               onClick={() => setActive(l)}
               className={cn(
-                "inline-flex min-h-9 items-center gap-1.5 rounded-sm px-2.5 text-caption",
+                "inline-flex min-h-10 items-center gap-1.5 rounded-sm px-2.5 text-caption",
                 active === l ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
               )}
             >

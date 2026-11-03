@@ -221,12 +221,52 @@
   .surface-navy :focus-visible {
     outline-color: var(--amber-500);
   }
+  /* doc 04 §2.4 motion: 150 ms ease-out for hover and press on every control. Utilities win
+     over this base rule, so a component with its own transition keeps it. */
+  a,
+  button,
+  summary,
+  select,
+  input,
+  textarea {
+    transition-property: color, background-color, border-color, box-shadow, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+  /* Bottom sheets built on <dialog> (feed filters) slide up like the shadcn sheet: 250 ms */
+  dialog[open].sheet-up {
+    animation: sheet-up 250ms ease-out;
+  }
+  @keyframes sheet-up {
+    from {
+      transform: translateY(2.5rem);
+      opacity: 0;
+    }
+  }
+  /* doc 04 §6.1: an important success (job just went live) gives its chip a brief pulse */
+  .chip-highlight {
+    animation: chip-highlight 1.6s ease-out 2;
+  }
+  @keyframes chip-highlight {
+    0% {
+      box-shadow: 0 0 0 0 rgb(31 122 77 / 0.45);
+    }
+    70% {
+      box-shadow: 0 0 0 8px rgb(31 122 77 / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgb(31 122 77 / 0);
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      /* One run only: an infinite loop at 0.01 ms would flicker (e.g. a skeleton pulse) */
+      animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 }

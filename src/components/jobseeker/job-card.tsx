@@ -19,7 +19,7 @@ export function JobCard({ job, lang, now }: { job: FeedCard; lang: "am" | "en"; 
   return (
     <Link
       href={`/jobs/${job.id}`}
-      className="flex flex-col gap-1.5 rounded-md border border-border bg-card p-4 hover:border-border-strong"
+      className="flex flex-col gap-1.5 rounded-md border border-border bg-card p-4 hover:border-border-strong hover:shadow-card"
     >
       {due && (
         <span className="inline-flex w-fit items-center gap-1 rounded-full bg-brand-accent px-2 py-0.5 text-caption font-medium text-navy-900">

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { TileGridSkeleton } from "@/components/skeletons";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { TemplatePicker } from "@/components/employer/template-picker";
@@ -52,7 +53,7 @@ export default async function NewJobPage() {
   return (
     <section className="flex flex-col gap-4">
       <h1 className="text-h1">{t("title")}</h1>
-      <Suspense fallback={<p className="text-text-secondary">{common("loading")}</p>}>
+      <Suspense fallback={<TileGridSkeleton label={common("loading")} />}>
         <Picker />
       </Suspense>
     </section>

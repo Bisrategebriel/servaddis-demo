@@ -1,4 +1,5 @@
 import { ArrowLeft, BadgeCheck, Zap } from "lucide-react";
+import { DetailSkeleton } from "@/components/skeletons";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
@@ -71,7 +72,7 @@ async function Detail({ params }: { params: Promise<{ id: string }> }) {
     <article className="flex flex-col gap-5">
       <Link
         href="/jobs"
-        className="inline-flex min-h-10 w-fit items-center gap-1.5 text-small text-text-secondary hover:text-foreground"
+        className="inline-flex min-h-11 w-fit items-center gap-1.5 text-small text-text-secondary hover:text-foreground"
       >
         <ArrowLeft className="size-4" aria-hidden />
         {t("back")}
@@ -174,9 +175,10 @@ async function Detail({ params }: { params: Promise<{ id: string }> }) {
   );
 }
 
-export default function JobDetailPage({ params }: PageProps<"/[locale]/jobs/[id]">) {
+export default async function JobDetailPage({ params }: PageProps<"/[locale]/jobs/[id]">) {
+  const t = await getTranslations("common");
   return (
-    <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-muted" aria-hidden />}>
+    <Suspense fallback={<DetailSkeleton label={t("loading")} />}>
       <Detail params={params} />
     </Suspense>
   );

@@ -70,7 +70,7 @@ export function JobPreview({
       title={label}
       onClick={onClick}
       className={cn(
-        "inline-flex min-h-9 min-w-10 items-center justify-center rounded-sm px-2 text-small font-semibold",
+        "inline-flex min-h-10 min-w-10 items-center justify-center rounded-sm px-2 text-small font-semibold",
         active ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
       )}
     >

@@ -47,7 +47,11 @@ export async function AdminShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-full flex-1">
       <SkipLink />
       <aside className="surface-navy sticky top-0 hidden h-screen w-62 shrink-0 flex-col gap-6 bg-navy-950 p-4 md:flex">
-        <Link href="/admin/queue" aria-label={t("common.appName")}>
+        <Link
+          href="/admin/queue"
+          aria-label={t("common.appName")}
+          className="inline-flex min-h-10 items-center"
+        >
           {brand}
         </Link>
         {nav}

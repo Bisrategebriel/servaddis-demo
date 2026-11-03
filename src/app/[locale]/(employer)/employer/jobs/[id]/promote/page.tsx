@@ -1,4 +1,5 @@
 import { ArrowLeft, Lock } from "lucide-react";
+import { DetailSkeleton } from "@/components/skeletons";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -73,7 +74,7 @@ export default async function PromotePage({
 }: PageProps<"/[locale]/employer/jobs/[id]/promote">) {
   const t = await getTranslations("common");
   return (
-    <Suspense fallback={<p className="text-text-secondary">{t("loading")}</p>}>
+    <Suspense fallback={<DetailSkeleton label={t("loading")} />}>
       <Promote params={params} />
     </Suspense>
   );

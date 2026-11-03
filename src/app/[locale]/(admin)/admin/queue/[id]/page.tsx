@@ -1,4 +1,5 @@
 import { CircleAlert, CircleX, Info, ShieldAlert, Zap } from "lucide-react";
+import { DetailSkeleton } from "@/components/skeletons";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -38,7 +39,7 @@ async function LicenseReview({ item }: { item: Item }) {
           href={fileUrl}
           target="_blank"
           rel="noopener"
-          className="text-small text-navy-700 underline underline-offset-4"
+          className="inline-flex min-h-10 items-center text-small text-navy-700 underline underline-offset-4"
         >
           {t("openDocument")}
         </a>
@@ -164,7 +165,7 @@ async function Review({ params }: { params: Promise<{ id: string }> }) {
     <section className="flex flex-col gap-4">
       <Link
         href="/admin/queue"
-        className="w-fit text-small text-navy-700 underline underline-offset-4"
+        className="inline-flex min-h-10 w-fit items-center text-small text-navy-700 underline underline-offset-4"
       >
         {t("back")}
       </Link>
@@ -176,7 +177,7 @@ async function Review({ params }: { params: Promise<{ id: string }> }) {
 export default async function ReviewPage({ params }: PageProps<"/[locale]/admin/queue/[id]">) {
   const t = await getTranslations("common");
   return (
-    <Suspense fallback={<p className="text-text-secondary">{t("loading")}</p>}>
+    <Suspense fallback={<DetailSkeleton label={t("loading")} />}>
       <Review params={params} />
     </Suspense>
   );

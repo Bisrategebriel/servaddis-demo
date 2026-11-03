@@ -91,7 +91,11 @@ export async function EmployerShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-full flex-1">
       <SkipLink />
       <aside className="surface-navy sticky top-0 hidden h-screen shrink-0 flex-col gap-6 bg-sidebar p-3 md:flex md:w-16 lg:w-62 lg:p-4 print:hidden">
-        <Link href="/employer" aria-label={t("common.appName")} className="md:mx-auto lg:mx-0">
+        <Link
+          href="/employer"
+          aria-label={t("common.appName")}
+          className="inline-flex min-h-10 items-center md:mx-auto lg:mx-0"
+        >
           <Wordmark labelClassName="md:sr-only lg:not-sr-only" />
         </Link>
         <Suspense fallback={<NavSkeleton />}>
@@ -113,7 +117,11 @@ export async function EmployerShell({ children }: { children: ReactNode }) {
               <EmployerNav rail={false} />
             </Suspense>
           </MobileNav>
-          <Link href="/employer" className="md:hidden" aria-label={t("common.appName")}>
+          <Link
+            href="/employer"
+            className="inline-flex min-h-10 items-center md:hidden"
+            aria-label={t("common.appName")}
+          >
             <Image src="/icons/servaddis-icon.svg" alt="" width={32} height={32} />
           </Link>
           <div className="ml-auto flex items-center gap-1 sm:gap-2">

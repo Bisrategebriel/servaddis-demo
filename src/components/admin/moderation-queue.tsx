@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import useSWR from "swr";
+import { EmptyState } from "@/components/empty-state";
+import { TableSkeleton } from "@/components/skeletons";
 import { cn } from "@/lib/utils";
 
 // SCR-A01 queue: polls every 4 s (TRD §7.2), so new items appear without a reload.
@@ -70,8 +72,10 @@ export function ModerationQueue() {
           {t("loadFailed")}
         </p>
       )}
-      {!data && !error && <p className="text-text-secondary">{t("loading")}</p>}
-      {data && items.length === 0 && <p className="text-text-secondary">{t("empty")}</p>}
+      {!data && !error && <TableSkeleton label={t("loading")} rows={4} heading={false} />}
+      {data && items.length === 0 && (
+        <EmptyState illustration="jobs" testId="queue-empty" title={t("empty")} />
+      )}
 
       {items.length > 0 && (
         <div className="overflow-x-auto rounded-2xl border border-border bg-card">

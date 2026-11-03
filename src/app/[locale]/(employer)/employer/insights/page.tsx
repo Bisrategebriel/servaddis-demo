@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { DashboardSkeleton } from "@/components/skeletons";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { Forbidden } from "@/components/employer/forbidden";
 import { InsightsView } from "@/components/employer/insights-view";
@@ -18,9 +20,12 @@ async function Insights({ searchParams }: { searchParams: Promise<{ range?: stri
   return <InsightsView data={await venueInsights(ctx.membership.venueId, r)} />;
 }
 
-export default function InsightsPage({ searchParams }: PageProps<"/[locale]/employer/insights">) {
+export default async function InsightsPage({
+  searchParams,
+}: PageProps<"/[locale]/employer/insights">) {
+  const t = await getTranslations("common");
   return (
-    <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-muted" aria-hidden />}>
+    <Suspense fallback={<DashboardSkeleton label={t("loading")} />}>
       <Insights searchParams={searchParams as Promise<{ range?: string }>} />
     </Suspense>
   );

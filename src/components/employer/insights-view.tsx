@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { EmptyState, emptyActionClass } from "@/components/empty-state";
 import { cn } from "@/lib/utils";
 import type { Range, VenueInsights } from "@/server/services/insights";
 
@@ -401,6 +402,7 @@ function MonthColumns({
 
 export function InsightsView({ data }: { data: VenueInsights }) {
   const t = useTranslations("insights");
+  const tn = useTranslations("nav");
   const kpi = (label: string, value: string, testid: string) => (
     <div className="rounded-2xl border border-border bg-card p-4" data-testid={testid}>
       <p className="text-small text-text-secondary">{label}</p>
@@ -447,9 +449,16 @@ export function InsightsView({ data }: { data: VenueInsights }) {
       </div>
 
       {empty ? (
-        <p className="rounded-md border border-dashed border-border-strong bg-card p-6 text-text-secondary">
-          {t("empty")}
-        </p>
+        <EmptyState
+          illustration="applicants"
+          testId="insights-empty"
+          title={t("empty")}
+          action={
+            <Link href="/employer/jobs" className={emptyActionClass}>
+              {tn("jobs")}
+            </Link>
+          }
+        />
       ) : (
         <>
           <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">

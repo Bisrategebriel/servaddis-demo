@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { TileGridSkeleton } from "@/components/skeletons";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { Forbidden } from "@/components/employer/forbidden";
 import { PlansView } from "@/components/employer/plans-view";
@@ -18,9 +20,10 @@ async function Plans({ searchParams }: { searchParams: Promise<{ payment?: strin
   return <PlansView data={await billingOverview(ctx.membership.venueId)} notice={notice} />;
 }
 
-export default function PlansPage({ searchParams }: PageProps<"/[locale]/employer/plans">) {
+export default async function PlansPage({ searchParams }: PageProps<"/[locale]/employer/plans">) {
+  const t = await getTranslations("common");
   return (
-    <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-muted" aria-hidden />}>
+    <Suspense fallback={<TileGridSkeleton label={t("loading")} count={3} />}>
       <Plans searchParams={searchParams as Promise<{ payment?: string }>} />
     </Suspense>
   );

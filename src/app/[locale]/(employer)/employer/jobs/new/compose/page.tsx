@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { FormSkeleton } from "@/components/skeletons";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { composerContext } from "@/components/employer/composer/composer-data";
@@ -39,7 +40,7 @@ export default async function ComposePage({
 }: PageProps<"/[locale]/employer/jobs/new/compose">) {
   const t = await getTranslations("common");
   return (
-    <Suspense fallback={<p className="text-text-secondary">{t("loading")}</p>}>
+    <Suspense fallback={<FormSkeleton label={t("loading")} fields={5} />}>
       <Compose searchParams={searchParams as Promise<{ template?: string }>} />
     </Suspense>
   );
