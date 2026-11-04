@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Circle, Clock, Hourglass, Lock, ShieldAlert, ShieldCheck } from "lucide-react";
+import { Check, Circle, Lock } from "lucide-react";
 import Link from "next/link";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
@@ -8,6 +8,7 @@ import useSWR from "swr";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { VerificationChip } from "./verification-chip";
 import type { VenueSummary } from "@/server/services/dashboard";
 
 // SCR-E03. Polls every 4 s so the Verified badge appears by itself after approval (≤ 5 s, T1.5).
@@ -17,32 +18,6 @@ const fetcher = async (url: string): Promise<VenueSummary> => {
   if (!res.ok) throw new Error(String(res.status));
   return res.json();
 };
-
-type Verification = VenueSummary["venue"]["verification"];
-
-const CHIP: Record<Verification, { icon: typeof Clock; tone: string }> = {
-  UNSUBMITTED: { icon: Circle, tone: "bg-gray-100 text-gray-700" },
-  PENDING: { icon: Hourglass, tone: "bg-info-bg text-info-fg" },
-  VERIFIED: { icon: ShieldCheck, tone: "bg-success-bg text-success-fg" },
-  REJECTED: { icon: ShieldAlert, tone: "bg-danger-bg text-danger-fg" },
-};
-
-function VerificationChip({ status }: { status: Verification }) {
-  const t = useTranslations("dashboard");
-  const { icon: Icon, tone } = CHIP[status];
-  return (
-    <span
-      data-testid="verification"
-      className={cn(
-        "inline-flex w-fit items-center gap-1.5 rounded-sm px-2 py-1 text-caption",
-        tone,
-      )}
-    >
-      <Icon className="size-4" aria-hidden />
-      {t(`verification.${status}`)}
-    </span>
-  );
-}
 
 function Step({
   state,

@@ -58,12 +58,29 @@ export async function createVenue(user: User, input: VenueCreate) {
   });
 }
 
-export async function updateVenue(venueId: string, input: VenuePatch) {
+/** SCR-E16 edits. Audited with the names of the fields that changed (never their values). */
+export async function updateVenue(user: User, venueId: string, input: VenuePatch) {
   const { subCity, ...fields } = input;
-  return db.$transaction(async (tx) =>
-    tx.venue.update({
+  return db.$transaction(async (tx) => {
+    const before = await tx.venue.findUniqueOrThrow({ where: { id: venueId } });
+    const subCityIdNext = subCity ? await subCityId(tx, subCity) : undefined;
+    const venue = await tx.venue.update({
       where: { id: venueId },
-      data: { ...fields, ...(subCity ? { subCityId: await subCityId(tx, subCity) } : {}) },
-    }),
-  );
+      data: { ...fields, ...(subCityIdNext ? { subCityId: subCityIdNext } : {}) },
+    });
+    const changed = Object.keys(fields).filter(
+      (k) => before[k as keyof typeof before] !== venue[k as keyof typeof venue],
+    );
+    if (subCityIdNext && subCityIdNext !== before.subCityId) changed.push("subCity");
+    if (changed.length) {
+      await audit(tx, {
+        actorId: user.id,
+        action: "venue.update",
+        entity: "Venue",
+        entityId: venueId,
+        meta: { venueId, fields: changed },
+      });
+    }
+    return venue;
+  });
 }

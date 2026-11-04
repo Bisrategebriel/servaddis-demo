@@ -106,6 +106,38 @@ describe("venue API", () => {
     expect((await patch(await byPhone("+251911000005"), venue.id, {})).status).toBe(404);
   });
 
+  it("clears an optional text sent empty, keeps fields left out (SCR-E16)", async () => {
+    const venue = await hiwot();
+    const owner = await byPhone("+251911000001");
+    await patch(owner, venue.id, { descriptionAm: "የቆየ መግለጫ", descriptionEn: "Old" });
+    const res = await patch(owner, venue.id, { descriptionAm: "", nameEn: "Hiwot Garden Hotel" });
+    expect(res.status).toBe(200);
+    const after = await db.venue.findUniqueOrThrow({ where: { id: venue.id } });
+    expect(after.descriptionAm).toBeNull();
+    expect(after.descriptionEn).toBe("Old"); // not sent, unchanged
+    expect((await patch(owner, venue.id, { nameEn: "" })).status).toBe(400);
+  });
+
+  it("audits an edit with the changed field names only, and nothing when nothing changed", async () => {
+    const venue = await hiwot();
+    const owner = await byPhone("+251911000001");
+    await patch(owner, venue.id, {
+      nameEn: venue.nameEn,
+      descriptionEn: "A garden hotel in Bole.",
+      subCity: "yeka",
+    });
+    const logs = await db.auditLog.findMany({
+      where: { action: "venue.update", entityId: venue.id },
+    });
+    expect(logs).toHaveLength(1);
+    expect(logs[0].actorId).toBe(owner.id);
+    expect(JSON.parse(logs[0].meta!).fields.sort()).toEqual(["descriptionEn", "subCity"]);
+    expect(logs[0].meta).not.toContain("A garden hotel"); // names, never values
+
+    await patch(owner, venue.id, { nameEn: venue.nameEn, subCity: "yeka" });
+    expect(await db.auditLog.count({ where: { action: "venue.update" } })).toBe(1);
+  });
+
   it("cannot be used to change verification", async () => {
     const venue = await db.venue.findFirstOrThrow({ where: { nameEn: "Lideta Corner Café" } });
     await db.venue.update({ where: { id: venue.id }, data: { verification: "PENDING" } });

@@ -14,6 +14,22 @@ export function normalizePhone(input: string): string | null {
   return MOBILE.test(local) ? `+251${local}` : null;
 }
 
+// Ethiopian fixed lines: +251, a two-digit area code (11 Addis Ababa, 22 Adama, 25 Dire Dawa,
+// 33/34 north-east, 46 Hawassa, 47 Jimma, 57 Nekemte, 58 Bahir Dar/Gondar), then 7 digits.
+const LANDLINE = /^(11|22|25|33|34|46|47|57|58)\d{7}$/;
+
+/**
+ * A venue's public contact number (SCR-E01/E16): mobile or landline, normalised to E.164.
+ * Sign-in and invites stay mobile-only (normalizePhone): those numbers receive SMS.
+ */
+export function normalizeContactPhone(input: string): string | null {
+  const mobile = normalizePhone(input);
+  if (mobile) return mobile;
+  const digits = input.replace(/[\s\-().]/g, "").replace(/^\+/, "");
+  const local = digits.startsWith("251") ? digits.slice(3) : digits.replace(/^0/, "");
+  return LANDLINE.test(local) ? `+251${local}` : null;
+}
+
 /**
  * What employers see before a contact reveal (doc 05 §12): "+251 92• ••• •01".
  * One mask character per hidden digit, so the shape matches a real number.

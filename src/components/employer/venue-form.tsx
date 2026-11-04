@@ -1,17 +1,34 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { VENUE_CATEGORIES, venueCreateBody } from "@/lib/zod-schemas";
 import { ADDIS_SUB_CITIES } from "../../../prisma/seed/data/geography";
 
-// SCR-E01 Venue setup. The shared zod schema gives instant feedback; the API re-validates.
+// Venue details, two uses: SCR-E01 setup (creates the venue and its owner) and SCR-E16 profile
+// (edits it). The shared zod schema gives instant feedback; the API re-validates.
 
 type Field = "ownerName" | "nameEn" | "category" | "subCity" | "contactPhone";
 
+export type VenueDetails = {
+  nameEn: string;
+  nameAm: string | null;
+  category: string;
+  subCity: string;
+  contactPhone: string;
+  descriptionEn: string | null;
+  descriptionAm: string | null;
+};
+
+type Props =
+  | { mode: "create"; name: string; phone: string }
+  | { mode: "edit"; venueId: string; initial: VenueDetails };
+
 const control =
   "h-11 w-full rounded-sm border border-input bg-card px-3 aria-invalid:border-danger";
+const editBody = venueCreateBody.omit({ ownerName: true });
 
 function Labelled({
   id,
@@ -39,12 +56,16 @@ function Labelled({
   );
 }
 
-export function VenueSetupForm({ name, phone }: { name: string; phone: string }) {
+export function VenueForm(props: Props) {
   const t = useTranslations("venue");
   const locale = useLocale();
+  const router = useRouter();
   const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
+  const editing = props.mode === "edit";
+  const initial = editing ? props.initial : null;
 
   const fieldProps = (id: Field) => ({
     id,
@@ -56,7 +77,7 @@ export function VenueSetupForm({ name, phone }: { name: string; phone: string })
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const raw = Object.fromEntries(new FormData(e.currentTarget));
-    const parsed = venueCreateBody.safeParse(raw);
+    const parsed = (editing ? editBody : venueCreateBody).safeParse(raw);
     if (!parsed.success) {
       const next: Partial<Record<Field, string>> = {};
       for (const issue of parsed.error.issues) {
@@ -64,23 +85,31 @@ export function VenueSetupForm({ name, phone }: { name: string; phone: string })
         next[field] = t(`errors.${field}`);
       }
       setErrors(next);
+      setSaved(false);
       return;
     }
     setErrors({});
     setFormError(null);
+    setSaved(false);
     setBusy(true);
     try {
-      const res = await fetch("/api/venues", {
-        method: "POST",
+      // Edits send every field: an optional text left empty clears it.
+      const res = await fetch(editing ? `/api/venues/${props.venueId}` : "/api/venues", {
+        method: editing ? "PATCH" : "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(raw),
       });
       const data = await res.json();
       if (res.ok) {
-        window.location.assign(new URL(data.redirectTo, window.location.origin).href);
-        return;
+        if (!editing) {
+          window.location.assign(new URL(data.redirectTo, window.location.origin).href);
+          return;
+        }
+        setSaved(true);
+        router.refresh(); // the sidebar shows the venue name
+      } else {
+        setFormError(locale === "am" ? data.error.messageAm : data.error.message);
       }
-      setFormError(locale === "am" ? data.error.messageAm : data.error.message);
     } catch {
       setFormError(t("errors.network"));
     }
@@ -88,24 +117,43 @@ export function VenueSetupForm({ name, phone }: { name: string; phone: string })
   }
 
   return (
-    <form onSubmit={submit} noValidate className="flex max-w-xl flex-col gap-4">
-      <div>
-        <h1 className="text-h1">{t("title")}</h1>
-        <p className="text-text-secondary">{t("intro")}</p>
-      </div>
-
-      <Labelled id="ownerName" label={t("ownerName")} error={errors.ownerName}>
-        <input {...fieldProps("ownerName")} defaultValue={name} className={control} />
-      </Labelled>
+    <form
+      onSubmit={submit}
+      noValidate
+      onChange={() => setSaved(false)}
+      className="flex max-w-xl flex-col gap-4"
+      data-testid="venue-form"
+    >
+      {!editing && (
+        <>
+          <div>
+            <h1 className="text-h1">{t("title")}</h1>
+            <p className="text-text-secondary">{t("intro")}</p>
+          </div>
+          <Labelled id="ownerName" label={t("ownerName")} error={errors.ownerName}>
+            <input {...fieldProps("ownerName")} defaultValue={props.name} className={control} />
+          </Labelled>
+        </>
+      )}
       <Labelled id="nameEn" label={t("nameEn")} error={errors.nameEn}>
-        <input {...fieldProps("nameEn")} className={control} />
+        <input {...fieldProps("nameEn")} defaultValue={initial?.nameEn} className={control} />
       </Labelled>
       <Labelled id="nameAm" label={t("nameAm")}>
-        <input id="nameAm" name="nameAm" lang="am" className={control} />
+        <input
+          id="nameAm"
+          name="nameAm"
+          lang="am"
+          defaultValue={initial?.nameAm ?? ""}
+          className={control}
+        />
       </Labelled>
       <div className="grid gap-4 sm:grid-cols-2">
         <Labelled id="category" label={t("category")} error={errors.category}>
-          <select {...fieldProps("category")} defaultValue="" className={control}>
+          <select
+            {...fieldProps("category")}
+            defaultValue={initial?.category ?? ""}
+            className={control}
+          >
             <option value="" disabled>
               {t("choose")}
             </option>
@@ -117,7 +165,11 @@ export function VenueSetupForm({ name, phone }: { name: string; phone: string })
           </select>
         </Labelled>
         <Labelled id="subCity" label={t("subCity")} error={errors.subCity}>
-          <select {...fieldProps("subCity")} defaultValue="" className={control}>
+          <select
+            {...fieldProps("subCity")}
+            defaultValue={initial?.subCity ?? ""}
+            className={control}
+          >
             <option value="" disabled>
               {t("choose")}
             </option>
@@ -133,7 +185,7 @@ export function VenueSetupForm({ name, phone }: { name: string; phone: string })
         <input
           {...fieldProps("contactPhone")}
           type="tel"
-          defaultValue={phone}
+          defaultValue={editing ? props.initial.contactPhone : props.phone}
           className={control}
         />
       </Labelled>
@@ -141,8 +193,9 @@ export function VenueSetupForm({ name, phone }: { name: string; phone: string })
         <textarea
           id="descriptionEn"
           name="descriptionEn"
-          rows={2}
+          rows={editing ? 3 : 2}
           maxLength={500}
+          defaultValue={initial?.descriptionEn ?? ""}
           className="w-full rounded-sm border border-input bg-card p-3"
         />
       </Labelled>
@@ -151,8 +204,9 @@ export function VenueSetupForm({ name, phone }: { name: string; phone: string })
           id="descriptionAm"
           name="descriptionAm"
           lang="am"
-          rows={2}
+          rows={editing ? 3 : 2}
           maxLength={500}
+          defaultValue={initial?.descriptionAm ?? ""}
           className="w-full rounded-sm border border-input bg-card p-3"
         />
       </Labelled>
@@ -162,9 +216,16 @@ export function VenueSetupForm({ name, phone }: { name: string; phone: string })
           {formError}
         </p>
       )}
-      <Button type="submit" disabled={busy} className="h-11 text-body sm:w-fit sm:px-6">
-        {busy ? t("saving") : t("save")}
-      </Button>
+      <div className="flex flex-wrap items-center gap-3">
+        <Button type="submit" disabled={busy} className="h-11 text-body sm:w-fit sm:px-6">
+          {busy ? t("saving") : editing ? t("saveChanges") : t("save")}
+        </Button>
+        {saved && (
+          <p role="status" className="text-small text-success-fg">
+            {t("saved")}
+          </p>
+        )}
+      </div>
     </form>
   );
 }

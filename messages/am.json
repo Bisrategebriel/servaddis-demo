@@ -3,7 +3,6 @@
     "appName": "Servaddis",
     "skipToContent": "ወደ ዋናው ይዘት ይዝለሉ",
     "demoEnvironment": "የማሳያ አካባቢ",
-    "comingSoon": "ይህ ገጽ በሚቀጥሉት የማሳያው ደረጃዎች ይሠራል።",
     "signIn": "ይግቡ",
     "signOut": "ይውጡ",
     "loading": "በመጫን ላይ…",
@@ -58,21 +57,6 @@
     "looking": "ሥራ እየፈለግሁ ነው",
     "verifiedVenues": "የተረጋገጡ ድርጅቶች",
     "freeToApply": "ማመልከት ነጻ ነው"
-  },
-  "pages": {
-    "login": "ይግቡ",
-    "jobs": "ሥራዎች",
-    "myApplications": "ማመልከቻዎቼ",
-    "profile": "መገለጫ",
-    "employerJobs": "ሥራዎች",
-    "team": "ቡድን",
-    "insights": "ትንታኔ",
-    "plans": "ዕቅዶች",
-    "venue": "የድርጅት መገለጫ",
-    "onboardingVenue": "ድርጅትዎን ያዘጋጁ",
-    "queue": "የግምገማ ወረፋ",
-    "audit": "የኦዲት መዝገብ",
-    "overview": "የመድረኩ አጠቃላይ እይታ"
   },
   "demo": {
     "title": "የማሳያ መሣሪያዎች",
@@ -177,9 +161,11 @@
       "nameEn": "የድርጅቱን ስም ያስገቡ።",
       "category": "ዘርፍ ይምረጡ።",
       "subCity": "ክፍለ ከተማ ይምረጡ።",
-      "contactPhone": "ትክክለኛ የኢትዮጵያ ሞባይል ቁጥር ያስገቡ።",
+      "contactPhone": "ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ (ሞባይል ወይም መደበኛ)።",
       "network": "Servaddisን ማግኘት አልቻልንም። እንደገና ይሞክሩ።"
-    }
+    },
+    "saveChanges": "ለውጦቹን አስቀምጥ",
+    "saved": "ተቀምጧል።"
   },
   "license": {
     "title": "የንግድ ፈቃድዎን ይጫኑ",
@@ -955,7 +941,8 @@
         "payment_failed": "ክፍያ አልተሳካም"
       },
       "venue": {
-        "create": "ድርጅት ፈጠረ"
+        "create": "ድርጅት ፈጠረ",
+        "update": "የድርጅቱን መገለጫ አዘመነ"
       },
       "authz": {
         "denied": "ተግባር ተከልክሏል"
@@ -990,5 +977,25 @@
     "openQueue": "ወረፋውን ክፈት",
     "payments": "የተቀበሉ ክፍያዎች",
     "paymentsTotal": "{total} ብር ተ.እ.ታ.ን ጨምሮ"
+  },
+  "venueProfile": {
+    "title": "የድርጅት መገለጫ",
+    "intro": "በሚለጥፏቸው ሥራዎች ሁሉ ላይ ሥራ ፈላጊዎች ስለ ድርጅትዎ የሚያዩት።",
+    "details": "ዝርዝሮች",
+    "verification": "ማረጋገጫ",
+    "notes": {
+      "UNSUBMITTED": "ገምጋሚ ድርጅቱን እንዲያረጋግጥ የንግድ ፈቃድዎን ይጫኑ። እስከዚያው ረቂቆችን ማስቀመጥ ይችላሉ፣ ሥራ ግን መለጠፍ አይችሉም።",
+      "PENDING": "ገምጋሚ ፈቃድዎን እየመረመረ ነው። ሲጠናቀቅ ማሳወቂያና የSMS መልዕክት ይደርስዎታል።",
+      "VERIFIED": "ድርጅትዎ ተረጋግጧል። ሥራ ፈላጊዎች በሥራዎችዎ ላይ የማረጋገጫ ምልክቱን ያያሉ።",
+      "REJECTED": "ፈቃድዎ ተቀባይነት አላገኘም። እንደገና ለመሞከር አዲስ ይጫኑ።"
+    },
+    "license": "ፈቃድ",
+    "noLicense": "እስካሁን ፈቃድ አልተጫነም።",
+    "uploaded": "የተጫነው {date}",
+    "reviewed": "የተገመገመው {date}",
+    "reason": "የገምጋሚው ምክንያት፦ {reason}",
+    "viewDocument": "ሰነዱን ይክፈቱ",
+    "upload": "ፈቃድ ይጫኑ",
+    "uploadNew": "አዲስ ፈቃድ ይጫኑ"
   }
 }

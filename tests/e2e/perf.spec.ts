@@ -111,8 +111,12 @@ test.describe.serial("jobseeker performance budgets (Slow 4G, 4× CPU)", () => {
       for (let i = 0; i < RUNS; i++) runs.push(await measure(browser, baseURL!, route));
       const fcps = runs.map((r) => r.fcp).sort((a, b) => a - b);
       const fcp = fcps[Math.floor(fcps.length / 2)];
-      const bytes = Math.max(...runs.map((r) => r.bytes));
-      const line = `${label}: ${(bytes / KB).toFixed(0)} KB JS+CSS, FCP median ${Math.round(fcp)} ms (${fcps.map(Math.round).join(", ")})`;
+      // Bytes too: the page's own JS+CSS is the same every load, but a prefetch for another route
+      // occasionally lands before the load event and inflates one run (seen once: 180 → 253 KB).
+      const sizes = runs.map((r) => r.bytes).sort((a, b) => a - b);
+      const bytes = sizes[Math.floor(sizes.length / 2)];
+      const kb = (n: number) => (n / KB).toFixed(0);
+      const line = `${label}: ${kb(bytes)} KB JS+CSS (${sizes.map(kb).join(", ")}), FCP median ${Math.round(fcp)} ms (${fcps.map(Math.round).join(", ")})`;
       test.info().annotations.push({ type: "measure", description: line });
       console.log(line);
       expect(bytes, `${label} JS+CSS bytes`).toBeLessThanOrEqual(BUDGET_BYTES);

@@ -11,8 +11,8 @@ export const GET = withAuth({ perm: "job.view", resource: "venue" }, async (_req
 
 export const PATCH = withAuth(
   { perm: "venue.edit", resource: "venue" },
-  async (req, { venueId }) => {
-    const venue = await updateVenue(venueId, await parseBody(req, venuePatchBody));
+  async (req, { user, venueId }) => {
+    const venue = await updateVenue(user, venueId, await parseBody(req, venuePatchBody));
     return Response.json({ venue });
   },
 );

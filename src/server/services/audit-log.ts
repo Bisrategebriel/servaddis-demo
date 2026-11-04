@@ -19,7 +19,7 @@ export const AUDIT_CATEGORIES = {
   team: ["team.invite", "team.permission_change", "team.remove"],
   billing: ["billing.checkout", "billing.payment_succeeded", "billing.payment_failed"],
   jobs: ["job.submit", "job.repost", "job.close", "job.promote"],
-  venues: ["venue.create", "license.upload"],
+  venues: ["venue.create", "venue.update", "license.upload"],
   denied: ["authz.denied"],
 } as const;
 

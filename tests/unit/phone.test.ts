@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPhone, maskPhone, normalizePhone } from "@/lib/phone";
+import { formatPhone, maskPhone, normalizeContactPhone, normalizePhone } from "@/lib/phone";
 
 describe("normalizePhone", () => {
   it.each([
@@ -33,5 +33,28 @@ describe("maskPhone / formatPhone", () => {
 
   it("formats a revealed number", () => {
     expect(formatPhone("+251922000001")).toBe("+251 92 200 0001");
+  });
+});
+
+describe("normalizeContactPhone (venue contact: mobile or landline)", () => {
+  it.each([
+    ["011 600 0101", "+251116000101"],
+    ["+251 11 600 0101", "+251116000101"],
+    ["0581234567", "+251581234567"],
+    ["0922000001", "+251922000001"],
+  ])("accepts %s", (input, e164) => {
+    expect(normalizeContactPhone(input)).toBe(e164);
+  });
+
+  it.each(["0161234567", "01160001", "+1 202 555 0100", ""])("rejects %s", (input) => {
+    expect(normalizeContactPhone(input)).toBeNull();
+  });
+
+  it("keeps sign-in mobile-only", () => {
+    expect(normalizePhone("011 600 0101")).toBeNull();
+  });
+
+  it("formats a landline like a mobile", () => {
+    expect(formatPhone("+251116000101")).toBe("+251 11 600 0101");
   });
 });

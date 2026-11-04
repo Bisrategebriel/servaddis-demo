@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ADDIS_SUB_CITIES, type SubCitySlug } from "../../prisma/seed/data/geography";
 import { EMPLOYMENT_TYPES, SALARY_PERIODS, URGENCIES } from "./job-form";
 import { VENUE_PERMISSIONS } from "./permissions";
-import { normalizePhone } from "./phone";
+import { normalizeContactPhone, normalizePhone } from "./phone";
 
 // Shared client/server schemas (TRD §3: one validation source).
 
@@ -14,6 +14,19 @@ export const phoneSchema = z
     const e164 = normalizePhone(v);
     if (!e164) {
       ctx.addIssue({ code: "custom", message: "Enter a valid Ethiopian mobile number" });
+      return z.NEVER;
+    }
+    return e164;
+  });
+
+/** A venue's contact number: mobile or landline (a hotel's front desk is often a landline). */
+export const contactPhoneSchema = z
+  .string()
+  .trim()
+  .transform((v, ctx) => {
+    const e164 = normalizeContactPhone(v);
+    if (!e164) {
+      ctx.addIssue({ code: "custom", message: "Enter a valid Ethiopian phone number" });
       return z.NEVER;
     }
     return e164;
@@ -58,7 +71,7 @@ const venueFields = {
   nameAm: optionalText(120),
   category: z.enum(VENUE_CATEGORIES),
   subCity: z.enum(SUB_CITY_SLUGS),
-  contactPhone: phoneSchema,
+  contactPhone: contactPhoneSchema,
   descriptionEn: optionalText(500),
   descriptionAm: optionalText(500),
 };
@@ -68,7 +81,23 @@ export const venueCreateBody = z.object({
   ...venueFields,
 });
 
-export const venuePatchBody = z.object(venueFields).partial();
+// Editing (SCR-E16): a field left out stays as it is; an optional text sent empty is cleared.
+const clearableText = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .optional()
+    .transform((v) => (v === undefined ? undefined : v || null));
+
+export const venuePatchBody = z
+  .object({
+    ...venueFields,
+    nameAm: clearableText(120),
+    descriptionEn: clearableText(500),
+    descriptionAm: clearableText(500),
+  })
+  .partial();
 
 export const moderationQuery = z.object({
   type: z.enum(["LICENSE", "JOB", "REPORT"]).optional(),

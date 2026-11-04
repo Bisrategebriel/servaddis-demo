@@ -3,7 +3,6 @@
     "appName": "Servaddis",
     "skipToContent": "Skip to main content",
     "demoEnvironment": "Demo environment",
-    "comingSoon": "This screen is built in a later step of the demo.",
     "signIn": "Sign in",
     "signOut": "Sign out",
     "loading": "Loading…",
@@ -58,21 +57,6 @@
     "looking": "I'm looking for work",
     "verifiedVenues": "Verified venues",
     "freeToApply": "Free to apply"
-  },
-  "pages": {
-    "login": "Sign in",
-    "jobs": "Jobs",
-    "myApplications": "My applications",
-    "profile": "Profile",
-    "employerJobs": "Jobs",
-    "team": "Team",
-    "insights": "Insights",
-    "plans": "Plans",
-    "venue": "Venue profile",
-    "onboardingVenue": "Set up your venue",
-    "queue": "Moderation queue",
-    "audit": "Audit log",
-    "overview": "Platform overview"
   },
   "demo": {
     "title": "Demo toolkit",
@@ -177,9 +161,11 @@
       "nameEn": "Enter the venue name.",
       "category": "Choose a category.",
       "subCity": "Choose a sub-city.",
-      "contactPhone": "Enter a valid Ethiopian mobile number.",
+      "contactPhone": "Enter a valid Ethiopian phone number, mobile or landline.",
       "network": "We couldn't reach Servaddis. Try again."
-    }
+    },
+    "saveChanges": "Save changes",
+    "saved": "Saved."
   },
   "license": {
     "title": "Upload your business license",
@@ -955,7 +941,8 @@
         "payment_failed": "Payment failed"
       },
       "venue": {
-        "create": "Created a venue"
+        "create": "Created a venue",
+        "update": "Updated the venue profile"
       },
       "authz": {
         "denied": "Was refused an action"
@@ -990,5 +977,25 @@
     "openQueue": "Open the queue",
     "payments": "Payments received",
     "paymentsTotal": "ETB {total} incl. VAT"
+  },
+  "venueProfile": {
+    "title": "Venue profile",
+    "intro": "What jobseekers see about your venue on every job you post.",
+    "details": "Details",
+    "verification": "Verification",
+    "notes": {
+      "UNSUBMITTED": "Upload your business license so a moderator can verify the venue. Until then you can save drafts but not publish jobs.",
+      "PENDING": "A moderator is checking your license. You'll get a notification and an SMS when it's done.",
+      "VERIFIED": "Your venue is verified. Jobseekers see the verified badge on your jobs.",
+      "REJECTED": "Your license wasn't accepted. Upload a new one to try again."
+    },
+    "license": "License",
+    "noLicense": "No license uploaded yet.",
+    "uploaded": "Uploaded {date}",
+    "reviewed": "Reviewed {date}",
+    "reason": "Moderator's reason: {reason}",
+    "viewDocument": "View document",
+    "upload": "Upload a license",
+    "uploadNew": "Upload a new license"
   }
 }
