@@ -7,8 +7,7 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "loading": "Loading…",
-    "simulated": "Simulated",
-    "demoRibbon": "Demo environment · fictional people, venues and payments"
+    "simulated": "Simulated"
   },
   "routeError": {
     "title": "Something went wrong on this page.",

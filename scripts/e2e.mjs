@@ -18,6 +18,6 @@ const run = (command, env = {}) => {
   if (status !== 0) process.exit(status ?? 1);
 };
 
-// DEMO_MODE at build time: static pages bake in the demo ribbon (see the root layout).
+// Build with DEMO_MODE=1 like `pnpm demo`, so anything a page reads from it at build time matches.
 if (!skipBuild) run("pnpm exec next build", { NEXT_DIST_DIR: ".next-e2e", DEMO_MODE: "1" });
 run(`pnpm exec playwright test ${passThrough.join(" ")}`);

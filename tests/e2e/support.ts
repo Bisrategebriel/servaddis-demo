@@ -24,6 +24,9 @@ export const re = (label: string) => new RegExp(label.replace(/[.*+?^${}()|[\]\\
 
 export const SAMPLE_LICENSE = "public/samples/license-sample.pdf";
 
+/** Set by `pnpm rehearse --record`: where the windows' videos go. */
+export const RECORD_DIR = process.env.E2E_RECORD_DIR;
+
 /** A POST the proxy accepts (same-origin check). */
 export async function post(ctx: BrowserContext, baseURL: string, path: string, data?: unknown) {
   const res = await ctx.request.post(`${baseURL}${path}`, { headers: { origin: baseURL }, data });
@@ -50,11 +53,18 @@ export async function openWindow(
   lang: Lang,
   kind: "desktop" | "phone",
 ) {
-  const ctx = await browser.newContext(
-    kind === "phone"
-      ? { baseURL, viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }
-      : { baseURL, viewport: { width: 1280, height: 800 } },
-  );
+  const viewport = kind === "phone" ? { width: 390, height: 844 } : { width: 1280, height: 800 };
+  const ctx = await browser.newContext({
+    baseURL,
+    viewport,
+    ...(kind === "phone" ? { isMobile: true, hasTouch: true } : {}),
+    // `pnpm rehearse --record` (fallback video, doc 06 §8): one video per window.
+    ...(RECORD_DIR ? { recordVideo: { dir: RECORD_DIR, size: viewport } } : {}),
+  });
+  // Recordings show the laptop windows as the room sees them: in presenter mode.
+  if (RECORD_DIR && kind === "desktop") {
+    await ctx.addInitScript(() => localStorage.setItem("sv-presenter", "1"));
+  }
   await post(ctx, baseURL, "/api/locale", { locale: lang });
   return ctx;
 }

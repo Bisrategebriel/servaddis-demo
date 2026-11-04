@@ -1,7 +1,9 @@
+import path from "node:path";
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import {
   ErrorLog,
   MESSAGES,
+  RECORD_DIR,
   SAMPLE_LICENSE,
   fmt,
   money,
@@ -62,6 +64,17 @@ for (const lang of ["en", "am"] as Lang[]) {
 
     test.afterAll(async () => {
       await Promise.all([employerCtx?.close(), adminCtx?.close(), phoneCtx?.close()]);
+      // Recording (pnpm rehearse --record): a video file is final once its context is closed.
+      if (RECORD_DIR) {
+        for (const [name, page] of [
+          ["employer", employer],
+          ["admin", admin],
+          ["phone", phone],
+        ] as const) {
+          await page?.video()?.saveAs(path.join(RECORD_DIR, `${lang}-${name}.webm`));
+          await page?.video()?.delete();
+        }
+      }
     });
 
     test("1. Bruk registers with a phone number and code", async () => {

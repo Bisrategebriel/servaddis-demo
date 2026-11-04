@@ -29,23 +29,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = { themeColor: "#16243f" };
 
-/**
- * doc 04 §4: a "Demo environment" ribbon above the top bar whenever demo mode is on (the local
- * and tunnelled copies both are). Read at build time for static pages: build and start with the
- * same .env, as `pnpm demo` does.
- */
-async function DemoRibbon() {
-  const t = await getTranslations("common");
-  return (
-    <p
-      data-testid="demo-ribbon"
-      className="bg-amber-100 px-4 py-0.5 text-center text-caption text-amber-800 print:hidden"
-    >
-      {t("demoRibbon")}
-    </p>
-  );
-}
-
 export default async function RootLayout({ children }: LayoutProps<"/[locale]">) {
   const locale = await rootLocale();
   if (!isLocale(locale)) notFound();
@@ -60,7 +43,6 @@ export default async function RootLayout({ children }: LayoutProps<"/[locale]">)
         {/* Toolkit display settings before first paint; see src/lib/display-prefs.ts */}
         <script dangerouslySetInnerHTML={{ __html: displayPrefsScript }} />
         <NextIntlClientProvider>
-          {process.env.DEMO_MODE === "1" && <DemoRibbon />}
           {children}
           <ServiceWorkerRegister />
           <div className="print:hidden">

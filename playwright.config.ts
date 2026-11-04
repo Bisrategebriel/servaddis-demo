@@ -23,6 +23,8 @@ export default defineConfig({
     screenshot: "only-on-failure",
     // Local runs use the installed Edge (no browser download); CI installs Chromium.
     ...(process.env.CI ? {} : { channel: "msedge" }),
+    // `pnpm rehearse --record`: a human pace, so the fallback video can be followed.
+    launchOptions: { slowMo: process.env.E2E_RECORD_DIR ? 400 : 0 },
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
