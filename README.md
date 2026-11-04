@@ -66,10 +66,16 @@ pnpm seed
 pnpm dev
 ```
 
-| Command           | Use                                                         |
-| ----------------- | ----------------------------------------------------------- |
-| `pnpm run check`  | Lint, typecheck, format check, tests and build (same as CI) |
-| `pnpm test`       | Unit and integration tests                                  |
-| `pnpm seed`       | Wipe and reload the demo data                               |
-| `pnpm db:migrate` | Create and apply a migration                                |
-| `pnpm db:studio`  | Browse the database                                         |
+| Command                 | Use                                                              |
+| ----------------------- | ---------------------------------------------------------------- |
+| `pnpm run check`        | Lint, typecheck, format check, tests and build                   |
+| `pnpm test`             | Unit and integration tests, including the endpoint × role matrix |
+| `pnpm e2e`              | The demo script in a browser, English and Amharic (~4 min)       |
+| `pnpm e2e --skip-build` | The same, reusing the last test build                            |
+| `pnpm seed`             | Wipe and reload the demo data                                    |
+| `pnpm db:migrate`       | Create and apply a migration                                     |
+| `pnpm db:studio`        | Browse the database                                              |
+
+`pnpm e2e` uses its own build, database and port, so it is safe to run next to `pnpm dev` and
+never touches the demo data. Locally it drives the installed Microsoft Edge; CI installs
+Chromium. CI runs the same checks as `pnpm run check`, then `pnpm e2e`.

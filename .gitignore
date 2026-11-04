@@ -44,3 +44,7 @@ next-env.d.ts
 # demo runtime data (SQLite db, uploads, rendered cards)
 /data/
 /.next-e2e/
+
+# Playwright
+/test-results/
+/playwright-report/

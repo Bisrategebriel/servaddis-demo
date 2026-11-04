@@ -18,7 +18,8 @@
     "db:studio": "prisma studio",
     "seed": "tsx prisma/seed/index.ts",
     "demo": "node scripts/demo.mjs",
-    "amharic:review": "node scripts/export-amharic.mjs"
+    "amharic:review": "node scripts/export-amharic.mjs",
+    "e2e": "node scripts/e2e.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.3.0",

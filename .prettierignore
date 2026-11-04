@@ -7,3 +7,5 @@ docs/
 PLAN.md
 AGENTS.md
 .next-e2e/
+test-results/
+playwright-report/
