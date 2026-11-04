@@ -88,7 +88,9 @@ describe("POST /api/jobs/:id/apply", () => {
     const dawit = await byPhone(DAWIT);
     const job = await cafeJob();
     const results = await Promise.all(Array.from({ length: 5 }, () => apply(dawit, job.id)));
-    expect(results.every((r) => r.status === 200 || r.status === 201)).toBe(true);
+    // One tap creates; the others share its result instead of racing it for SQLite's lock.
+    expect(results.map((r) => r.status).sort()).toEqual([200, 200, 200, 200, 201]);
+    expect(await db.notification.count({ where: { kind: "APPLICATION_RECEIVED" } })).toBe(1);
     const ids = new Set(
       await Promise.all(results.map(async (r) => (await r.json()).application.id)),
     );

@@ -3,7 +3,10 @@ import { db } from "@/server/db";
 import { apiHandler } from "@/server/http/handler";
 
 // Public reference data (TRD §7): launch cities, sub-cities, role templates and skills.
-export const GET = apiHandler(async () => {
+export const GET = apiHandler(async (req) => {
+  // Reading the request keeps this a per-request handler. Without it Next prerenders the GET at
+  // build time (it does not see Prisma queries) and serves build-time data from then on.
+  void req.headers;
   const [cities, roleTemplates, skills] = await Promise.all([
     db.city.findMany({
       where: { isLaunch: true },

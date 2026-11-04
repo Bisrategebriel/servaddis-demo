@@ -20,11 +20,32 @@ async function applicantViewers(tx: Tx, venueId: string) {
   return members.filter((m) => effectivePermissions(m).has("applicant.view")).map((m) => m.userId!);
 }
 
+type ApplyResult = { application: Prisma.ApplicationGetPayload<object>; created: boolean };
+
+// Taps in flight, per jobseeker + job. Kept on globalThis so route handlers share one map.
+const inFlight = ((
+  globalThis as unknown as { svApplyInFlight?: Map<string, Promise<ApplyResult>> }
+).svApplyInFlight ??= new Map());
+
 /**
  * One-tap apply (TRD §5.4): an upsert on (jobId, jobseekerId). A repeated tap, even one racing
  * the first, returns the existing application instead of creating a second.
+ *
+ * Taps that race in this process share the first tap's work instead of each opening a write
+ * transaction: SQLite takes one writer at a time, and on Linux CI the waiting transactions
+ * stalled past the test timeout. The unique-constraint fallback below still covers a race
+ * across processes.
  */
-export async function apply(user: User, jobId: string, note?: string) {
+export async function apply(user: User, jobId: string, note?: string): Promise<ApplyResult> {
+  const id = `${user.id}:${jobId}`;
+  const running = inFlight.get(id);
+  if (running) return { application: (await running).application, created: false };
+  const attempt = applyOnce(user, jobId, note).finally(() => inFlight.delete(id));
+  inFlight.set(id, attempt);
+  return attempt;
+}
+
+async function applyOnce(user: User, jobId: string, note?: string): Promise<ApplyResult> {
   const key = { jobId_jobseekerId: { jobId, jobseekerId: user.id } };
   const job = await db.job.findUnique({ where: { id: jobId } });
   if (!job || !job.publishedAt) throw notFound();
