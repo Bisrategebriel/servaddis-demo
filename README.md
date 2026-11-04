@@ -70,7 +70,7 @@ pnpm dev
 | ----------------------- | ---------------------------------------------------------------- |
 | `pnpm run check`        | Lint, typecheck, format check, tests and build                   |
 | `pnpm test`             | Unit and integration tests, including the endpoint × role matrix |
-| `pnpm e2e`              | The demo script in a browser, English and Amharic (~4 min)       |
+| `pnpm e2e`              | Browser tests: accessibility, demo script, performance (~10 min) |
 | `pnpm e2e --skip-build` | The same, reusing the last test build                            |
 | `pnpm seed`             | Wipe and reload the demo data                                    |
 | `pnpm db:migrate`       | Create and apply a migration                                     |
@@ -79,3 +79,14 @@ pnpm dev
 `pnpm e2e` uses its own build, database and port, so it is safe to run next to `pnpm dev` and
 never touches the demo data. Locally it drives the installed Microsoft Edge; CI installs
 Chromium. CI runs the same checks as `pnpm run check`, then `pnpm e2e`.
+
+The browser tests live in `tests/e2e/`:
+
+- `a11y.spec.ts`: axe (WCAG 2.1 A and AA) on every P0 screen, in English and Amharic.
+- `demo-script.spec.ts`: the full demo script, in English and Amharic.
+- `perf.spec.ts`: jobseeker pages on a cold load at 360 px with Lighthouse's "Slow 4G" profile
+  and 4× CPU slowdown. Each page must stay within 200 KB of JS and CSS, and its median first
+  contentful paint within 3.5 s. CI enforces the size budget; first paint depends on the
+  runner's CPU, so CI reports it and enforces it only with `E2E_STRICT_FCP=1`.
+
+Run one file with `pnpm e2e --skip-build -- tests/e2e/perf.spec.ts`.

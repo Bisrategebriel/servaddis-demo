@@ -82,8 +82,8 @@ export function JobPreview({
     <div className="flex flex-col gap-3" data-testid="job-preview">
       <div className="flex items-center justify-between gap-2">
         <div role="group" aria-label={ui.languageGroup} className="flex gap-1">
-          {toggle(am, () => setLang("am"), <span lang="am">አማ</span>, "አማርኛ")}
-          {toggle(!am, () => setLang("en"), <span lang="en">EN</span>, "English")}
+          {toggle(am, () => setLang("am"), <span lang="am">አማ</span>, "አማ (አማርኛ)")}
+          {toggle(!am, () => setLang("en"), <span lang="en">EN</span>, "EN (English)")}
         </div>
         <div className="flex gap-1">
           {toggle(

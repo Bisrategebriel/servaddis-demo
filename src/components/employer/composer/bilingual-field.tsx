@@ -62,7 +62,8 @@ export function BilingualField({
               type="button"
               lang={l}
               aria-pressed={active === l}
-              aria-label={`${l === "am" ? "አማርኛ" : "English"}: ${filled[l] ? t("filled") : t("empty")}`}
+              // WCAG 2.5.3: the name starts with the visible label ("EN (English): filled in")
+              aria-label={`${lang(l)} (${l === "am" ? "አማርኛ" : "English"}): ${filled[l] ? t("filled") : t("empty")}`}
               onClick={() => setActive(l)}
               className={cn(
                 "inline-flex min-h-10 items-center gap-1.5 rounded-sm px-2.5 text-caption",

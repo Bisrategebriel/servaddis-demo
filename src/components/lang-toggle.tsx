@@ -49,7 +49,8 @@ export function LangToggle({ surface = "light" }: { surface?: "light" | "navy" }
             type="button"
             lang={o.locale}
             aria-pressed={active}
-            aria-label={o.name}
+            // WCAG 2.5.3: the name starts with what is on the button ("EN (English)")
+            aria-label={`${o.label} (${o.name})`}
             disabled={pending !== null}
             onClick={() => choose(o.locale)}
             className={cx(

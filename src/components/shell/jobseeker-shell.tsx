@@ -34,11 +34,7 @@ export async function JobseekerShell({
       <SkipLink />
       <header className="surface-navy sticky top-0 z-30 bg-navy-900">
         <div className="mx-auto flex h-14 max-w-[640px] items-center justify-between px-4">
-          <Link
-            href="/"
-            aria-label={t("common.appName")}
-            className="inline-flex min-h-11 items-center"
-          >
+          <Link href="/" className="inline-flex min-h-11 items-center">
             <Wordmark />
           </Link>
           <div className="flex items-center gap-1">

@@ -118,7 +118,7 @@ for (const lang of ["en", "am"] as Lang[]) {
       await employer.getByLabel(m.jobs.composer.salaryMax).fill("9500");
       await cont.click();
       const preview = employer.getByTestId("job-preview");
-      await preview.getByRole("button", { name: "አማርኛ", exact: true }).click();
+      await preview.getByRole("button", { name: "አማ (አማርኛ)", exact: true }).click();
       await expect(preview.locator("article")).toHaveAttribute("lang", "am");
       await expect(preview.locator("article")).toContainText("ባሪስታ");
       await expect(employer.getByText(m.jobs.rules.noIssues)).toBeVisible();
@@ -128,8 +128,8 @@ for (const lang of ["en", "am"] as Lang[]) {
       // English page: the English description; Amharic page: the Amharic one.
       const [tab, phrase] =
         lang === "en"
-          ? [/^English:/, " Registration fee ETB 200 on your first day."]
-          : [/^አማርኛ:/, " የምዝገባ ክፍያ 200 ብር"];
+          ? [/^EN \(English\):/, " Registration fee ETB 200 on your first day."]
+          : [/^አማ \(አማርኛ\):/, " የምዝገባ ክፍያ 200 ብር"];
       await employer.getByRole("button", { name: re(m.jobs.composer.steps.basics) }).click();
       await employer.getByRole("button", { name: tab }).nth(1).click();
       const description = employer.getByRole("textbox", { name: re(m.jobs.composer.description) });

@@ -74,7 +74,7 @@ export async function signIn(page: Page, localPhone: string) {
 export async function keepLanguage(page: Page, lang: Lang) {
   if ((await page.locator("html").getAttribute("lang")) === lang) return;
   await page
-    .getByRole("button", { name: lang === "am" ? "አማርኛ" : "English", exact: true })
+    .getByRole("button", { name: lang === "am" ? "አማ (አማርኛ)" : "EN (English)", exact: true })
     .first()
     .click();
   await page.waitForFunction((l) => document.documentElement.lang === l, lang);

@@ -91,11 +91,7 @@ export async function EmployerShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-full flex-1">
       <SkipLink />
       <aside className="surface-navy sticky top-0 hidden h-screen shrink-0 flex-col gap-6 bg-sidebar p-3 md:flex md:w-16 lg:w-62 lg:p-4 print:hidden">
-        <Link
-          href="/employer"
-          aria-label={t("common.appName")}
-          className="inline-flex min-h-10 items-center md:mx-auto lg:mx-0"
-        >
+        <Link href="/employer" className="inline-flex min-h-10 items-center md:mx-auto lg:mx-0">
           <Wordmark labelClassName="md:sr-only lg:not-sr-only" />
         </Link>
         <Suspense fallback={<NavSkeleton />}>
