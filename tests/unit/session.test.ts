@@ -21,7 +21,11 @@ describe("session token", () => {
     expect(await verifySessionToken(undefined)).toBeNull();
     expect(await verifySessionToken("not-a-jwt")).toBeNull();
     expect(await verifySessionToken(`${h}.${forged}.${s}`)).toBeNull();
-    expect(await verifySessionToken(`${h}.${p}.${s.slice(0, -2)}xx`)).toBeNull();
+    // Tamper with the first signature character: all 6 of its bits are signature data. (The
+    // last character carries only 4, so changing it can decode to the same bytes, which made
+    // this test fail about once in a thousand runs.)
+    const flipped = `${s[0] === "A" ? "B" : "A"}${s.slice(1)}`;
+    expect(await verifySessionToken(`${h}.${p}.${flipped}`)).toBeNull();
     const other = await new SignJWT({ role: "ADMIN" })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject("u1")
