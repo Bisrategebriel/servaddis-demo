@@ -4,6 +4,7 @@ import {
   BarChart3,
   Briefcase,
   CreditCard,
+  Gauge,
   Home,
   ListChecks,
   ScrollText,
@@ -30,6 +31,7 @@ const ICONS = {
   user: User,
   queue: ListChecks,
   audit: ScrollText,
+  overview: Gauge,
 } satisfies Record<string, LucideIcon>;
 
 export type NavIcon = keyof typeof ICONS;

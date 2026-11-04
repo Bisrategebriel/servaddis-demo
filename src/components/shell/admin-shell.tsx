@@ -28,6 +28,7 @@ export async function AdminShell({ children }: { children: ReactNode }) {
   const items: NavItem[] = [
     { href: "/admin/queue", label: t("nav.queue"), icon: "queue" },
     { href: "/admin/audit", label: t("nav.audit"), icon: "audit" },
+    { href: "/admin/overview", label: t("nav.overview"), icon: "overview" },
   ];
   const nav = (
     <nav aria-label={t("shell.mainNav")}>

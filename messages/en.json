@@ -50,7 +50,8 @@
     "myApplications": "My applications",
     "profile": "Profile",
     "queue": "Moderation queue",
-    "audit": "Audit log"
+    "audit": "Audit log",
+    "overview": "Overview"
   },
   "landing": {
     "headline": "The hiring platform built only for hospitality.",
@@ -71,7 +72,8 @@
     "venue": "Venue profile",
     "onboardingVenue": "Set up your venue",
     "queue": "Moderation queue",
-    "audit": "Audit log"
+    "audit": "Audit log",
+    "overview": "Platform overview"
   },
   "demo": {
     "title": "Demo toolkit",
@@ -900,5 +902,94 @@
     "filledJobs": "{count, plural, =0 {no jobs filled} one {# job filled} other {# jobs filled}}",
     "applicantsCount": "{count, plural, one {# applicant} other {# applicants}}",
     "empty": "No hiring data yet. Insights fill in as jobs get applicants and hires."
+  },
+  "audit": {
+    "title": "Audit log",
+    "intro": "Every sensitive action: moderation decisions, contact reveals, permission changes, payments and refused attempts. Read-only.",
+    "filters": "Filter by type",
+    "categories": {
+      "all": "All",
+      "moderation": "Moderation",
+      "contact": "Contact reveals",
+      "team": "Team & permissions",
+      "billing": "Payments",
+      "jobs": "Jobs",
+      "venues": "Venues & licenses",
+      "denied": "Refused attempts"
+    },
+    "colWhen": "When",
+    "colWho": "Who",
+    "colWhat": "What",
+    "colDetails": "Details",
+    "system": "System",
+    "admin": "Moderator",
+    "empty": "Nothing logged yet. Entries appear as people approve, reveal contacts, change permissions or pay.",
+    "emptyCategory": "Nothing of this type yet.",
+    "older": "Older entries",
+    "newest": "Back to newest",
+    "actions": {
+      "license": {
+        "approve": "Approved a license",
+        "reject": "Rejected a license",
+        "upload": "Uploaded a license"
+      },
+      "job": {
+        "approve": "Approved a job",
+        "request_changes": "Asked for changes to a job",
+        "reject": "Rejected a job",
+        "submit": "Submitted a job for review",
+        "repost": "Reposted a job",
+        "close": "Closed a job",
+        "promote": "Promoted a job to socials"
+      },
+      "application": {
+        "contact_reveal": "Revealed an applicant's phone number"
+      },
+      "team": {
+        "invite": "Invited a team member",
+        "permission_change": "Changed a member's access",
+        "remove": "Removed a team member"
+      },
+      "billing": {
+        "checkout": "Started a checkout",
+        "payment_succeeded": "Payment succeeded",
+        "payment_failed": "Payment failed"
+      },
+      "venue": {
+        "create": "Created a venue"
+      },
+      "authz": {
+        "denied": "Was refused an action"
+      },
+      "unknown": "Other action"
+    },
+    "reason": "Reason: {reason}",
+    "permission": "Needed: {permission}",
+    "roleChange": "Role: {from} → {to}",
+    "role": "Role: {role}",
+    "receipt": "Receipt {receiptNo}",
+    "total": "ETB {total} incl. VAT",
+    "firstReveal": "First reveal",
+    "outcome": {
+      "FAILED": "Declined",
+      "CANCELLED": "Cancelled"
+    }
+  },
+  "overview": {
+    "title": "Platform overview",
+    "intro": "Live counts from the demo database, as of the demo clock.",
+    "venues": "Venues",
+    "venuesBreakdown": "{verified} verified · {pending} pending · {unsubmitted} not submitted · {rejected} rejected",
+    "liveJobs": "Live jobs",
+    "inReview": "{count} in review",
+    "applications": "Applications",
+    "lastWeek": "{count} in the last 7 days",
+    "hires": "Hires",
+    "jobseekers": "Jobseekers",
+    "employers": "Employer accounts",
+    "queue": "Waiting for review",
+    "openQueue": "Open the queue",
+    "payments": "Payments received",
+    "paymentsTotal": "ETB {total} incl. VAT"
   }
 }

@@ -50,7 +50,8 @@
     "myApplications": "ማመልከቻዎቼ",
     "profile": "መገለጫ",
     "queue": "የግምገማ ወረፋ",
-    "audit": "የኦዲት መዝገብ"
+    "audit": "የኦዲት መዝገብ",
+    "overview": "አጠቃላይ እይታ"
   },
   "landing": {
     "headline": "ለእንግዳ ተቀባይነት ዘርፍ ብቻ የተሠራ የቅጥር መድረክ።",
@@ -71,7 +72,8 @@
     "venue": "የድርጅት መገለጫ",
     "onboardingVenue": "ድርጅትዎን ያዘጋጁ",
     "queue": "የግምገማ ወረፋ",
-    "audit": "የኦዲት መዝገብ"
+    "audit": "የኦዲት መዝገብ",
+    "overview": "የመድረኩ አጠቃላይ እይታ"
   },
   "demo": {
     "title": "የማሳያ መሣሪያዎች",
@@ -900,5 +902,94 @@
     "filledJobs": "{count, plural, =0 {የተያዘ ሥራ የለም} other {# ሥራዎች ተይዘዋል}}",
     "applicantsCount": "{count, plural, other {# አመልካቾች}}",
     "empty": "እስካሁን የቅጥር መረጃ የለም። ሥራዎች አመልካቾችንና ቅጥሮችን ሲያገኙ ትንታኔው ይሞላል።"
+  },
+  "audit": {
+    "title": "የኦዲት መዝገብ",
+    "intro": "ሁሉም ጥንቃቄ የሚሹ ተግባራት፦ የግምገማ ውሳኔዎች፣ የስልክ ቁጥር መግለጫዎች፣ የፈቃድ ለውጦች፣ ክፍያዎችና ውድቅ የተደረጉ ሙከራዎች። ለንባብ ብቻ።",
+    "filters": "በዓይነት አጣራ",
+    "categories": {
+      "all": "ሁሉም",
+      "moderation": "ግምገማ",
+      "contact": "የስልክ መግለጫዎች",
+      "team": "ቡድንና ፈቃዶች",
+      "billing": "ክፍያዎች",
+      "jobs": "ሥራዎች",
+      "venues": "ድርጅቶችና ፈቃዶች",
+      "denied": "ውድቅ የተደረጉ ሙከራዎች"
+    },
+    "colWhen": "መቼ",
+    "colWho": "ማን",
+    "colWhat": "ምን",
+    "colDetails": "ዝርዝር",
+    "system": "ሥርዓቱ",
+    "admin": "ገምጋሚ",
+    "empty": "እስካሁን ምንም አልተመዘገበም። ሰዎች ሲያጸድቁ፣ ስልክ ሲገልጡ፣ ፈቃድ ሲቀይሩ ወይም ሲከፍሉ እዚህ ይታያሉ።",
+    "emptyCategory": "የዚህ ዓይነት ምንም እስካሁን የለም።",
+    "older": "የቆዩ መዝገቦች",
+    "newest": "ወደ አዳዲሶቹ ተመለስ",
+    "actions": {
+      "license": {
+        "approve": "ፈቃድ አጸደቀ",
+        "reject": "ፈቃድ ውድቅ አደረገ",
+        "upload": "ፈቃድ ጫነ"
+      },
+      "job": {
+        "approve": "ሥራ አጸደቀ",
+        "request_changes": "በሥራው ላይ ማስተካከያ ጠየቀ",
+        "reject": "ሥራ ውድቅ አደረገ",
+        "submit": "ሥራ ለግምገማ አስገባ",
+        "repost": "ሥራ እንደገና ለጠፈ",
+        "close": "ሥራ ዘጋ",
+        "promote": "ሥራ በማኅበራዊ ሚዲያ አስተዋወቀ"
+      },
+      "application": {
+        "contact_reveal": "የአመልካች ስልክ ቁጥር ገለጠ"
+      },
+      "team": {
+        "invite": "የቡድን አባል ጋበዘ",
+        "permission_change": "የአባል ፈቃድ ቀየረ",
+        "remove": "የቡድን አባል አስወገደ"
+      },
+      "billing": {
+        "checkout": "ክፍያ ጀመረ",
+        "payment_succeeded": "ክፍያ ተሳክቷል",
+        "payment_failed": "ክፍያ አልተሳካም"
+      },
+      "venue": {
+        "create": "ድርጅት ፈጠረ"
+      },
+      "authz": {
+        "denied": "ተግባር ተከልክሏል"
+      },
+      "unknown": "ሌላ ተግባር"
+    },
+    "reason": "ምክንያት፦ {reason}",
+    "permission": "የሚያስፈልገው፦ {permission}",
+    "roleChange": "ሚና፦ {from} → {to}",
+    "role": "ሚና፦ {role}",
+    "receipt": "ደረሰኝ {receiptNo}",
+    "total": "{total} ብር ተ.እ.ታ.ን ጨምሮ",
+    "firstReveal": "የመጀመሪያ መግለጫ",
+    "outcome": {
+      "FAILED": "ተቀባይነት አላገኘም",
+      "CANCELLED": "ተሰርዟል"
+    }
+  },
+  "overview": {
+    "title": "የመድረኩ አጠቃላይ እይታ",
+    "intro": "ከማሳያው የመረጃ ቋት የቀጥታ ቁጥሮች፣ በማሳያው ሰዓት።",
+    "venues": "ድርጅቶች",
+    "venuesBreakdown": "{verified} የተረጋገጡ · {pending} በመጠባበቅ ላይ · {unsubmitted} ያላስገቡ · {rejected} ውድቅ",
+    "liveJobs": "ክፍት ሥራዎች",
+    "inReview": "{count} በግምገማ ላይ",
+    "applications": "ማመልከቻዎች",
+    "lastWeek": "ባለፉት 7 ቀናት {count}",
+    "hires": "ቅጥሮች",
+    "jobseekers": "ሥራ ፈላጊዎች",
+    "employers": "የቀጣሪ መለያዎች",
+    "queue": "ግምገማ የሚጠብቁ",
+    "openQueue": "ወረፋውን ክፈት",
+    "payments": "የተቀበሉ ክፍያዎች",
+    "paymentsTotal": "{total} ብር ተ.እ.ታ.ን ጨምሮ"
   }
 }
